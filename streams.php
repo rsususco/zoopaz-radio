@@ -12,13 +12,14 @@ $streamsDir = "{$webroot}/music.wjsams.com/htdocs/streams/m3u";
 $streamsUrl = "https://music.wjsams.com/streams/m3u";
 $tmpDir = "/tmp";
 
+// This is a really cheap login scheme for storing playlists.
+// Since this is a personal player you can manually add people
+// here. Use whatever you want. You just need to store a username
+// in the $_SESSION['u'] variable.
 if ( $_GET['action'] == "login" ) {
     if ( $_GET['u'] != "" && $_GET['p'] != "" ) {
-        if ( $_GET['u'] == "wsams" && $_GET['p'] == "ilovesiam" ) {
-            $_SESSION['u'] = "wsams"; 
-        }
-        if ( $_GET['u'] == "nora" && $_GET['p'] == "pizers" ) {
-            $_SESSION['u'] = "nora"; 
+        if ( $_GET['u'] == "someUserName" && $_GET['p'] == "yourPassword" ) {
+            $_SESSION['u'] = $_GET['u']; 
         }
         header("Location:{$_SERVER['PHP_SELF']}"); exit();
     }
