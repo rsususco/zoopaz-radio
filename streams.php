@@ -4,12 +4,12 @@ $sessid = session_id();
 require_once("WsPhpLibrary.php");
 
 $webroot = "/var/www/nas";
-$defaultMp3Dir = "{$webroot}/music.wjsams.com/htdocs/music";
-$defaultMp3Url = "https://music.wjsams.com/music";
-$streamsRootDir = "{$webroot}/music.wjsams.com/htdocs/streams";
-$streamsRootDirUrl = "https://music.wjsams.com/streams";
-$streamsDir = "{$webroot}/music.wjsams.com/htdocs/streams/m3u";
-$streamsUrl = "https://music.wjsams.com/streams/m3u";
+$defaultMp3Dir = "{$webroot}/www.example.com/htdocs/music";
+$defaultMp3Url = "https://www.example.com/music";
+$streamsRootDir = "{$webroot}/www.example.com/htdocs/streams";
+$streamsRootDirUrl = "https://www.example.com/streams";
+$streamsDir = "{$webroot}/www.example.com/htdocs/streams/m3u";
+$streamsUrl = "https://www.example.com/streams/m3u";
 $tmpDir = "/tmp";
 
 // This is a really cheap login scheme for storing playlists.

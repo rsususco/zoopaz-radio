@@ -20,6 +20,6 @@ foreach ($a_file as $k=>$file) {
     $file = preg_replace("/^\.\.\//", "", $file);
     $file = "/var/www/nas/music/htdocs/" . $file;
     $enc_file = urlencode($file);
-    file_put_contents("ArminVanBuuren.m3u", "http://music.wjsams.com/stream/play.php?file=" . $enc_file . "\n", FILE_APPEND);
+    file_put_contents("ArminVanBuuren.m3u", "http://music.example.com/stream/play.php?file=" . $enc_file . "\n", FILE_APPEND);
 }
 unlink("ArminVanBuuren.m3u.tmp");
