@@ -4,11 +4,11 @@
 // See the variables below for its use.
 $webroot = "/var/www/nas";
 
-$host = "https://music.wjsams.com";
+$host = "https://www.example.com";
 
 // This is the root directory of your music archive.
 // Absolute path - no trailing slash.
-$defaultMp3Dir = "{$webroot}/music.wjsams.com/htdocs/music";
+$defaultMp3Dir = "{$webroot}/www.example.com/htdocs/music";
 
 // This is the root URL to the root location of your music archive. {@see $defaultMp3Dir}
 // No trailing slash.
@@ -16,7 +16,7 @@ $defaultMp3Url = "{$host}/music";
 
 // This is the root directory of this streaming application.
 // Absolute path - no trailing slash.
-$streamsRootDir = "{$webroot}/music.wjsams.com/htdocs/streams";
+$streamsRootDir = "{$webroot}/www.example.com/htdocs/streams";
 
 // This is the root URL to the root location of this streaming application. {@see $streamsRootDir}
 // No trailing slash.
@@ -24,7 +24,7 @@ $streamsRootDirUrl = "{$host}/streams";
 
 // This is the directory where m3u files are stored in a web accessible directory of this application.
 // Absolute path - no trailing slash.
-$streamsDir = "{$webroot}/music.wjsams.com/htdocs/streams/m3u";
+$streamsDir = "{$webroot}/www.example.com/htdocs/streams/m3u";
 
 // This is the URL pointing to the m3u directory inside this application. {@see $streamsDir}
 // No trailing slash.
