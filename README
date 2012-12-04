@@ -1,1 +1,19 @@
-A simple web based LAMP mp3 streaming application. Drop your mp3s into a folder, point the application to it, browse, download and play your mp3s on any modern web browser.
+A simple mp3 or ogg streaming application. It uses PHP, HTML, CSS and jQuery.
+
+Your mp3s or oggs should be stored in a web accessible directory - it does
+not have to be inside this application. But this application and your music
+archive must be on the same machine. The application should have read access
+to your music archive.
+
+Edit config.php.
+
+Open this application in a web browser and begin streaming your music.
+
+---
+
+Notes
+
+This application relies on the file name for display your albums. Currently
+it does not support ID3 tags. There is some deprecated code that used getid3
+but it never worked reliably. If you know how to write ID3 support in 
+PHP/JavaScript, please contact me: wjsams@gmail.com
