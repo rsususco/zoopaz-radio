@@ -232,7 +232,7 @@ if ( $_GET['action'] == "downloadAlbum" && $_GET['dir'] != "" ) {
         $("li.mp3").each(function(i, item){
             var html = $(item).children("span.text").first().children("a").first().html();
             var currentSong = jwplayer('mediaplayer').getPlaylistItem().title;
-            if (html == "&nbsp;" + currentSong) {
+            if (html == currentSong) {
                 $(item).css("font-weight", "bold");
             } else {
                 $(item).css("font-weight", "normal");
