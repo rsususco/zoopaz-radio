@@ -1,4 +1,14 @@
+---
+DESCRIPTION
+---
+
 A simple mp3 or ogg streaming application. It uses PHP, HTML, CSS and jQuery.
+
+See screenshot1.png for a view of playing an album.
+
+---
+SETUP
+---
 
 Your mp3s or oggs should be stored in a web accessible directory - it does
 not have to be inside this application. But this application and your music
@@ -14,8 +24,8 @@ cover.jpg and small_cover.jpg
 Open this application in a web browser and begin streaming your music.
 
 ---
-
 Notes
+---
 
 This application relies on the file name for display your albums. Currently
 it does not support ID3 tags. There is some deprecated code that used getid3
