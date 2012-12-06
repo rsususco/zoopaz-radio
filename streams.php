@@ -177,6 +177,7 @@ if ( $_GET['action'] == "downloadAlbum" && $_GET['dir'] != "" ) {
         $("#playbutton").html("Play");
         $("#backbutton").remove();
         $("#nextbutton").remove();
+        //$("#shufflebutton").remove();
     }
 
     function pauseme() {
@@ -187,6 +188,11 @@ if ( $_GET['action'] == "downloadAlbum" && $_GET['dir'] != "" ) {
         if ($("#nextbutton").size() < 1) {
             $("#backbutton").after(" <span style='cursor:pointer;' id='nextbutton' onclick='forward()' class='button'>Next</span>");
         }
+        /*
+        if ($("#shufflebutton").size() < 1) {
+            $("#nextbutton").after(" <span style='cursor:pointer;' id='shufflebutton' onclick='shufflePlaylist()' class='button'>Shuffle</span>");  
+        }
+        */
     }
 
     function shufflePlaylist() {
@@ -431,7 +437,7 @@ function getDropDownAlbums($url) {
         if (file_exists("{$thisdir}/small_cover.jpg")) {
             $thelinks .= "<a class=\"droplink\" data-url=\"{$_SERVER['PHP_SELF']}?action=openIndex&amp;dir={$enc_thisdir}\"><img class=\"dropimg\" src=\"{$GLOBALS['defaultMp3Url']}/{$url}/{$html_thisdir}/small_cover.jpg\" alt=\"img\" /> {$html_thisdir}</a>"; 
         } else {
-            $thelinks .= "<a class=\"droplink\" data-url=\"{$_SERVER['PHP_SELF']}?action=openIndex&amp;dir={$enc_thisdir}\">{$html_thisdir}</a>"; 
+            $thelinks .= "<a class=\"droplink\" data-url=\"{$_SERVER['PHP_SELF']}?action=openIndex&amp;dir={$enc_thisdir}\"><img class=\"dropimg\" src=\"images/bigfolder.png\" alt=\"img\" /> {$html_thisdir}</a>"; 
         }
     }
     chdir($curdir);
@@ -535,12 +541,15 @@ Current song: <span id="currentSong"></span><br />
 </script>
 eof;
     }
+    /*
     $streams .= "<h3>Current Streams</h3><ul>";
     foreach ($a_streams as $k=>$stream) {
         $streams .= "<li><img src=\"images/stream.png\" alt=\"stream\" /> <a href=\"{$streamsUrl}/{$stream}\">{$stream}</a></li>";
     }
     $streams .= "</ul>";
     $pageContent = getFileIndex($defaultMp3Dir) . $streams;
+    */
+    $pageContent = getFileIndex($defaultMp3Dir);
 } else {
     $pageContent .= openTheDir($_GET['dir']);
 }
@@ -576,6 +585,7 @@ body {
     padding:0;
     background-color:white;
     color:#6d6d6d;
+    border-top:4px solid #3181b7;
 }
 
 .mp3 {
