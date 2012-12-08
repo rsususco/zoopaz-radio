@@ -46,10 +46,17 @@ function openTheDir() {
     $pageContent = "";
     // This is when you open a dir.
     if (file_exists($GLOBALS['defaultMp3Dir'] . "/" . $_GET['dir'] . "/cover.jpg")) {
-        $pageContent .= "<div class=\"coverart\"><a target=\"_blank\" href=\"../music/{$_GET['dir']}/cover.jpg\"><img src=\"../music/{$_GET['dir']}/cover.jpg\" alt=\"cover\" /></a></div><span class=\"clear\"></span>";
+        $pageContent .= "<div class=\"coverart\"><a target=\"_blank\" href=\"../music/{$_GET['dir']}"
+                . "/cover.jpg\"><img src=\"../music/{$_GET['dir']}/cover.jpg\" alt=\"cover\" /></a>"
+                . "</div><span class=\"clear\"></span>";
     }
     $pageContent .= getFileIndex($_GET['dir']);
     return $pageContent;
+}
+
+if ($logging) {
+    file_put_contents($logfile, date("Y-m-d H:i:s") . " ::: " . $_SERVER['REMOTE_ADDR'] . " ::: " 
+            . $_SERVER['HTTP_USER_AGENT'] . " ::: " . $_SERVER['REQUEST_URI'] . "\n", FILE_APPEND);
 }
 
 if ($_GET['action'] == "openDir") {
@@ -101,14 +108,14 @@ if ( $_GET['action'] == "downloadAlbum" && $_GET['dir'] != "" ) {
         chdir($curdir);
         die();
     }
-} else if ($_GET['action'] == "play" && file_exists($defaultMp3Dir . '/' . $_GET['file']) && preg_match("/\.(mp3|ogg)$/i", $_GET['file'])) {
-    //print("Going to play {$_GET['file']}<br />");
+} else if ($_GET['action'] == "play" && file_exists($defaultMp3Dir . '/' . $_GET['file']) 
+        && preg_match("/\.(mp3|ogg)$/i", $_GET['file'])) {
 } else if ( $_GET['action'] == "clearPersonal" ) {
     if ( file_exists("{$streamsRootDir}/playlists/personal_playlist.{$sessid}.json") ) {
         unlink("{$streamsRootDir}/playlists/personal_playlist.{$sessid}.json");
     }
-} else if ($_GET['action'] == "createPlaylist" && file_exists($defaultMp3Dir . '/' . $_GET['dir']) && is_dir($defaultMp3Dir . '/' . $_GET['dir'])) {
-    //function createPlaylist() 
+} else if ($_GET['action'] == "createPlaylist" && file_exists($defaultMp3Dir . '/' . $_GET['dir']) 
+        && is_dir($defaultMp3Dir . '/' . $_GET['dir'])) {
     $curdir = getcwd();
     chdir($defaultMp3Dir . '/' . $_GET['dir']);
     $a_files = glob("*.{mp3,ogg,MP3,OGG}", GLOB_BRACE);
@@ -245,17 +252,18 @@ if ( $_GET['action'] == "downloadAlbum" && $_GET['dir'] != "" ) {
             }
         });
     }
-
 </script>
 eof;
-    $m3uPlayer .= "<tr><td class=\"currentsong\">Current song: <span id=\"currentSong\"></span> &#160;&#160;&#160; <a style=\"cursor:pointer; text-decoration:underline;\" onclick=\"shufflePlaylist()\">shuffle</a></td></tr>";
+    $m3uPlayer .= "<tr><td class=\"currentsong\">Current song: <span id=\"currentSong\"></span> &#160;&#160;&#160; "
+            . "<a style=\"cursor:pointer; text-decoration:underline;\" onclick=\"shufflePlaylist()\">shuffle</a></td></tr>";
     $m3uPlayer .= "<tr><td id=\"mediaplayer\"></td></tr>";
     $m3uPlayer .= "</table>";
     $m3uPlayer .= $flashPlayer;
 
     chdir($curdir);
     $esc_dir = preg_quote($_GET['dir']);
-    $_SESSION['message'] = "<span id=\"theurl\" data-url=\"{$esc_dir}\" />{$m3uPlayer}<!--<br /><span class=\"small-text\"><a href=\"{$streamsUrl}/{$fileName}.m3u\">{$streamsUrl}/{$fileName}.m3u</a></span>-->";
+    $_SESSION['message'] = "<span id=\"theurl\" data-url=\"{$esc_dir}\" />{$m3uPlayer}<!--<br /><span class=\"small-text\">"
+            . "<a href=\"{$streamsUrl}/{$fileName}.m3u\">{$streamsUrl}/{$fileName}.m3u</a></span>-->";
     header("Location:{$_SERVER['PHP_SELF']}?dir=" . urlencode($_GET['dir']));
     die();
 } else if ($_GET['action'] == "download") {
@@ -291,9 +299,14 @@ function getFileIndex ($dir) {
     foreach ($a_files as $k=>$file) {
         if (is_dir($file)) {
             if (file_exists("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}/small_cover.jpg")) {
-                $index .= "<li class=\"dirlink-cover dirlinkcover\" style=\"margin-bottom:4px; background:url('{$GLOBALS['defaultMp3Url']}/{$dirLink}{$file}/small_cover.jpg') no-repeat left center; background-size:128px 128px;\" data-url=\"" . $dirLink . $file . "\"><a style=\"padding-left:148px;\">" . htmlspecialchars($file) . "</a></li>";
+                $index .= "<li class=\"dirlink-cover dirlinkcover\" style=\"margin-bottom:4px; "
+                        . "background:url('{$GLOBALS['defaultMp3Url']}/{$dirLink}{$file}/small_cover.jpg') "
+                        . "no-repeat left center; background-size:128px 128px;\" data-url=\"" . $dirLink . $file 
+                        . "\"><a style=\"padding-left:148px;\">" . htmlspecialchars($file) . "</a></li>";
             } else {
-                $index .= "<li class=\"dirlink-cover dirlinkcover\" style=\"margin-bottom:4px; background:url('images/bigfolder.png') no-repeat left center; background-size:128px 128px;\" data-url=\"" . $dirLink . $file . "\"><a style=\"padding-left:148px;\">" . htmlspecialchars($file) . "</a></li>";
+                $index .= "<li class=\"dirlink-cover dirlinkcover\" style=\"margin-bottom:4px; "
+                        . "background:url('images/bigfolder.png') no-repeat left center; background-size:128px 128px;\" data-url=\"" 
+                        . $dirLink . $file . "\"><a style=\"padding-left:148px;\">" . htmlspecialchars($file) . "</a></li>";
             }
         } else {
             if (preg_match("/\.(mp3|ogg)$/i", $file)) {

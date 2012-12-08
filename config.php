@@ -39,3 +39,7 @@ $tmpDir = "/tmp";
 
 // This array is used when logging in. Its use has been deprecated.
 $users = array("ENTER_USERNAME" => "ENTER_PASSWORD");
+
+// Turn on logging and log to $loglocation
+$logging = true;
+$logfile = "access.log";
