@@ -15,6 +15,11 @@ not have to be inside this application. But this application and your music
 archive must be on the same machine. The application should have read access
 to your music archive.
 
+See config.php, but your music will live in $defaultMp3Dir. This directory
+should contain any level of sub-directories, but at least one more level
+deep. e.g. If $defaultMp3Dir='/var/www/mymusic', then put your music in
+/var/www/mymusic/myalbum. e.g. /var/www/mymusic/Rock/TheDoors/L.A.Woman/*.mp3
+
 Edit config.php.
 
 See scripts/README for information on cover art. Each album can have a cover
