@@ -1,52 +1,8 @@
 <?php
-// start: login
-if (!file_exists("sessions")) {
-    mkdir("sessions");
-}
-$session = "sessions/" . $_SERVER['REMOTE_ADDR'] . ".txt";
-$try = "sessions/" . $_SERVER['REMOTE_ADDR'] . ".try";
-$users = array("wsams"=>"ilovesiam", "nroggeve"=>"pizers");
-// clean up $_POST
-foreach ($_POST as $k=>$v) {
-    $k = preg_replace("/[^0-9a-zA-Z]/", "", $k);
-    $v = preg_replace("/[^0-9a-zA-Z]/", "", $v);
-    $_POST[$k] = $v;
-}
-if ($_GET['action'] == "login") {
-    if (!file_exists($try)) {
-        file_put_contents($try, 0);
-        $trys = 0;
-    } else {
-        $trys = intval(file_get_contents($try));
-    }
-    if ($trys > 5) {
-        header("Location:{$_SERVER['PHP_SELF']}");
-        exit();
-    }
-    if (array_key_exists($_POST['username'], $users)) {
-        if ($_POST['password'] == $users[$_POST['username']]) {
-            file_put_contents($session, "logged in as {$_POST['username']} on " . date("Y-m-d H:i:s"));
-            file_put_contents($try, 0);
-            header("Location:{$_SERVER['PHP_SELF']}");
-            exit();
-        } else {
-            file_put_contents($try, $trys+1);
-        }
-    } else {
-        file_put_contents($try, $trys+1);
-    }
-}
-if (!file_exists($session)) {
-    print <<<eof
-<form action="{$_SERVER['PHP_SELF']}?action=login" method="post">
-username: <input type="text" name="username" id="username" /><br />
-password: <input type="password" name="password" id="password" /><br />
-<input type="submit" value="login" />
-</form>
-eof;
-    die();
-}
-// end: login
+session_start();
+$sessid = session_id();
+
+require_once("auth.php");
 
 define("STREAMS", 1);
 
@@ -85,9 +41,6 @@ function print_gzipped_page() {
         exit();
     }
 }
-
-session_start();
-$sessid = session_id();
 
 require_once("WsPhpLibrary.php");
 
@@ -496,10 +449,17 @@ function getFileIndex ($dir) {
     $isMp3 = false;
     foreach ($a_files as $k=>$file) {
         if (is_dir($file)) {
-            $background_url = "{$GLOBALS['defaultMp3Url']}/{$dirLink}{$file}/small_cover.jpg";
-            $js_background_url = preg_replace("/'/", "\\'", $background_url);
             $html_data_url = preg_replace("/\"/", "\\\"", $dirLink . $file);
-            if (file_exists("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}/small_cover.jpg")) {
+            if (file_exists("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}/small_montage.jpg")) {
+                $background_url = "{$GLOBALS['defaultMp3Url']}/{$dirLink}{$file}/small_montage.jpg";
+                $js_background_url = preg_replace("/'/", "\\'", $background_url);
+                $index .= "<li class=\"dirlink-cover dirlinkcover\" style=\"margin-bottom:4px; "
+                        . "background:url('{$js_background_url}') "
+                        . "no-repeat left center; background-size:128px 128px;\" data-url=\"" . $html_data_url 
+                        . "\"><a style=\"padding-left:148px;\">" . htmlspecialchars($file) . "</a></li>";
+            } else if (file_exists("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}/small_cover.jpg")) {
+                $background_url = "{$GLOBALS['defaultMp3Url']}/{$dirLink}{$file}/small_cover.jpg";
+                $js_background_url = preg_replace("/'/", "\\'", $background_url);
                 $index .= "<li class=\"dirlink-cover dirlinkcover\" style=\"margin-bottom:4px; "
                         . "background:url('{$js_background_url}') "
                         . "no-repeat left center; background-size:128px 128px;\" data-url=\"" . $html_data_url 
@@ -646,12 +606,18 @@ function getDropDownAlbums($url) {
     $thelinks = "";
     foreach ($a_available_dirs as $k5=>$thisdir) {
         $enc_thisdir = urlencode($url . "/" . $thisdir);
+        $enc_thisdir = singleSlashes($enc_thisdir);
         $html_thisdir = htmlspecialchars($thisdir);
+        $html_thisdir = singleSlashes($html_thisdir);
+        $enc_html_thisdir = preg_replace("/\"/", "\\\"", $url . "/" . $thisdir);
+        $enc_html_thisdir = singleSlashes($enc_html_thisdir);
         //print("{$GLOBALS['defaultMp3Dir']}/{$thisdir}/small_cover.jpg");
-        if (file_exists("{$thisdir}/small_cover.jpg")) {
-            $thelinks .= "<a class=\"droplink\" data-url=\"{$_SERVER['PHP_SELF']}?action=openIndex&amp;dir={$enc_thisdir}\"><img class=\"dropimg\" src=\"{$GLOBALS['defaultMp3Url']}/{$url}/{$html_thisdir}/small_cover.jpg\" alt=\"img\" /> {$html_thisdir}</a>"; 
+        if (file_exists("{$thisdir}/small_montage.jpg")) {
+            $thelinks .= "<a class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"{$GLOBALS['defaultMp3Url']}/{$url}/{$html_thisdir}/small_montage.jpg\" alt=\"img\" /> {$html_thisdir}</a>"; 
+        } else if (file_exists("{$thisdir}/small_cover.jpg")) {
+            $thelinks .= "<a class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"{$GLOBALS['defaultMp3Url']}/{$url}/{$html_thisdir}/small_cover.jpg\" alt=\"img\" /> {$html_thisdir}</a>"; 
         } else {
-            $thelinks .= "<a class=\"droplink\" data-url=\"{$_SERVER['PHP_SELF']}?action=openIndex&amp;dir={$enc_thisdir}\"><img class=\"dropimg\" src=\"images/bigfolder.png\" alt=\"img\" /> {$html_thisdir}</a>"; 
+            $thelinks .= "<a class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"images/bigfolder.png\" alt=\"img\" /> {$html_thisdir}</a>"; 
         }
     }
     chdir($curdir);
@@ -659,6 +625,10 @@ function getDropDownAlbums($url) {
         return false;
     }
     return $thelinks;
+}
+
+function singleSlashes($in) {
+    return preg_replace("/\/\/*/", "/", $in);
 }
 
 $streams = "";
@@ -1073,7 +1043,7 @@ function createPlaylistJs(url) {
     $.ajax({
         type: "GET",  
         url: "index.php",  
-        data: "action=createPlaylistJs&dir=" + url,
+        data: "action=createPlaylistJs&dir=" + encodeURIComponent(url),
         success: function(html){
             $("#content-player").html(html);
         }
@@ -1086,7 +1056,7 @@ function openDir(url) {
     $.ajax({
         type: "GET",  
         url: "index.php",  
-        data: "action=openDir&url=" + url + "&dir=" + url,
+        data: "action=openDir&url=" + encodeURIComponent(url) + "&dir=" + encodeURIComponent(url),
         success: function(text){
             $("#content").html(text);
         }
