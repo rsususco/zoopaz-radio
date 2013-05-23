@@ -1,4 +1,53 @@
 <?php
+// start: login
+if (!file_exists("sessions")) {
+    mkdir("sessions");
+}
+$session = "sessions/" . $_SERVER['REMOTE_ADDR'] . ".txt";
+$try = "sessions/" . $_SERVER['REMOTE_ADDR'] . ".try";
+$users = array("wsams"=>"ilovesiam", "nroggeve"=>"pizers");
+// clean up $_POST
+foreach ($_POST as $k=>$v) {
+    $k = preg_replace("/[^0-9a-zA-Z]/", "", $k);
+    $v = preg_replace("/[^0-9a-zA-Z]/", "", $v);
+    $_POST[$k] = $v;
+}
+if ($_GET['action'] == "login") {
+    if (!file_exists($try)) {
+        file_put_contents($try, 0);
+        $trys = 0;
+    } else {
+        $trys = intval(file_get_contents($try));
+    }
+    if ($trys > 5) {
+        header("Location:{$_SERVER['PHP_SELF']}");
+        exit();
+    }
+    if (array_key_exists($_POST['username'], $users)) {
+        if ($_POST['password'] == $users[$_POST['username']]) {
+            file_put_contents($session, "logged in as {$_POST['username']} on " . date("Y-m-d H:i:s"));
+            file_put_contents($try, 0);
+            header("Location:{$_SERVER['PHP_SELF']}");
+            exit();
+        } else {
+            file_put_contents($try, $trys+1);
+        }
+    } else {
+        file_put_contents($try, $trys+1);
+    }
+}
+if (!file_exists($session)) {
+    print <<<eof
+<form action="{$_SERVER['PHP_SELF']}?action=login" method="post">
+username: <input type="text" name="username" id="username" /><br />
+password: <input type="password" name="password" id="password" /><br />
+<input type="submit" value="login" />
+</form>
+eof;
+    die();
+}
+// end: login
+
 define("STREAMS", 1);
 
 require_once("config.php");
@@ -114,11 +163,160 @@ if ( $_GET['action'] == "downloadAlbum" && $_GET['dir'] != "" ) {
     if ( file_exists("{$streamsRootDir}/playlists/personal_playlist.{$sessid}.json") ) {
         unlink("{$streamsRootDir}/playlists/personal_playlist.{$sessid}.json");
     }
+} else if ($_GET['action'] == "createPlaylistJs" && file_exists($defaultMp3Dir . '/' . $_GET['dir']) 
+        && is_dir($defaultMp3Dir . '/' . $_GET['dir'])) {
+    $curdir = getcwd();
+    chdir($defaultMp3Dir . '/' . $_GET['dir']);
+    $a_files = glob("*.{mp3,MP3,ogg,OGG}", GLOB_BRACE);
+    $fileName = preg_replace("/[^a-zA-Z0-9-_\.]/", "_", $_GET['dir']);
+    $filename = preg_replace("/__+/", "_", $filename);
+    chdir($streamsDir);
+    file_put_contents("{$fileName}.m3u", "");
+    $m3uPlayer .= "<div class='m3uplayer'><table>";
+
+    foreach ($a_files as $k=>$mp3) {
+        $enc_file = htmlspecialchars($_GET['dir'] . '/' . $mp3);
+        $directMusicUrl = preg_replace("/ /", "%20", "{$defaultMp3Url}/{$_GET['dir']}/{$mp3}");
+        $js_directMusicUrl = preg_replace("/'/", "\\\'", $directMusicUrl);
+        $js_mp3 = preg_replace("/'/", "\\\'", $mp3);
+        file_put_contents("{$fileName}.m3u", "{$directMusicUrl}\n", FILE_APPEND);
+        $playlist .= "{'file':'{$js_directMusicUrl}', 'title':'{$js_mp3}'},";
+    }
+
+    file_put_contents("{$streamsRootDir}/playlists/personal_playlist.{$sessid}.json", $playlist, FILE_APPEND);
+    $flashPlayer = <<<eof
+<script type="text/javascript">
+    jwplayer('mediaplayer').setup({
+        'flashplayer': 'js/mediaplayer-5.7/player.swf',
+        'id': 'playlistmediaplayer',
+        'width': '480',
+        //'height': '250',
+        'height': '640',
+        'backcolor': '#ffffff',
+        'frontcolor': '#6d6d6d',
+        'lightcolor': 'black',
+        'screencolor': '#6d6d6d',
+        'controlbar': 'top',
+        'playlist': [{$playlist}],
+        'repeat': 'always',
+        'playlist.position': 'bottom',
+        //'playlist.size': '250',
+        'playlist.size': '640',
+        'autoplay': true,
+        'events': {
+            onPlaylist: function(e) {
+                var currentSong = jwplayer('mediaplayer').getPlaylistItem().title;
+                $("span#currentSong").html(currentSong);
+                $("div#currentlyPlaying").html(currentSong);
+                setCurrentItem();
+            },
+            onPlaylistItem: function(e) {
+                var currentSong = jwplayer('mediaplayer').getPlaylistItem().title;
+                $("span#currentSong").html(currentSong);
+                $("div#currentlyPlaying").html(currentSong);
+                jwplayer('mediaplayer').getPlaylistItem().title;
+                pauseme();
+                setCurrentItem();
+            },
+            onPlay: function(e) {
+                pauseme();
+                setCurrentItem();
+            },
+            onPause: function(e) {
+                startme();
+                setCurrentItem();
+            }
+        }
+    });
+
+    function startme() {
+        $("#playbutton").html("Play");
+        $("#backbutton").remove();
+        $("#nextbutton").remove();
+        //$("#shufflebutton").remove();
+    }
+
+    function pauseme() {
+        $("#playbutton").html("Pause");
+        if ($("#backbutton").size() < 1) {
+            $("#playbutton").after(" <span style='cursor:pointer;' id='backbutton' onclick='goback()' class='button'>Back</span>");
+        }
+        if ($("#nextbutton").size() < 1) {
+            $("#backbutton").after(" <span style='cursor:pointer;' id='nextbutton' onclick='forward()' class='button'>Next</span>");
+        }
+        /*
+        if ($("#shufflebutton").size() < 1) {
+            $("#nextbutton").after(" <span style='cursor:pointer;' id='shufflebutton' onclick='shufflePlaylist()' class='button'>Shuffle</span>");  
+        }
+        */
+    }
+
+    function shufflePlaylist() {
+        // This document id is the id when you call jwplayer('mediaplayer').setup().
+        // mediaplayer is that ID.
+        var player = document.getElementById("mediaplayer");
+        var playlist = player.getPlaylist();
+
+        if ( playlist.length > 0 ) {
+            //...shuffle playlist
+            for(var rnd, tmp, i = playlist.length; i; rnd = parseInt(Math.random()*i), tmp = playlist[--i], playlist[i] = playlist[rnd], playlist[rnd] = tmp);
+          
+            //...load the shuffled playlist
+            player.sendEvent('LOAD', playlist);
+
+
+            //...optional - to start playing after a shuffle
+            //player.sendEvent('PLAY', 'true');
+        }
+    }
+
+    function forward() {
+        var player = document.getElementById("mediaplayer");
+        var playlist = player.getPlaylist();
+
+        if ( playlist.length > 0 ) {
+            player.sendEvent('NEXT', 'true');
+            setCurrentItem();
+        }
+    }
+
+    function goback() {
+        var player = document.getElementById("mediaplayer");
+        var playlist = player.getPlaylist();
+
+        if ( playlist.length > 0 ) {
+            player.sendEvent('PREV', 'true');
+            setCurrentItem();
+        }
+    }
+
+    function setCurrentItem() {
+        $("li.mp3").each(function(i, item){
+            var html = $(item).children("span.text").first().children("a").first().html();
+            var currentSong = jwplayer('mediaplayer').getPlaylistItem().title;
+            if (html == currentSong) {
+                $(item).css("font-weight", "bold");
+            } else {
+                $(item).css("font-weight", "normal");
+            }
+        });
+    }
+</script>
+eof;
+    $m3uPlayer .= "<tr><td class=\"currentsong\">Current song: <span id=\"currentSong\"></span> &#160;&#160;&#160; "
+            . "<a style=\"cursor:pointer; text-decoration:underline;\" onclick=\"shufflePlaylist()\">shuffle</a></td></tr>";
+    $m3uPlayer .= "<tr><td id=\"mediaplayer\"></td></tr>";
+    $m3uPlayer .= "</table>";
+    $m3uPlayer .= $flashPlayer;
+
+    chdir($curdir);
+    print($m3uPlayer);
+    die();
 } else if ($_GET['action'] == "createPlaylist" && file_exists($defaultMp3Dir . '/' . $_GET['dir']) 
         && is_dir($defaultMp3Dir . '/' . $_GET['dir'])) {
     $curdir = getcwd();
     chdir($defaultMp3Dir . '/' . $_GET['dir']);
-    $a_files = glob("*.{mp3,ogg,MP3,OGG}", GLOB_BRACE);
+    $a_files = glob("*.{mp3,MP3,ogg,OGG}", GLOB_BRACE);
     $fileName = preg_replace("/[^a-zA-Z0-9-_\.]/", "_", $_GET['dir']);
     $filename = preg_replace("/__+/", "_", $filename);
     chdir($streamsDir);
@@ -298,18 +496,21 @@ function getFileIndex ($dir) {
     $isMp3 = false;
     foreach ($a_files as $k=>$file) {
         if (is_dir($file)) {
+            $background_url = "{$GLOBALS['defaultMp3Url']}/{$dirLink}{$file}/small_cover.jpg";
+            $js_background_url = preg_replace("/'/", "\\'", $background_url);
+            $html_data_url = preg_replace("/\"/", "\\\"", $dirLink . $file);
             if (file_exists("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}/small_cover.jpg")) {
                 $index .= "<li class=\"dirlink-cover dirlinkcover\" style=\"margin-bottom:4px; "
-                        . "background:url('{$GLOBALS['defaultMp3Url']}/{$dirLink}{$file}/small_cover.jpg') "
-                        . "no-repeat left center; background-size:128px 128px;\" data-url=\"" . $dirLink . $file 
+                        . "background:url('{$js_background_url}') "
+                        . "no-repeat left center; background-size:128px 128px;\" data-url=\"" . $html_data_url 
                         . "\"><a style=\"padding-left:148px;\">" . htmlspecialchars($file) . "</a></li>";
             } else {
                 $index .= "<li class=\"dirlink-cover dirlinkcover\" style=\"margin-bottom:4px; "
                         . "background:url('images/bigfolder.png') no-repeat left center; background-size:128px 128px;\" data-url=\"" 
-                        . $dirLink . $file . "\"><a style=\"padding-left:148px;\">" . htmlspecialchars($file) . "</a></li>";
+                        . $html_data_url . "\"><a style=\"padding-left:148px;\">" . htmlspecialchars($file) . "</a></li>";
             }
         } else {
-            if (preg_match("/\.(mp3|ogg)$/i", $file)) {
+            if (preg_match("/\.(mp3|ogg|flac)$/i", $file)) {
                 $isMp3 = true;
                 $filesize = human_filesize($file);
                 //$displayFile = preg_replace("/\.mp3$/i", "", $file);
@@ -853,7 +1054,7 @@ function toggleMusicOn(url) {
     if ($(".m3uplayer").size() > 0 && url == $("#theurl").data("url")) {
         var player = document.getElementById("mediaplayer");
         var playlist = player.getPlaylist();
-        if ( playlist.length > 0 ) {
+        if (playlist.length > 0) {
             if ($("#playbutton").html() == "Play") {
                 player.sendEvent('PLAY', 'true');
                 $("#playbutton").html("Pause");
@@ -863,8 +1064,20 @@ function toggleMusicOn(url) {
             }
         }
     } else {
-        location.href = "index.php?action=createPlaylist&dir=" + encodeURIComponent(url);
+        //location.href = "index.php?action=createPlaylist&dir=" + encodeURIComponent(url);
+        createPlaylistJs(url);
     }
+}
+
+function createPlaylistJs(url) {
+    $.ajax({
+        type: "GET",  
+        url: "index.php",  
+        data: "action=createPlaylistJs&dir=" + url,
+        success: function(html){
+            $("#content-player").html(html);
+        }
+    });
 }
 
 function openDir(url) {
