@@ -43,3 +43,4 @@ $users = array("ENTER_USERNAME" => "ENTER_PASSWORD");
 // Turn on logging and log to $loglocation
 $logging = true;
 $logfile = "access.log";
+
