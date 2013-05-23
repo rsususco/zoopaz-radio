@@ -106,7 +106,7 @@ if ( $_GET['action'] == "downloadAlbum" && $_GET['dir'] != "" ) {
         die();
     }
 } else if ($_GET['action'] == "play" && file_exists($defaultMp3Dir . '/' . $_GET['file']) 
-        && preg_match("/\.(mp3|ogg)$/i", $_GET['file'])) {
+        && preg_match("/\.(m4a|mp3|ogg)$/i", $_GET['file'])) {
 } else if ( $_GET['action'] == "clearPersonal" ) {
     if ( file_exists("{$streamsRootDir}/playlists/personal_playlist.{$sessid}.json") ) {
         unlink("{$streamsRootDir}/playlists/personal_playlist.{$sessid}.json");
@@ -115,7 +115,7 @@ if ( $_GET['action'] == "downloadAlbum" && $_GET['dir'] != "" ) {
         && is_dir($defaultMp3Dir . '/' . $_GET['dir'])) {
     $curdir = getcwd();
     chdir($defaultMp3Dir . '/' . $_GET['dir']);
-    $a_files = glob("*.{mp3,MP3,ogg,OGG}", GLOB_BRACE);
+    $a_files = glob("*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE);
     $fileName = preg_replace("/[^a-zA-Z0-9-_\.]/", "_", $_GET['dir']);
     $filename = preg_replace("/__+/", "_", $filename);
     chdir($streamsDir);
@@ -258,13 +258,16 @@ eof;
     $m3uPlayer .= $flashPlayer;
 
     chdir($curdir);
-    print($m3uPlayer);
+
+    $esc_dir = preg_quote($_GET['dir']);
+
+    print("<span id=\"theurl\" data-url=\"{$esc_dir}\" />{$m3uPlayer}</span>");
     die();
 } else if ($_GET['action'] == "createPlaylist" && file_exists($defaultMp3Dir . '/' . $_GET['dir']) 
         && is_dir($defaultMp3Dir . '/' . $_GET['dir'])) {
     $curdir = getcwd();
     chdir($defaultMp3Dir . '/' . $_GET['dir']);
-    $a_files = glob("*.{mp3,MP3,ogg,OGG}", GLOB_BRACE);
+    $a_files = glob("*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE);
     $fileName = preg_replace("/[^a-zA-Z0-9-_\.]/", "_", $_GET['dir']);
     $filename = preg_replace("/__+/", "_", $filename);
     chdir($streamsDir);
@@ -448,24 +451,24 @@ function getFileIndex ($dir) {
             if (file_exists("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}/small_montage.jpg")) {
                 $background_url = "{$GLOBALS['defaultMp3Url']}/{$dirLink}{$file}/small_montage.jpg";
                 $js_background_url = preg_replace("/'/", "\\'", $background_url);
-                $index .= "<li class=\"dirlink-cover dirlinkcover\" style=\"margin-bottom:4px; "
+                $index .= "<li class=\"dirlink-cover dirlinkcover\" style=\""
                         . "background:url('{$js_background_url}') "
                         . "no-repeat left center; background-size:128px 128px;\" data-url=\"" . $html_data_url 
                         . "\"><a style=\"padding-left:148px;\">" . htmlspecialchars($file) . "</a></li>";
             } else if (file_exists("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}/small_cover.jpg")) {
                 $background_url = "{$GLOBALS['defaultMp3Url']}/{$dirLink}{$file}/small_cover.jpg";
                 $js_background_url = preg_replace("/'/", "\\'", $background_url);
-                $index .= "<li class=\"dirlink-cover dirlinkcover\" style=\"margin-bottom:4px; "
+                $index .= "<li class=\"dirlink-cover dirlinkcover\" style=\""
                         . "background:url('{$js_background_url}') "
                         . "no-repeat left center; background-size:128px 128px;\" data-url=\"" . $html_data_url 
                         . "\"><a style=\"padding-left:148px;\">" . htmlspecialchars($file) . "</a></li>";
             } else {
-                $index .= "<li class=\"dirlink-cover dirlinkcover\" style=\"margin-bottom:4px; "
+                $index .= "<li class=\"dirlink-cover dirlinkcover\" style=\""
                         . "background:url('images/bigfolder.png') no-repeat left center; background-size:128px 128px;\" data-url=\"" 
                         . $html_data_url . "\"><a style=\"padding-left:148px;\">" . htmlspecialchars($file) . "</a></li>";
             }
         } else {
-            if (preg_match("/\.(mp3|ogg|flac)$/i", $file)) {
+            if (preg_match("/\.(m4a|mp3|ogg|flac)$/i", $file)) {
                 $isMp3 = true;
                 $filesize = human_filesize($file);
                 //$displayFile = preg_replace("/\.mp3$/i", "", $file);
@@ -566,14 +569,14 @@ function getFileIndex ($dir) {
     if (preg_match("/\//", $dir)) {
         $previousDir = preg_replace("/^(.+)\/(.*)$/", "$1", $dir);
         $previousDirListItem = "<li class='previousDirectoryListItem'><img src=\"images/folder.png\" alt=\"folder\" /><!-- <a href=\"{$_SERVER['PHP_SELF']}?action=openIndex&dir=" . urlencode($previousDir) . "\">Previous directory</a> &#160;&#160;&#160;--> {$backDirs}</li>";
-        if ( count(glob("{$GLOBALS['defaultMp3Dir']}/{$dir}/*.{mp3,MP3,ogg,OGG}", GLOB_BRACE)) > 0 ) {
+        if ( count(glob("{$GLOBALS['defaultMp3Dir']}/{$dir}/*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE)) > 0 ) {
             $previousDirListItem .= "<li class='previousDirectoryListItem'>{$createPlaylistLink} <a class=\"button download\" target=\"_blank\" href=\"{$_SERVER['PHP_SELF']}?action=downloadAlbum&amp;dir=" . urlencode($dir) . "\" onclick=\"return confirm('After clicking ok, it may take some time to prepare your download - please wait - your download will begin shortly.')\">Download</a></li>";
         }
         //$previousDirListItem .= "<div id=\"currentlyPlaying\"></div>";
     } else if ($dir != "") {
         $previousDir = $dir;
         $previousDirListItem = "<li class='previousDirectoryListItem'><img src=\"images/folder.png\" alt=\"folder\" /><!-- <span class='filesize_type'><a href=\"{$_SERVER['PHP_SELF']}\">Previous directory</a></span> &#160;&#160;&#160;--> {$backDirs}</li>";
-        if ( count(glob("{$GLOBALS['defaultMp3Dir']}/{$dir}/*.{mp3,MP3,ogg,OGG}", GLOB_BRACE)) > 0 ) {
+        if ( count(glob("{$GLOBALS['defaultMp3Dir']}/{$dir}/*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE)) > 0 ) {
             $previousDirListItem .= "<li class='previousDirectoryListItem'>{$createPlaylistLink} <a class=\"button download\" target=\"_blank\" href=\"{$_SERVER['PHP_SELF']}?action=downloadAlbum&amp;dir=" . urlencode($dir) . "\" onclick=\"return confirm('After clicking ok, it may take some time to prepare your download - please wait - your download will begin shortly.')\">Download</a></li>";
         }
     } else {
@@ -830,6 +833,24 @@ ul {
 li {
     list-style-type:none;
 }
+.dirlink, .dirlinkcover {
+    cursor:pointer;
+    margin-bottom:16px; 
+}
+.dirlinkcover {
+    font-size:.75em;
+    -moz-box-shadow:0px 0px 4px #ececec;
+    -webkit-box-shadow:0px 0px 4px #ececec;
+    -o-box-shadow:0px 0px 4px #ececec;
+    box-shadow:0px 0px 4px #ececec;
+}
+.dirlinkcover:hover {
+    -moz-box-shadow:0px 0px 4px #3181b7;
+    -webkit-box-shadow:0px 0px 4px #3181b7;
+    -o-box-shadow:0px 0px 4px #3181b7;
+    box-shadow:0px 0px 4px #3181b7;
+    font-weight:bold;
+}
 
 .mp3 {
     margin-bottom:8px;
@@ -923,23 +944,10 @@ div.drop {
     cursor:pointer;
 }
 
-.dirlink, .dirlinkcover {
-    cursor:pointer;
-}
-
-.dirlinkcover {
-    font-size:.75em;
-}
-
 .dropimg {
     width:64px;
     height:64px;
     margin-right:4px;
-}
-
-.dirlinkcover:hover {
-/*    background-color:#ececec;*/
-    font-weight:bold;
 }
 
 .droplink:hover {

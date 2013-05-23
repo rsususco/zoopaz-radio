@@ -21,7 +21,7 @@ $f = file("dir.list");
 $c = 0;
 foreach ($f as $dir) {
     $dir = trim($dir);
-    $mp3 = glob($dir . "/*.{mp3,MP3,ogg,OGG}", GLOB_BRACE);
+    $mp3 = glob($dir . "/*.{m4a,M4A,mp3,MP3,ogg,OGG}", GLOB_BRACE);
     $n = count($mp3);
     if ($n < 1) {
         print("$c: Need a montage in $dir\n");
