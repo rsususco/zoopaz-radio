@@ -1,5 +1,5 @@
 The Scripts
-=============
+===========
 * `findMissingAlbumArt.php`
 * `makeSmallCover.php`
 * `getAlbumArt.php`
