@@ -1,16 +1,11 @@
 <?php
+define("STREAMS", 1);
+
 session_start();
 $sessid = session_id();
 
 require_once("auth.php");
-
-define("STREAMS", 1);
-
 require_once("config.php");
-
-//
-// End Configuration
-//
 
 ob_start("ob_gzhandler");
 
