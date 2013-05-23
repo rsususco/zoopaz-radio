@@ -16,3 +16,4 @@ foreach ($a_list as $k=>$v) {
     $v = preg_replace("/(\r|\n)/", "", $v);
     exec("/root/src/coverlovin/coverlovin.py \"{$v}\" --size=large --name=cover.jpg {$overwrite}");
 }
+

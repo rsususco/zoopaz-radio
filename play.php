@@ -16,3 +16,4 @@ if (file_exists("{$webroot}/wjsams.com/htdocs/music.wjsams.com/htdocs/music/" . 
     readfile("{$webroot}/wjsams.com/htdocs/music.wjsams.com/htdocs/music/" . $_GET['file']);
     die();
 }
+

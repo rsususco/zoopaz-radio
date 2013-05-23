@@ -40,3 +40,4 @@ You copy this script into your top level images directory along with the white.j
 
 When you run it, it will find all directories, and then for each directory it will look for `small_cover.jpg`
 images. It will create a thumbnail that is a montage of 1, 4 or 9 cover images.
+

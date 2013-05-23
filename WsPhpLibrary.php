@@ -668,3 +668,4 @@ function sv($str)
 {
 	return $_SERVER[$str];
 }
+

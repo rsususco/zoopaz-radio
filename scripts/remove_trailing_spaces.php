@@ -9,3 +9,4 @@ foreach ($f as $k=>$file) {
     print("mv \"$old\" \"$new\"\n");
     rename($old, $new);
 }
+

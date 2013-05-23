@@ -39,3 +39,4 @@ This application relies on the file name for display your albums. Currently
 it does not support ID3 tags. There is some deprecated code that used getid3
 but it never worked reliably. If you know how to write ID3 support in 
 PHP/JavaScript, please contact me: wjsams@gmail.com
+
