@@ -1,11 +1,17 @@
 <?php
+/**
+ * Configuration
+ */
+
+// Set your users here.
+$users = array("user1"=>"user1pass", "user2"=>"user2pass");
+
 // start: login
 if (!file_exists("sessions")) {
     mkdir("sessions");
 }
 $session = "sessions/" . $_SERVER['REMOTE_ADDR'] . ".txt";
 $try = "sessions/" . $_SERVER['REMOTE_ADDR'] . ".try";
-$users = array("user1"=>"user1pass", "user2"=>"user2pass");
 // clean up $_POST
 foreach ($_POST as $k=>$v) {
     $k = preg_replace("/[^0-9a-zA-Z]/", "", $k);
