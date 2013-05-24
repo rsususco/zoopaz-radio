@@ -396,10 +396,21 @@ function getFileIndex ($dir) {
     } else {
         $css_style = "";
     }
-    $index = "<ul><li {$css_style}><img src=\"images/folder.png\" alt=\"folder\" /> <a class=\"dirlink\" data-url=\"\">Home</a></li>{$previousDirListItem}" . $index . "</ul>";
 
+    $searchBox = buildSearchBox();
+
+    $index = "{$searchBox}<ul><li {$css_style}><img src=\"images/folder.png\" alt=\"folder\" /> <a class=\"dirlink\" data-url=\"\">Home</a></li>{$previousDirListItem}" . $index . "</ul>";
 
     return $index;
+}
+
+function buildSearchBox() {
+    $html = <<<eof
+<div id="searchbox">
+<input type="text" id="search" placeholder="Find some music..." />
+</div><!--div#searchbox-->
+eof;
+    return $html;
 }
 
 function getDropDownAlbums($url) {
@@ -665,10 +676,10 @@ div.coverart img {
     float:right;
     max-width:175px;
     margin:16px;
-    -moz-box-shadow:4px 4px 0px silver;
-    -webkit-box-shadow:4px 4px 0px silver;
-    -o-box-shadow:4px 4px 0px silver;
-    box-shadow:4px 4px 0px silver;
+    -moz-box-shadow:3px 3px 0px silver;
+    -webkit-box-shadow:3px 3px 0px silver;
+    -o-box-shadow:3px 3px 0px silver;
+    box-shadow:3px 3px 0px silver;
 }
 
 .clear {
@@ -690,10 +701,10 @@ a.button, .button {
     color:white;
     font-weight:bold;
     background-color:#3181b7;
-    -moz-box-shadow:4px 4px 0px silver;
-    -webkit-box-shadow:4px 4px 0px silver;
-    -o-box-shadow:4px 4px 0px silver;
-    box-shadow:4px 4px 0px silver;
+    -moz-box-shadow:3px 3px 0px silver;
+    -webkit-box-shadow:3px 3px 0px silver;
+    -o-box-shadow:3px 3px 0px silver;
+    box-shadow:3px 3px 0px silver;
     text-shadow: 1px 1px 2px gray; 
 
     /*
@@ -763,10 +774,10 @@ span.dropwrapper:hover div.drop {
     margin:0px;
     padding:0px;
     /* the topleft corner is still a hard right angle */
-    -moz-box-shadow:4px 4px 0px silver;
-    -webkit-box-shadow:4px 4px 0px silver;
-    -o-box-shadow:4px 4px 0px silver;
-    box-shadow:4px 4px 0px silver;
+    -moz-box-shadow:3px 3px 0px silver;
+    -webkit-box-shadow:3px 3px 0px silver;
+    -o-box-shadow:3px 3px 0px silver;
+    box-shadow:3px 3px 0px silver;
     opacity:0.9;
     -ms-filter:'alpha(opacity=90)';
     filter:alpha(opacity=90);
@@ -811,12 +822,25 @@ tr td:first-child {
 }
 
 .dirlink-cover a img {
-    -moz-box-shadow:4px 4px 0px silver;
-    -webkit-box-shadow:4px 4px 0px silver;
-    -o-box-shadow:4px 4px 0px silver;
-    box-shadow:4px 4px 0px silver;
+    -moz-box-shadow:3px 3px 0px silver;
+    -webkit-box-shadow:3px 3px 0px silver;
+    -o-box-shadow:3px 3px 0px silver;
+    box-shadow:3px 3px 0px silver;
 }
 
+#searchbox {
+}
+
+#search {
+    width:50%;
+    margin-bottom:8px;
+    padding:4px;
+    border:1px solid gray;
+    -moz-box-shadow:3px 3px 0px silver;
+    -webkit-box-shadow:3px 3px 0px silver;
+    -o-box-shadow:3px 3px 0px silver;
+    box-shadow:3px 3px 0px silver;
+}
 </style>
 <script type="text/javascript">
 function toggleMusicOn(url) {
@@ -876,7 +900,15 @@ function init() {
     }
 }
 
+function search(q) {
+    $("#test").html(q);
+}
+
 $(document).ready(function(){
+    if ($("#test").size() < 1) {
+        $("body").append("Coming Soon: <div id=\"test\"></div>");
+    }
+
     init();
 
     if ($("#content-player").size() > 0 && $(".m3uplayer").size() > 0) {
@@ -897,6 +929,10 @@ $(document).ready(function(){
 
     $(".dirlinkcover").live("click", function() {
         openDir($(this).data('url'));
+    });
+
+    $("#search").live("keyup", function() {
+        search($(this).val());
     });
 });
 </script>
