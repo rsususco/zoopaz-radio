@@ -30,6 +30,8 @@ This is a very simple authentication mechanism. It contains an array of username
 Just comment out `require_once("auth.php")` in `streams.php` if you want to turn it off.
 By default after 6 unsuccessful tries you get locked out.
 
+See `scripts/README.md` for information on setting up the search index.
+
 Open this application in a web browser and begin streaming your music.
 
 Notes
