@@ -1,0 +1,117 @@
+<script type="text/javascript">
+    jwplayer('mediaplayer').setup({
+        'flashplayer': 'js/mediaplayer-5.7/player.swf',
+        'id': 'playlistmediaplayer',
+        'width': '480',
+        //'height': '250',
+        'height': '640',
+        'backcolor': '#ffffff',
+        'frontcolor': '#6d6d6d',
+        'lightcolor': 'black',
+        'screencolor': '#6d6d6d',
+        'controlbar': 'top',
+        'playlist': [;:playlist:;],
+        'repeat': 'always',
+        'playlist.position': 'bottom',
+        //'playlist.size': '250',
+        'playlist.size': '640',
+        'autoplay': true,
+        'events': {
+            onPlaylist: function(e) {
+                var currentSong = jwplayer('mediaplayer').getPlaylistItem().title;
+                $("span#currentSong").html(currentSong);
+                $("div#currentlyPlaying").html(currentSong);
+                setCurrentItem();
+            },
+            onPlaylistItem: function(e) {
+                var currentSong = jwplayer('mediaplayer').getPlaylistItem().title;
+                $("span#currentSong").html(currentSong);
+                $("div#currentlyPlaying").html(currentSong);
+                jwplayer('mediaplayer').getPlaylistItem().title;
+                pauseme();
+                setCurrentItem();
+            },
+            onPlay: function(e) {
+                pauseme();
+                setCurrentItem();
+            },
+            onPause: function(e) {
+                startme();
+                setCurrentItem();
+            }
+        }
+    });
+
+    function startme() {
+        $("#playbutton").html("Play");
+        $("#backbutton").remove();
+        $("#nextbutton").remove();
+        //$("#shufflebutton").remove();
+    }
+
+    function pauseme() {
+        $("#playbutton").html("Pause");
+        if ($("#backbutton").size() < 1) {
+            $("#playbutton").after(" <span style='cursor:pointer;' id='backbutton' onclick='goback()' class='button'>Back</span>");
+        }
+        if ($("#nextbutton").size() < 1) {
+            $("#backbutton").after(" <span style='cursor:pointer;' id='nextbutton' onclick='forward()' class='button'>Next</span>");
+        }
+        /*
+        if ($("#shufflebutton").size() < 1) {
+            $("#nextbutton").after(" <span style='cursor:pointer;' id='shufflebutton' onclick='shufflePlaylist()' class='button'>Shuffle</span>");  
+        }
+        */
+    }
+
+    function shufflePlaylist() {
+        // This document id is the id when you call jwplayer('mediaplayer').setup().
+        // mediaplayer is that ID.
+        var player = document.getElementById("mediaplayer");
+        var playlist = player.getPlaylist();
+
+        if ( playlist.length > 0 ) {
+            //...shuffle playlist
+            for(var rnd, tmp, i = playlist.length; i; rnd = parseInt(Math.random()*i), tmp = playlist[--i], playlist[i] = playlist[rnd], playlist[rnd] = tmp);
+          
+            //...load the shuffled playlist
+            player.sendEvent('LOAD', playlist);
+
+
+            //...optional - to start playing after a shuffle
+            //player.sendEvent('PLAY', 'true');
+        }
+    }
+
+    function forward() {
+        var player = document.getElementById("mediaplayer");
+        var playlist = player.getPlaylist();
+
+        if ( playlist.length > 0 ) {
+            player.sendEvent('NEXT', 'true');
+            setCurrentItem();
+        }
+    }
+
+    function goback() {
+        var player = document.getElementById("mediaplayer");
+        var playlist = player.getPlaylist();
+
+        if ( playlist.length > 0 ) {
+            player.sendEvent('PREV', 'true');
+            setCurrentItem();
+        }
+    }
+
+    function setCurrentItem() {
+        $("li.mp3").each(function(i, item){
+            var html = $(item).children("span.text").first().children("a").first().html();
+            var currentSong = jwplayer('mediaplayer').getPlaylistItem().title;
+            if (html == currentSong) {
+                $(item).css("font-weight", "bold");
+            } else {
+                $(item).css("font-weight", "normal");
+            }
+        });
+    }
+</script>

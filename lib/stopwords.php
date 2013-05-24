@@ -1,12 +1,5 @@
 <?php
 
-exec("find . -type d | sed 's/^\.\///g' > dir.list");
-
-$f = file("dir.list");
-$c = 0;
-$curdir = getcwd();
-$db = "{$curdir}/../streams/search.db";
-
 $stopwords = array(
 "as", "able", "about", "above", "according",
 "accordingly", "across", "actually", "after", "afterwards",
@@ -117,48 +110,3 @@ $stopwords = array(
 "wouldnt", "yes", "yet", "you", "youd",
 "youll", "youre", "youve", "your", "yours",
 "yourself", "yourselves", "zero");
-
-file_put_contents($db, "");
-
-foreach ($f as $dir) {
-    $dir = trim($dir);
-
-    $start = "$dir:::";
-    $l = "";
-
-    chdir($dir);
-
-    $files = glob("*");
-    foreach ($files as $file) {
-        $file = trim($file);
-        $file = strtolower($file);
-        if (preg_match("/^(cover|small_cover|montage|small_montage).jpg$/", $file)) {
-            continue;
-        }
-        $file = preg_replace("/\.(mp3|jpg|ogg|m4a|jpeg|png|txt|pdf)/i", "", $file);
-        $file = preg_replace("/[0-9~!@#\$%\^\&\*\(\)_\+`\-\.\']/", "", $file);
-        $file = preg_replace("/\s\s*/", " ", $file);
-
-        $afile = explode(" ", $file);
-        $nfile = "";
-        foreach ($afile as $cfile) {
-            if (in_array($cfile, $stopwords)) {
-                continue;
-            }
-            $nfile = "$cfile ";
-        }
-        $file = rtrim($nfile);
-
-        $l .= "{$file} ";
-        $al = explode(" ", $l);
-        $ul = array_unique($al);
-        $l = implode(" ", $ul);
-    }
-    unset($files);
-
-    $l = rtrim($start . $l, ":::");
-
-    file_put_contents($db, "{$l}\n", FILE_APPEND);
-
-    chdir($curdir);
-}

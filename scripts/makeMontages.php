@@ -1,6 +1,11 @@
 <?php
 
-exec("find . -type d > dir.list");
+$in = ".";
+if (isset($_SERVER['argv'][1])) {
+    $in = $_SERVER['argv'][1];
+}
+
+exec("find {$in} -type d > dir.list");
 
 function traverse($dir) {
     $f = glob("$dir/*");
@@ -49,8 +54,8 @@ foreach ($f as $dir) {
                 $montage .= "white.jpg ";
             }
             if ($montage != "") {
-                print("system(\"montage -geometry 175x175>+{$splicer}+{$splicer} {$montage} \\\"{$dir}/montage.jpg\\\"\");\n");
-                system("montage -geometry 175x175>+{$splicer}+{$splicer} {$montage} \"{$dir}/montage.jpg\"");
+                print("system(\"montage -geometry 175x175+{$splicer}+{$splicer} {$montage} \\\"{$dir}/montage.jpg\\\"\");\n");
+                system("montage -geometry 175x175+{$splicer}+{$splicer} {$montage} \"{$dir}/montage.jpg\"");
                 print("copy(\"{$dir}/montage.jpg\", \"{$dir}/small_montage.jpg\");\n");
                 copy("{$dir}/montage.jpg", "{$dir}/small_montage.jpg");
                 print("system(\"mogrify -resize 175x175 \\\"{$dir}/small_montage.jpg\\\"\");\n");
@@ -62,4 +67,3 @@ foreach ($f as $dir) {
         $c++;
     }
 }
-

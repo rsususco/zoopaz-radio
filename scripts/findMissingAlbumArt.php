@@ -29,4 +29,3 @@ foreach ($a_list as $k=>$v) {
 }
 
 unlink("dir.list");
-
