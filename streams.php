@@ -122,10 +122,19 @@ if ( $_GET['action'] == "downloadAlbum" && $_GET['dir'] != "" ) {
     file_put_contents("{$fileName}.m3u", "");
     $m3uPlayer .= "<div class='m3uplayer'><table>";
 
+    // THIS
+    $adir = explode("/", $_GET['dir']);
+    foreach ($adir as $adk=>$adv) {
+        $adir[$adk] = rawurlencode($adv);
+    }
+    $tdir = implode("/", $adir);
     foreach ($a_files as $k=>$mp3) {
         $enc_file = htmlspecialchars($_GET['dir'] . '/' . $mp3);
-        $directMusicUrl = preg_replace("/ /", "%20", "{$defaultMp3Url}/{$_GET['dir']}/{$mp3}");
-        $js_directMusicUrl = preg_replace("/'/", "\\\'", $directMusicUrl);
+
+        $amp3 = rawurlencode($mp3);
+        $directMusicUrl = "{$defaultMp3Url}{$tdir}/{$amp3}";
+        $js_directMusicUrl = "{$defaultMp3Url}{$tdir}/{$amp3}";
+
         $js_mp3 = preg_replace("/'/", "\\\'", $mp3);
         file_put_contents("{$fileName}.m3u", "{$directMusicUrl}\n", FILE_APPEND);
         $playlist .= "{'file':'{$js_directMusicUrl}', 'title':'{$js_mp3}'},";
