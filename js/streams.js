@@ -32,6 +32,7 @@ function createPlaylistJs(url) {
                 $("#musicindex").remove();
                 $("#playercontrols").remove();
                 var newwidth = width - 16;
+                //alert('newwidth = ' + newwidth);
                 $("#mediaplayer_wrapper").css("width", newwidth + "px");
             }
         }

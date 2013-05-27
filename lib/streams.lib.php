@@ -85,14 +85,14 @@ function getFileIndex ($dir) {
         }
         $enc_url = urlencode($url);
         if ($dirCnt === 1) {
-            $a_dir[$k] = "<span class='filesize_type'>{$backDir}</span>";
+            $a_dir[$k] = "<span class='filesize_type'><span class=\"enddir\">{$backDir}</span></span>";
         } else if ($cnt === ($dirCnt - 1)) {
             // Have drop-down of all available directories under this directory.
             $thelinks = getDropDownAlbums($url);
-            if ( $thelinks ) {
-                $a_dir[$k] = "<span class='filesize_type'><span class=\"dropwrapper enddir\">{$backDir}<div class=\"drop\">{$thelinks}</div><!--div.drop--></span><!--span.dropwrapper--></span><!--span.filesize_type-->";
+            if ($thelinks) {
+                $a_dir[$k] = "<span class='filesize_type'><span class=\"dropwrapper\">{$backDir}<div class=\"drop\">{$thelinks}</div><!--div.drop--></span><!--span.dropwrapper--></span><!--span.filesize_type-->";
             } else {
-                $a_dir[$k] = "<span class='filesize_type'>{$backDir}</span><!--span.filesize_type-->";
+                $a_dir[$k] = "<span class='filesize_type'><span class='enddir'>{$backDir}</span></span><!--span.filesize_type-->";
             }
         } else {
             // Have drop-down of all available directories under this directory.
@@ -101,7 +101,8 @@ function getFileIndex ($dir) {
         }
         $cnt++;
     }
-    $backDirs = implode(" &rsaquo;<!--&raquo;--> ", $a_dir);
+    //$backDirs = implode(" &rsaquo;<!--&raquo;--> ", $a_dir);
+    $backDirs = implode(" ", $a_dir);
 
     $createPlaylistLink = "";
     if ($isMp3) {
@@ -110,14 +111,14 @@ function getFileIndex ($dir) {
 
     if (preg_match("/\//", $dir)) {
         $previousDir = preg_replace("/^(.+)\/(.*)$/", "$1", $dir);
-        $previousDirListItem = "<li class='previousDirectoryListItem'><img src=\"images/folder.png\" alt=\"folder\" /> {$backDirs}</li>";
-        if ( count(glob("{$GLOBALS['defaultMp3Dir']}/{$dir}/*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE)) > 0 ) {
+        $previousDirListItem = "<li class='previousDirectoryListItem'><span class='filesize_type'><a class=\"dirlink\" data-url=\"\">Home</a></span> {$backDirs}</li>";
+        if (count(glob("{$GLOBALS['defaultMp3Dir']}/{$dir}/*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE)) > 0) {
             $previousDirListItem .= "<li class='previousDirectoryListItem' id='playercontrols'>{$createPlaylistLink} <a class=\"button download\" target=\"_blank\" href=\"{$_SERVER['PHP_SELF']}?action=downloadAlbum&amp;dir=" . urlencode($dir) . "\" onclick=\"return confirm('After clicking ok, it may take some time to prepare your download - please wait - your download will begin shortly.')\">Download</a></li>";
         }
     } else if ($dir != "") {
         $previousDir = $dir;
-        $previousDirListItem = "<li class='previousDirectoryListItem'><img src=\"images/folder.png\" alt=\"folder\" /> {$backDirs}</li>";
-        if ( count(glob("{$GLOBALS['defaultMp3Dir']}/{$dir}/*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE)) > 0 ) {
+        $previousDirListItem = "<li class='previousDirectoryListItem'>{$backDirs}</li>";
+        if (count(glob("{$GLOBALS['defaultMp3Dir']}/{$dir}/*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE)) > 0) {
             $previousDirListItem .= "<li class='previousDirectoryListItem' id='playercontrols'>{$createPlaylistLink} <a class=\"button download\" target=\"_blank\" href=\"{$_SERVER['PHP_SELF']}?action=downloadAlbum&amp;dir=" . urlencode($dir) . "\" onclick=\"return confirm('After clicking ok, it may take some time to prepare your download - please wait - your download will begin shortly.')\">Download</a></li>";
         }
     } else {
@@ -125,17 +126,10 @@ function getFileIndex ($dir) {
         $previousDirListItem = "";
     }
 
-    // This sets the class previousDirectoryListItem so that there's space under the Home link when no previous directory is listed.
-    // When there is a previos directory, that class is applied to that list item.
-    if ( $previousDirListItem == "" ) {
-        $css_style = "class='previousDirectoryListItem'";
-    } else {
-        $css_style = "";
-    }
-
     $searchBox = buildSearchBox();
 
-    $index = "{$searchBox}<ul id=\"navlist\"><li {$css_style}><img src=\"images/folder.png\" alt=\"folder\" /> <a class=\"dirlink\" data-url=\"\">Home</a></li>{$previousDirListItem}</ul><ul id=\"musicindex\">" . $index . "</ul>";
+    //$index = "{$searchBox}<ul id=\"navlist\"><li {$css_style}><a class=\"dirlink\" data-url=\"\">Home</a></li>{$previousDirListItem}</ul><ul id=\"musicindex\">" . $index . "</ul>";
+    $index = "{$searchBox}<ul id=\"navlist\">{$previousDirListItem}</ul><ul id=\"musicindex\">" . $index . "</ul>";
 
     return $index;
 }
