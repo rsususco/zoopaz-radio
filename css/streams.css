@@ -198,9 +198,9 @@ span.dropwrapper {
 
 div.drop {
     display:none;
-    max-height:480px;
-    width:480px;
-    max-width:640px;
+    max-height:240px;
+    width:240px;
+    max-width:320px;
     wrap:auto;
     z-index:10;
 }
@@ -210,6 +210,12 @@ div.drop {
     padding:4px;
     text-decoration:none;
     cursor:pointer;
+}
+
+.droplink-text {
+    width:65%;
+    float:right;
+    margin-top:20px;
 }
 
 .dropimg {

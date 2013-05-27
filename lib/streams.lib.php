@@ -156,11 +156,11 @@ function getDropDownAlbums($url) {
         $enc_html_thisdir = preg_replace("/\"/", "\\\"", $url . "/" . $thisdir);
         $enc_html_thisdir = singleSlashes($enc_html_thisdir);
         if (file_exists("{$thisdir}/small_montage.jpg")) {
-            $thelinks .= "<a class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"{$GLOBALS['defaultMp3Url']}/{$url}/{$html_thisdir}/small_montage.jpg\" alt=\"img\" /> {$html_thisdir}</a>"; 
+            $thelinks .= "<div class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"{$GLOBALS['defaultMp3Url']}/{$url}/{$html_thisdir}/small_montage.jpg\" alt=\"img\" /> <div class=\"droplink-text\">{$html_thisdir}</div></div>"; 
         } else if (file_exists("{$thisdir}/small_cover.jpg")) {
-            $thelinks .= "<a class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"{$GLOBALS['defaultMp3Url']}/{$url}/{$html_thisdir}/small_cover.jpg\" alt=\"img\" /> {$html_thisdir}</a>"; 
+            $thelinks .= "<div class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"{$GLOBALS['defaultMp3Url']}/{$url}/{$html_thisdir}/small_cover.jpg\" alt=\"img\" /> <div class=\"droplink-text\">{$html_thisdir}</div></div>"; 
         } else {
-            $thelinks .= "<a class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"images/bigfolder.png\" alt=\"img\" /> {$html_thisdir}</a>"; 
+            $thelinks .= "<div class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"images/bigfolder.png\" alt=\"img\" /> <div class=\"droplink-text\">{$html_thisdir}</div></div>"; 
         }
     }
     chdir($curdir);
