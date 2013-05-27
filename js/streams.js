@@ -23,7 +23,17 @@ function createPlaylistJs(url) {
         url: "index.php",  
         data: "action=createPlaylistJs&dir=" + encodeURIComponent(url),
         success: function(html){
+            var width = $("#content").width();
             $("#content-player").html(html);
+
+            // Currently the player only works in iPhone with the Chrome browser.
+            // We remove this playlist because it is not functional while playing.
+            if (isMobile()) {
+                $("#musicindex").remove();
+                $("#playercontrols").remove();
+                var newwidth = width - 16;
+                $("#mediaplayer_wrapper").css("width", newwidth + "px");
+            }
         }
     });
 }

@@ -60,7 +60,7 @@ a, a:link {
 
 a:hover {
     color:gray;
-    text-decoration:underline;
+    text-decoration:none;
 }
 
 ul {
@@ -256,10 +256,11 @@ tr td:first-child {
     overflow:hidden;
 }
 
-.dirlink-cover a {
+.dirlink-cover a, .dirlink-cover a:link {
     position:absolute;
     top:50px;
     text-align:left;
+    text-decoration:none;
 }
 
 .dirlink-cover a img {
@@ -274,7 +275,7 @@ tr td:first-child {
 
 #search {
     width:50%;
-    margin-bottom:8px;
+    margin-bottom:16px;
     padding:4px;
     border:1px solid gray;
     -moz-box-shadow:3px 3px 0px silver;

@@ -90,7 +90,7 @@ function getFileIndex ($dir) {
             // Have drop-down of all available directories under this directory.
             $thelinks = getDropDownAlbums($url);
             if ( $thelinks ) {
-                $a_dir[$k] = "<span class='filesize_type'><span class=\"dropwrapper\">{$backDir}<div class=\"drop\">{$thelinks}</div><!--div.drop--></span><!--span.dropwrapper--></span><!--span.filesize_type-->";
+                $a_dir[$k] = "<span class='filesize_type'><span class=\"dropwrapper enddir\">{$backDir}<div class=\"drop\">{$thelinks}</div><!--div.drop--></span><!--span.dropwrapper--></span><!--span.filesize_type-->";
             } else {
                 $a_dir[$k] = "<span class='filesize_type'>{$backDir}</span><!--span.filesize_type-->";
             }
@@ -112,13 +112,13 @@ function getFileIndex ($dir) {
         $previousDir = preg_replace("/^(.+)\/(.*)$/", "$1", $dir);
         $previousDirListItem = "<li class='previousDirectoryListItem'><img src=\"images/folder.png\" alt=\"folder\" /> {$backDirs}</li>";
         if ( count(glob("{$GLOBALS['defaultMp3Dir']}/{$dir}/*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE)) > 0 ) {
-            $previousDirListItem .= "<li class='previousDirectoryListItem'>{$createPlaylistLink} <a class=\"button download\" target=\"_blank\" href=\"{$_SERVER['PHP_SELF']}?action=downloadAlbum&amp;dir=" . urlencode($dir) . "\" onclick=\"return confirm('After clicking ok, it may take some time to prepare your download - please wait - your download will begin shortly.')\">Download</a></li>";
+            $previousDirListItem .= "<li class='previousDirectoryListItem' id='playercontrols'>{$createPlaylistLink} <a class=\"button download\" target=\"_blank\" href=\"{$_SERVER['PHP_SELF']}?action=downloadAlbum&amp;dir=" . urlencode($dir) . "\" onclick=\"return confirm('After clicking ok, it may take some time to prepare your download - please wait - your download will begin shortly.')\">Download</a></li>";
         }
     } else if ($dir != "") {
         $previousDir = $dir;
         $previousDirListItem = "<li class='previousDirectoryListItem'><img src=\"images/folder.png\" alt=\"folder\" /> {$backDirs}</li>";
         if ( count(glob("{$GLOBALS['defaultMp3Dir']}/{$dir}/*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE)) > 0 ) {
-            $previousDirListItem .= "<li class='previousDirectoryListItem'>{$createPlaylistLink} <a class=\"button download\" target=\"_blank\" href=\"{$_SERVER['PHP_SELF']}?action=downloadAlbum&amp;dir=" . urlencode($dir) . "\" onclick=\"return confirm('After clicking ok, it may take some time to prepare your download - please wait - your download will begin shortly.')\">Download</a></li>";
+            $previousDirListItem .= "<li class='previousDirectoryListItem' id='playercontrols'>{$createPlaylistLink} <a class=\"button download\" target=\"_blank\" href=\"{$_SERVER['PHP_SELF']}?action=downloadAlbum&amp;dir=" . urlencode($dir) . "\" onclick=\"return confirm('After clicking ok, it may take some time to prepare your download - please wait - your download will begin shortly.')\">Download</a></li>";
         }
     } else {
         $previousDir = "";
@@ -135,7 +135,7 @@ function getFileIndex ($dir) {
 
     $searchBox = buildSearchBox();
 
-    $index = "{$searchBox}<ul><li {$css_style}><img src=\"images/folder.png\" alt=\"folder\" /> <a class=\"dirlink\" data-url=\"\">Home</a></li>{$previousDirListItem}</ul><ul id=\"musicindex\">" . $index . "</ul>";
+    $index = "{$searchBox}<ul id=\"navlist\"><li {$css_style}><img src=\"images/folder.png\" alt=\"folder\" /> <a class=\"dirlink\" data-url=\"\">Home</a></li>{$previousDirListItem}</ul><ul id=\"musicindex\">" . $index . "</ul>";
 
     return $index;
 }
