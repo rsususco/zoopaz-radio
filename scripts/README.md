@@ -7,7 +7,7 @@ Each script is a command line script.
 * [`findMissingAlbumArt.php`](findMissingAlbumArt.php)
 * [`makeSmallCover.php`](makeSmallCover.php)
 * [`getAlbumArt.php`](getAlbumArt.php)
-* [`getMontage.php`](getMontage.php)
+* [`makeMontages.php`](makeMontages.php)
 * [`buildSearchIndex.php`](buildSearchIndex.php)
 
 
@@ -40,7 +40,7 @@ Edit this script to point to the location of coverlovin.py. Current at: `/root/s
 Run the script on the command line with `php getAlbumArt.php`
 
 
-`makeMontage.php`
+`makeMontages.php`
 -----------------
 This script creates montage.jpg and `small_montage.jpg` images in directories that contain no mp3s or oggs.
 It uses the Imagemagick command `montage`, as well as the UNIX `find` command.
@@ -50,11 +50,11 @@ You copy this script into your top level images directory along with the white.j
 When you run it, it will find all directories, and then for each directory it will look for `small_cover.jpg`
 images. It will create a thumbnail that is a montage of 1, 4 or 9 cover images.
 
-Run the script on the command line with `php makeMontage.php`
+Run the script on the command line with `php makeMontages.php`
 
 It also takes an optional directory if you don't want to generate all montages.
 
-e.g. `php makeMontage.php path/to/another/directory`
+e.g. `php makeMontages.php path/to/another/directory`
 
 
 `buildSearchIndex.php`
