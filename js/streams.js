@@ -1,5 +1,5 @@
 function toggleMusicOn(url) {
-    if ($(".m3uplayer").size() > 0 && url == $("#theurl").data("url")) {
+    if ($(".m3uplayer").length > 0 && url == $("#theurl").data("url")) {
         var player = document.getElementById("mediaplayer");
         var playlist = player.getPlaylist();
         if (playlist.length > 0) {
@@ -30,7 +30,6 @@ function createPlaylistJs(url) {
 
 function openDir(url) {
     location.hash = "#/open/" + encodeURIComponent(url);
-    //location.href = url;
     $.ajax({
         type: "GET",  
         url: "index.php",  
@@ -59,7 +58,7 @@ function search(q) {
     if (q.length < 3) {
         return false;
     }
-    if ($("#playbutton").size() > 0) {
+    if ($("#playbutton").length > 0) {
         var p = $("#playbutton").parent();
         p.remove();
     }
@@ -76,27 +75,27 @@ function search(q) {
 $(document).ready(function(){
     init();
 
-    if ($("#content-player").size() > 0 && $(".m3uplayer").size() > 0) {
+    if ($("#content-player").length > 0 && $(".m3uplayer").length > 0) {
         $("#playbutton").html("Pause");
     }
     
-    $("#playbutton").live("click", function() {
+    $(document).on("click", "#playbutton", function() {
         toggleMusicOn($(this).data('url'));
     });
 
-    $(".droplink").live("click", function() {
+    $(document).on("click", ".droplink", function() {
         openDir($(this).data('url'));
     });
 
-    $(".dirlink").live("click", function() {
+    $(document).on("click", ".dirlink", function() {
         openDir($(this).data('url'));
     });
 
-    $(".dirlinkcover").live("click", function() {
+    $(document).on("click", ".dirlinkcover", function() {
         openDir($(this).data('url'));
     });
 
-    $("#search").live("keyup", function() {
+    $(document).on("keyup", "#search", function() {
         search($(this).val());
     });
 });
