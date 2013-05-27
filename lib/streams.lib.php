@@ -1,5 +1,5 @@
 <?php
-function openTheDir() {
+function openTheDir($dir) {
     $pageContent = "";
     // This is when you open a dir.
     if (file_exists($GLOBALS['defaultMp3Dir'] . "/" . $_GET['dir'] . "/cover.jpg")) {
@@ -7,7 +7,7 @@ function openTheDir() {
                 . "/cover.jpg\"><img src=\"../music/{$_GET['dir']}/cover.jpg\" alt=\"cover\" /></a>"
                 . "</div><span class=\"clear\"></span>";
     }
-    $pageContent .= getFileIndex($_GET['dir']);
+    $pageContent .= getFileIndex($dir);
     return $pageContent;
 }
 

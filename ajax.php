@@ -62,7 +62,7 @@ eof;
     print_gzipped_page();
     die();
 } else if ($_GET['action'] == "openDir") {
-    $pageContent = openTheDir($pageContent);
+    $pageContent = openTheDir($_GET['dir']);
 
     ob_start();
     ob_implicit_flush(0);
