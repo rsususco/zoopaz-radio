@@ -4,11 +4,11 @@ These are scripts used to assist with thumbnails.
 
 Each script is a command line script.
 
-* `findMissingAlbumArt.php`
-* `makeSmallCover.php`
-* `getAlbumArt.php`
-* `getMontage.php`
-* `buildSearchIndex.php`
+* [`findMissingAlbumArt.php`](findMissingAlbumArt.php)
+* [`makeSmallCover.php`](makeSmallCover.php)
+* [`getAlbumArt.php`](getAlbumArt.php)
+* [`getMontage.php`](getMontage.php)
+* [`buildSearchIndex.php`](buildSearchIndex.php)
 
 
 `findMissingAlbumArt.php`
@@ -33,7 +33,7 @@ Run the script on the command line with `php getAlbumArt.php`
 `getAlbumArt.php`
 -----------------
 This script actually uses a program called 'coverlovin.py' to find missing album art from the Internet.
-See https://launchpad.net/coverlovin
+See [https://launchpad.net/coverlovin](https://launchpad.net/coverlovin)
 
 Edit this script to point to the location of coverlovin.py. Current at: `/root/src/coverlovin/coverlovin.py`
 
@@ -63,9 +63,9 @@ This script is responsible for building the search index. Currently the search i
 not configurable. The search index is named `search.db` and should live in the root of the application
 adjacent to `index.php`.
 
-Open `buildSearchIndex.php` and edit `$db = "{$curdir}/../streams/search.db";`
+Open [`buildSearchIndex.php`](buildSearchIndex.php) and edit `$db = "{$curdir}/../streams/search.db";`
 
-You place `buildSearchIndex.php` in the root of your music directory and point `$db` to the root of your
+You place [`buildSearchIndex.php`](buildSearchIndex.php) in the root of your music directory and point `$db` to the root of your
 streams install.
 
 Just run the script with `php buildSearchIndex.php` on the command line to build the index.
