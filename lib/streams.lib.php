@@ -128,8 +128,7 @@ function getFileIndex ($dir) {
 
     $searchBox = buildSearchBox();
 
-    //$index = "{$searchBox}<ul id=\"navlist\"><li {$css_style}><a class=\"dirlink\" data-url=\"\">Home</a></li>{$previousDirListItem}</ul><ul id=\"musicindex\">" . $index . "</ul>";
-    $index = "{$searchBox}<ul id=\"navlist\">{$previousDirListItem}</ul><ul id=\"musicindex\">" . $index . "</ul>";
+    $index = "{$searchBox}<ul id=\"navlist\">{$previousDirListItem}</ul><div class=\"clear\"></div><ul id=\"musicindex\">" . $index . "</ul>";
 
     return $index;
 }
