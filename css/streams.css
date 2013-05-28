@@ -198,8 +198,8 @@ span.dropwrapper {
 
 div.drop {
     display:none;
-    max-height:240px;
-    width:240px;
+    max-height:480px;
+    width:480px;
     max-width:320px;
     wrap:auto;
     z-index:10;
