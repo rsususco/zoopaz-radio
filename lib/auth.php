@@ -6,7 +6,7 @@
 $maxTrys = 5;
 
 // Set your users here.
-$users = array("user1"=>"user1pass", "user2"=>"user2pass");
+$users = array("wsams"=>"ilovesiam", "nroggeve"=>"pizers", "brsams"=>"r34g34equ", "anthony"=>"vitacco", "asik"=>"pradhan");
 
 // start: login
 if (!file_exists("sessions")) {
