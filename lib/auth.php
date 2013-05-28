@@ -3,6 +3,8 @@
  * Configuration
  */
 
+$maxTrys = 5;
+
 // Set your users here.
 $users = array("user1"=>"user1pass", "user2"=>"user2pass");
 
@@ -27,11 +29,11 @@ if (!file_exists($try)) {
 }
 $disabled = "";
 $message = "";
-if ($trys > 5) {
+if ($trys > $maxTrys) {
     $message = "<strong>Locked out.</strong><br />";
     $disabled = "disabled='disabled'";
 }
-if ($_GET['action'] == "login" && $trys > 5) {
+if ($_GET['action'] == "login" && $trys > $maxTrys) {
     header("Location:{$_SERVER['PHP_SELF']}");
     exit();
 }
@@ -50,7 +52,8 @@ if ($_GET['action'] == "login") {
         file_put_contents($try, $trys+1);
     }
 }
-if (!file_exists($session)) {
+
+if (!file_exists($session) || $trys > $maxTrys) {
     print($message);
     print <<<eof
 <form action="{$_SERVER['PHP_SELF']}?action=login" method="post">
