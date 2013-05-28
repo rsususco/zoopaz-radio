@@ -106,7 +106,20 @@ $(document).ready(function(){
         openDir($(this).data('url'));
     });
 
+    prevtime = parseInt(new Date().getTime());
+    // Waits 500 milliseconds before performing search.
+    threshold = 500;
+    curval = "";
+    t = null;
     $(document).on("keyup", "#search", function() {
-        search($(this).val());
+        curval = $(this).val();
+        curtime = parseInt(new Date().getTime());
+        next = prevtime + threshold;
+        prevtime = curtime;
+        if (curtime < next) {
+            clearTimeout(t);
+            t = setTimeout("search('" + curval + "')", threshold);
+            return;
+        }
     });
 });

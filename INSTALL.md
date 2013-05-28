@@ -25,4 +25,8 @@ By default after 6 unsuccessful tries you get locked out.
 
 See [`scripts/README.md`](scripts/README.md) for information on setting up the search index.
 
+Set search threshold, the time before an ajax query pings the server, by setting the
+`threshold` variable in [`js/streams.js`](js/streams.js). Current it is set to 500 milliseconds.
+You may need to tune this setting depending on your traffic or preference.
+
 Open this application in a web browser and begin streaming your music.
