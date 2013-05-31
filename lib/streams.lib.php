@@ -27,6 +27,13 @@ function openTheDir($dir) {
     return $pageContent;
 }
 
+function containsMusic($dir) {
+    if (glob("{$dir}/*.{mp3,MP3,ogg,OGG,m4a,M4A}", GLOB_BRACE) > 0) {
+        return true;
+    }
+    return false;
+}
+
 function buildIndex($a_files, $dirLink, $search=false) {
     $o = array();
     $o['index'] = "";
@@ -35,7 +42,6 @@ function buildIndex($a_files, $dirLink, $search=false) {
         if (is_dir($file)) {
             $html_data_url = preg_replace("/\"/", "\\\"", $dirLink . $file);
             $html_file = htmlspecialchars($file);
-
 
             if (file_exists("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}/small_montage.jpg")) {
                 $background_url = "{$GLOBALS['defaultMp3Url']}/{$dirLink}{$file}/small_montage.jpg";
@@ -48,13 +54,17 @@ function buildIndex($a_files, $dirLink, $search=false) {
                 $js_background_url = $background_url;
             }
 
+            $addToPlaylist = "";
+            if (containsMusic("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}")) {
+                $addToPlaylist = "<span onclick=\"addToPlaylist(this)\" class=\"linkbutton addtoplaylist\" data-url=\"{$html_data_url}\">add to playlist</span>";
+            }
+
             $coverListItem = <<<eof
 <li class="dirlink-cover dirlinkcover" style="background:url('{$js_background_url}') no-repeat left center; background-size:128px 128px;" data-url="{$html_data_url}">
     <div class="linknamediv">
         <div class="dirtext">
             <a class="linkname">{$html_file}</a> 
-            <!--TODO: Add add to playlist button.-->
-            <!--<span onclick="addToPlaylist(this)" class="linkbutton addtoplaylist" data-url="{$html_data_url}">add to playlist</span>-->
+            {$addToPlaylist}
         </div>
     </div><!--div.linknamediv-->
     <div class="clear"></div><!--div.clear-->

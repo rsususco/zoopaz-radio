@@ -18,7 +18,8 @@ if ($_GET['action'] == "createPlaylistJs" && file_exists($defaultMp3Dir . '/' . 
 
     // This #theurl span is required. Without it the player javascript
     // doesn't function. The pause button will just restart and play the list.
-    $esc_dir = preg_quote($_GET['dir']);
+    $esc_dir = preg_replace("/\\\"/", "\"", $_GET['dir']);
+    $esc_dir = preg_replace("/\"/", "\\\"", $esc_dir);
     $html = <<<eof
 <span id="theurl" data-url="{$esc_dir}" />
 <div class='m3uplayer'><table>
