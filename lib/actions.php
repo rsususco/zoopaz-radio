@@ -15,7 +15,8 @@ if ($_GET['action'] == "downloadAlbum" && $_GET['dir'] != "") {
         chdir("{$tmpDir}/downloadAlbum/{$md5}");
         exec("zip -r \"{$theDir}.zip\" \"{$theDir}\"");
         header('Content-Description: Download file');
-        header("Content-type: applications/x-download");
+        //header("Content-type: applications/x-download");
+        header("Content-type: application/zip");
         header("Content-Length: " . filesize("{$theDir}.zip"));
         header("Content-Disposition: attachment; filename=" . basename("{$theDir}.zip"));
         header('Content-Transfer-Encoding: binary');
