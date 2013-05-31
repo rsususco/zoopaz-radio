@@ -53,7 +53,8 @@ function buildIndex($a_files, $dirLink, $search=false) {
     <div class="linknamediv">
         <div class="dirtext">
             <a class="linkname">{$html_file}</a> 
-            <span onclick="addToPlaylist(this)" class="linkbutton addtoplaylist" data-url="{$html_data_url}">add to playlist</span>
+            <!--TODO: Add add to playlist button.-->
+            <!--<span onclick="addToPlaylist(this)" class="linkbutton addtoplaylist" data-url="{$html_data_url}">add to playlist</span>-->
         </div>
     </div><!--div.linknamediv-->
     <div class="clear"></div><!--div.clear-->
