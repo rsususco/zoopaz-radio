@@ -159,6 +159,7 @@ a.button, .button {
     -o-box-shadow:3px 3px 0px silver;
     box-shadow:3px 3px 0px silver;
     text-shadow: 1px 1px 2px gray; 
+    border:0px;
 
     /*
     background: #3181b7;
@@ -310,7 +311,7 @@ span.dropwrapper:hover div.drop {
 }
 
 #search {
-    width:50%;
+    width:40%;
     margin-bottom:0px;
     padding:4px;
     border:1px solid gray;
@@ -355,4 +356,11 @@ div#loading {
 div#loading div#loadinginner {
     margin:0;
     padding:4px 8px;
+}
+
+.link {
+    cursor:pointer;
+}
+
+.logout-link {
 }

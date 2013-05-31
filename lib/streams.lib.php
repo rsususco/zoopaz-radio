@@ -182,7 +182,7 @@ function buildSearchBox() {
     // TODO: Break into HTML template
     $html = <<<eof
 <div id="searchbox">
-<input type="text" id="search" placeholder="Find some music..." />
+    <input type="text" id="search" placeholder="Find some music..." /> <input class="button" id="logout-link" type="button" value="Logout" />
 </div><!--div#searchbox-->
 eof;
     return $html;
@@ -448,4 +448,10 @@ function addToPlaylist($dir) {
     file_put_contents($auth->currentPlaylist, $newPlaylistJson);
     file_put_contents($auth->currentPlaylistDir, "/Custom playlist");
     return json_encode(array("status"=>"ok"));
+}
+
+function logout() {
+    unset($_SESSION['auth']);
+    unset($_SESSION);
+    session_destroy();
 }

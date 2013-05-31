@@ -18,6 +18,7 @@ function toggleMusicOn(url) {
 }
 
 function createPlaylistJs(url) {
+    displayWorking();
     $.ajax({
         type: "GET",  
         url: "ajax.php",  
@@ -35,17 +36,20 @@ function createPlaylistJs(url) {
                 //alert('newwidth = ' + newwidth);
                 $("#mediaplayer_wrapper").css("width", newwidth + "px");
             }
+            hideWorking();
         }
     });
 }
 
 function openDir(url) {
     location.hash = "#/open/" + encodeURIComponent(url);
+    displayWorking();
     $.ajax({
         type: "GET",  
         url: "ajax.php",  
         data: "action=openDir&url=" + encodeURIComponent(url) + "&dir=" + encodeURIComponent(url),
         success: function(text){
+            hideWorking();
             $("#content").html(text);
         }
     });
@@ -73,12 +77,14 @@ function search(q) {
         var p = $("#playbutton").parent();
         p.remove();
     }
+    displayWorking();
     $.ajax({
         type: "GET",  
         url: "ajax.php",  
         data: "action=search&q=" + encodeURIComponent(q),
         success: function(html){
             $("#musicindex").html(html);
+            hideWorking();
         }
     });
 }
@@ -108,6 +114,19 @@ function addToPlaylist(e) {
     return false;
 }
 
+function logout(e) {
+    displayWorking();
+    $.ajax({
+        type: "GET",  
+        url: "ajax.php",  
+        data: "action=logout",
+        success: function(html){
+            hideWorking();
+            location.href="index.php";
+        }
+    });
+}
+
 $(document).ready(function(){
     init();
 
@@ -133,6 +152,10 @@ $(document).ready(function(){
 
     $(document).on("click", ".addtoplaylist", function(e) {
         addToPlaylist(this);
+    });
+
+    $(document).on("click", "#logout-link", function(e) {
+        logout(this);
     });
 
     prevtime = parseInt(new Date().getTime());

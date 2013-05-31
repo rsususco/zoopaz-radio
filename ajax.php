@@ -49,4 +49,6 @@ if ($_GET['action'] == "createPlaylistJs" && file_exists($cfg->defaultMp3Dir . '
     print($pageContent);
     print_gzipped_page();
     die();
+} else if ($_GET['action'] == "logout") {
+    logout();
 }
