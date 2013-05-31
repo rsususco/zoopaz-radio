@@ -35,6 +35,7 @@ if ($_GET['action'] == "login") {
             $auth->username = $_POST['username'];
             $auth->is_logged_in = true;
             $auth->tries = 0;
+            $auth->currentPlaylist = $auth->userDir . "/currentPlaylist.obj";
             $_SESSION['auth'] = serialize($auth);
             header("Location:{$_SERVER['PHP_SELF']}");
             exit();

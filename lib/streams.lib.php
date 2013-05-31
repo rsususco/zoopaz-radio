@@ -55,9 +55,9 @@ function buildIndex($a_files, $dirLink, $search=false) {
             }
 
             $addToPlaylist = "";
-//            if (containsMusic("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}")) {
-//                $addToPlaylist = "<span onclick=\"addToPlaylist(this)\" class=\"linkbutton addtoplaylist\" data-url=\"{$html_data_url}\">add to playlist</span>";
-//            }
+            if (containsMusic("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}")) {
+                $addToPlaylist = "<span onclick=\"addToPlaylist(this)\" class=\"linkbutton addtoplaylist\" data-url=\"{$html_data_url}\">add to playlist</span>";
+            }
 
             $coverListItem = <<<eof
 <li class="dirlink-cover dirlinkcover" style="background:url('{$js_background_url}') no-repeat left center; background-size:128px 128px;" data-url="{$html_data_url}">
@@ -398,8 +398,8 @@ function buildPlaylistFromArray($playlistArray) {
     return $json;
 }
 
-function buildPlayerHtml($playlist, $dir) {
-    $a_indextmpl = array("playlist" => $playlist);
+function buildPlayerHtml($playlist, $dir, $autoplay='false') {
+    $a_indextmpl = array("playlist" => $playlist, "autoplay" => $autoplay);
     $flashPlayer = apply_template("tmpl/player.tmpl", $a_indextmpl);
 
     // This #theurl span is required. Without it the player javascript

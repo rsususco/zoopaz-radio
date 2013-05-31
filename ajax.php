@@ -5,26 +5,17 @@ session_start();
 $sessid = session_id();
 
 require_once("lib/auth.php");
-require_once("lib/Playlist.php");
 require_once("lib/config.php");
 require_once("lib/ws-php-library.php");
 require_once("lib/streams.lib.php");
-
-$playlistObj = "{$auth->userDir}/playlist.obj";
-if (!file_exists($playlistObj)) {
-    $pl = new Playlist();
-} else {
-    $pl = unserialize($playlistObj);
-}
 
 if ($_GET['action'] == "createPlaylistJs" && file_exists($defaultMp3Dir . '/' . $_GET['dir']) 
         && is_dir($defaultMp3Dir . '/' . $_GET['dir'])) {
     $playlist = buildPlaylistFromDir($_GET['dir']);
 
-    $pl->currentPlaylist = $playlist;
-    file_put_contents($playlistObj, serialize($pl));
+    file_put_contents($auth->currentPlaylist, $playlist);
 
-    $html = buildPlayerHtml($playlist, $_GET['dir']);
+    $html = buildPlayerHtml($playlist, $_GET['dir'], 'true');
 
     ob_start();
     ob_implicit_flush(0);
