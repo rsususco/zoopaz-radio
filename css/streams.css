@@ -331,3 +331,28 @@ span.dropwrapper:hover div.drop {
 .linkbutton:hover {
     background-color:#c2e8f9;
 }
+
+div#loading {
+    position:fixed;
+    top:0;
+    left:320px;
+    margin:0;
+    padding:0;
+    border-top:4px solid #3181b7;
+    border-right:2px solid #3181b7;
+    border-bottom:2px solid #3181b7;
+    border-left:2px solid #3181b7;
+    /* If you update this, update the ajax-loader.gif */
+    /* http://ajaxload.info/ */
+    background-color:#b5d3e5;
+    /**************************************************/
+    color:#276893;
+    z-index:50;
+    display:none;
+    visibility:hidden;
+}
+
+div#loading div#loadinginner {
+    margin:0;
+    padding:4px 8px;
+}

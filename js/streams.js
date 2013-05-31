@@ -83,14 +83,23 @@ function search(q) {
     });
 }
 
+function displayWorking() {
+    $("#loading").css("display", "block").css("visibility", "visible");
+}
+
+function hideWorking() {
+    $("#loading").css("display", "none").css("visibility", "hidden");
+}
+
 function addToPlaylist(e) {
     var event = e || window.event;
+    displayWorking();
     $.ajax({
         type: "GET",  
         url: "ajax.php",  
         data: "action=addToPlaylist&dir=" + encodeURIComponent($(event).data('url')),
         success: function(html){
-            //alert('Add to playlist dir ' + $(event).data('url'));
+            hideWorking();
         }
     });
     event.stopPropagation();
