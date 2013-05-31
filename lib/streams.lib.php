@@ -20,6 +20,7 @@ function openTheDir($dir) {
     $pageContent = "";
     // This is when you open a dir.
     if (file_exists($cfg->defaultMp3Dir . "/" . $dir . "/cover.jpg")) {
+        // TODO: Break into HTML template
         $pageContent .= "<div class=\"coverart\"><a target=\"_blank\" href=\"../music/{$dir}"
                 . "/cover.jpg\"><img src=\"../music/{$dir}/cover.jpg\" alt=\"cover\" /></a>"
                 . "</div><span class=\"clear\"></span>";
@@ -29,7 +30,7 @@ function openTheDir($dir) {
 }
 
 function containsMusic($dir) {
-    if (glob("{$dir}/*.{mp3,MP3,ogg,OGG,m4a,M4A}", GLOB_BRACE) > 0) {
+    if (count(glob("{$dir}/*.{mp3,MP3,ogg,OGG,m4a,M4A}", GLOB_BRACE)) > 0) {
         return true;
     }
     return false;
@@ -45,33 +46,26 @@ function buildIndex($a_files, $dirLink, $search=false) {
             $html_data_url = preg_replace("/\"/", "\\\"", $dirLink . $file);
             $html_file = htmlspecialchars($file);
 
-            if (file_exists("{$cfg->defaultMp3Dir}/{$dirLink}{$file}/small_montage.jpg")) {
-                $background_url = "{$cfg->defaultMp3Url}/{$dirLink}{$file}/small_montage.jpg";
+            if (file_exists("{$cfg->defaultMp3Dir}{$dirLink}{$file}/small_montage.jpg")) {
+                $background_url = "{$cfg->defaultMp3Url}{$dirLink}{$file}/small_montage.jpg";
                 $js_background_url = preg_replace("/'/", "\\'", $background_url);
-            } else if (file_exists("{$cfg->defaultMp3Dir}/{$dirLink}{$file}/small_cover.jpg")) {
-                $background_url = "{$cfg->defaultMp3Url}/{$dirLink}{$file}/small_cover.jpg";
+            } else if (file_exists("{$cfg->defaultMp3Dir}{$dirLink}{$file}/small_cover.jpg")) {
+                $background_url = "{$cfg->defaultMp3Url}{$dirLink}{$file}/small_cover.jpg";
                 $js_background_url = preg_replace("/'/", "\\'", $background_url);
             } else {
                 $background_url = "images/bigfolder.png";
                 $js_background_url = $background_url;
             }
 
+            // TODO: Break into HTML template
             $addToPlaylist = "";
-//            if (containsMusic("{$cfg->defaultMp3Dir}/{$dirLink}{$file}")) {
-//                $addToPlaylist = "<span onclick=\"addToPlaylist(this)\" class=\"linkbutton addtoplaylist\" data-url=\"{$html_data_url}\">add to playlist</span>";
-//            }
+            if (containsMusic("{$cfg->defaultMp3Dir}{$dirLink}{$file}")) {
+                $addToPlaylist = "<span class=\"linkbutton addtoplaylist\" data-url=\"{$html_data_url}\">add to playlist</span>";
+            }
 
-            $coverListItem = <<<eof
-<li class="dirlink-cover dirlinkcover" style="background:url('{$js_background_url}') no-repeat left center; background-size:128px 128px;" data-url="{$html_data_url}">
-    <div class="linknamediv">
-        <div class="dirtext">
-            <a class="linkname">{$html_file}</a> 
-            {$addToPlaylist}
-        </div>
-    </div><!--div.linknamediv-->
-    <div class="clear"></div><!--div.clear-->
-</li>
-eof;
+            $a_indextmpl = array("js_background_url"=>$js_background_url, "html_data_url"=>$html_data_url, 
+                    "html_file"=>$html_file, "addToPlaylist"=>$addToPlaylist);
+            $coverListItem = apply_template("{$cfg->streamsRootDir}/tmpl/coverListItem.tmpl", $a_indextmpl);
             $o['index'] .= $coverListItem;
         } else {
             if (preg_match("/\.(m4a|mp3|ogg|flac)$/i", $file)) {
@@ -79,6 +73,7 @@ eof;
                 $filesize = human_filesize($file);
                 $displayFile = $file;
 
+                // TODO: Break into HTML template
                 $o['index'] .= "<li class='mp3'><span class=\"text\"><a target=\"_blank\" href=\"index.php?action=download&amp;file=" . urlencode($dirLink . $file) . "\">" . htmlspecialchars($displayFile) . "</a> <code>{$filesize}</code></span></li>";
                 continue;
             }
@@ -130,6 +125,7 @@ function getFileIndex ($dir) {
             $url .= "/{$backDir}";
         }
         $enc_url = urlencode($url);
+        // TODO: Break into HTML template
         if ($dirCnt === 1) {
             $a_dir[$k] = "<span class='filesize_type'><span class=\"enddir\">{$backDir}</span></span>";
         } else if ($cnt === ($dirCnt - 1)) {
@@ -142,12 +138,13 @@ function getFileIndex ($dir) {
             }
         } else {
             // Have drop-down of all available directories under this directory.
-            $thelinks = getDropDownAlbums($url);
-            $a_dir[$k] = "<span class='filesize_type'><span class=\"dropwrapper\"><a class=\"dirlink\" data-url=\"{$url}\">{$backDir}</a><div class=\"drop\">{$thelinks}</div><!--div.drop--></span><!--span.dropwrapper--></span><!--span.filesize_type-->";
+            if (isset($url) && strlen($url) > 0) {
+                $thelinks = getDropDownAlbums($url);
+                $a_dir[$k] = "<span class='filesize_type'><span class=\"dropwrapper\"><a class=\"dirlink\" data-url=\"{$url}\">{$backDir}</a><div class=\"drop\">{$thelinks}</div><!--div.drop--></span><!--span.dropwrapper--></span><!--span.filesize_type-->";
+            }
         }
         $cnt++;
     }
-    //$backDirs = implode(" &rsaquo;<!--&raquo;--> ", $a_dir);
     $backDirs = implode(" ", $a_dir);
 
     $createPlaylistLink = "";
@@ -155,6 +152,7 @@ function getFileIndex ($dir) {
         $createPlaylistLink = "<a id=\"playbutton\" class=\"button\" style='cursor:pointer;' data-url=\"" . $dir . "\">Play</a>";
     }
 
+    // TODO: Break into HTML template
     if (preg_match("/\//", $dir)) {
         $previousDir = preg_replace("/^(.+)\/(.*)$/", "$1", $dir);
         $previousDirListItem = "<li class='previousDirectoryListItem'><span class='filesize_type'><a class=\"dirlink\" data-url=\"\">Home</a></span> {$backDirs}</li>";
@@ -174,12 +172,14 @@ function getFileIndex ($dir) {
 
     $searchBox = buildSearchBox();
 
+    // TODO: Break into HTML template
     $index = "{$searchBox}<ul id=\"navlist\">{$previousDirListItem}</ul><div class=\"clear\"></div><ul id=\"musicindex\">" . $index . "</ul>";
 
     return $index;
 }
 
 function buildSearchBox() {
+    // TODO: Break into HTML template
     $html = <<<eof
 <div id="searchbox">
 <input type="text" id="search" placeholder="Find some music..." />
@@ -201,6 +201,7 @@ function getDropDownAlbums($url) {
         $html_thisdir = singleSlashes($html_thisdir);
         $enc_html_thisdir = preg_replace("/\"/", "\\\"", $url . "/" . $thisdir);
         $enc_html_thisdir = singleSlashes($enc_html_thisdir);
+        // TODO: Break into HTML template
         if (file_exists("{$thisdir}/small_montage.jpg")) {
             $thelinks .= "<div class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"{$cfg->defaultMp3Url}/{$url}/{$html_thisdir}/small_montage.jpg\" alt=\"img\" /> <div class=\"droplink-text\">{$html_thisdir}</div></div>"; 
         } else if (file_exists("{$thisdir}/small_cover.jpg")) {
@@ -409,6 +410,20 @@ function buildPlaylistFromArray($playlistArray) {
     return $json;
 }
 
+function buildPlayerAlbumTitle($dir) {
+    if (preg_match("/\/.*\//", $dir)) {
+        $artist = preg_replace("/^.*\/(.*?)\/.*$/", "\${1}", $dir);
+        $html_artist = htmlspecialchars($artist);
+        $album = preg_replace("/^.*\/.*?\/(.*)$/", "\${1}", $dir);
+        $html_album = htmlspecialchars($album);
+        $html_dir = "{$html_artist} &rsaquo; {$html_album}";
+    } else {
+        $album = preg_replace("/^.*\/(.*)$/", "\${1}", $dir);
+        $html_dir = htmlspecialchars($album);
+    }
+    return $html_dir;
+}
+
 function buildPlayerHtml($playlist, $dir, $autoplay='false') {
     $a_indextmpl = array("playlist" => $playlist, "autoplay" => $autoplay);
     $flashPlayer = apply_template("tmpl/player.tmpl", $a_indextmpl);
@@ -417,15 +432,20 @@ function buildPlayerHtml($playlist, $dir, $autoplay='false') {
     // doesn't function. The pause button will just restart and play the list.
     $esc_dir = preg_replace("/\\\"/", "\"", $dir);
     $esc_dir = preg_replace("/\"/", "\\\"", $esc_dir);
-    $html = <<<eof
-<span id="theurl" data-url="{$esc_dir}" />
-<div class='m3uplayer'><table>
-<tr><td class="currentsong">Current song: <span id="currentSong"></span> &#160;&#160;&#160; 
-<a style="cursor:pointer; text-decoration:underline;" onclick="shufflePlaylist()">shuffle</a></td></tr>
-<tr><td id="mediaplayer"></td></tr>
-</table>
-{$flashPlayer}
-</span>
-eof;
+    $html_dir = buildPlayerAlbumTitle($dir);
+    $a_contentplayertmpl = array("esc_dir"=>$esc_dir, "html_dir"=>$html_dir, "flashPlayer"=>$flashPlayer);
+    $html = apply_template("tmpl/contentPlayer.tmpl", $a_contentplayertmpl);
+
     return $html;
+}
+
+function addToPlaylist($dir) {
+    $auth = unserialize($_SESSION['auth']);
+    $currentPlaylistArray = json_decode(file_get_contents($auth->currentPlaylist));
+    $toAddArray = json_decode(buildPlaylistFromDir($dir));
+    $newPlaylist = array_merge($currentPlaylistArray, $toAddArray);
+    $newPlaylistJson = json_encode($newPlaylist);
+    file_put_contents($auth->currentPlaylist, $newPlaylistJson);
+    file_put_contents($auth->currentPlaylistDir, "/Custom playlist");
+    return json_encode(array("status"=>"ok"));
 }

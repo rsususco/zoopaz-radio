@@ -84,9 +84,19 @@ function search(q) {
 }
 
 function addToPlaylist(e) {
-    e.cancelBubble = true;
-    if (e.stopPropagation) e.stopPropagation();
-    alert($(e).data('url'));
+    var event = e || window.event;
+    $.ajax({
+        type: "GET",  
+        url: "ajax.php",  
+        data: "action=addToPlaylist&dir=" + encodeURIComponent($(event).data('url')),
+        success: function(html){
+            //alert('Add to playlist dir ' + $(event).data('url'));
+        }
+    });
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    event.cancelBubble = true;
+    return false;
 }
 
 $(document).ready(function(){
@@ -112,9 +122,9 @@ $(document).ready(function(){
         openDir($(this).data('url'));
     });
 
-    //$(document).on("click", ".addtoplaylist", function(e) {
-    //    addToPlaylist(e);
-    //});
+    $(document).on("click", ".addtoplaylist", function(e) {
+        addToPlaylist(this);
+    });
 
     prevtime = parseInt(new Date().getTime());
     // Waits 500 milliseconds before performing search.

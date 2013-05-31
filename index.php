@@ -15,8 +15,9 @@ require_once("lib/streams.lib.php");
 $cfg = Config::getInstance();
 
 $currentPlaylist = null;
-if (file_exists($auth->currentPlaylist)) {
+if (file_exists($auth->currentPlaylist) && file_exists($auth->currentPlaylistDir)) {
     $currentPlaylist = file_get_contents($auth->currentPlaylist);
+    $currentPlaylistDir = file_get_contents($auth->currentPlaylistDir);
 }
 
 if ($cfg->logging) {
@@ -52,7 +53,12 @@ if (preg_match("/(Android|iPhone|Phone|iPad|Nexus)/i", $_SERVER['HTTP_USER_AGENT
 
 $contentPlayer = null;
 if (isset($currentPlaylist) && strlen($currentPlaylist) > 0) {
-    $contentPlayer = buildPlayerHtml($currentPlaylist, null, 'false');
+    $esc_dir = preg_replace("/\\\"/", "\"", $currentPlaylistDir);
+    $esc_dir = preg_replace("/\"/", "\\\"", $esc_dir);
+    $html_dir = buildPlayerAlbumTitle($currentPlaylistDir);
+    $flashPlayer = buildPlayerHtml($currentPlaylist, null, 'false');
+    $a_contentplayertmpl = array("esc_dir"=>$esc_dir, "html_dir"=>$html_dir, "flashPlayer"=>$flashPlayer);
+    $contentPlayer = apply_template("tmpl/contentPlayer.tmpl", $a_contentplayertmpl);
 }
 
 $a_indextmpl = array("viewport" => $viewport, "pageContent" => $pageContent, "message" => $message, "jsMobileVar" => $jsMobileVar, 

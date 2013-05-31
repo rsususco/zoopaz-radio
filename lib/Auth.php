@@ -22,6 +22,7 @@ class Auth {
     public $userDir = "";
     public $username = "";
     public $currentPlaylist = null;
+    public $currentPlaylistDir = null;
 
     function __construct() {
         $this->year = date("Y");

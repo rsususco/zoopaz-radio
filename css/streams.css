@@ -250,22 +250,18 @@ span.dropwrapper:hover div.drop {
     filter:alpha(opacity=90);
 }
 
-.m3uplayer td, .m3uplayer tr, .m3uplayer table, .m3uplayer tbody, .m3uplayer thead {
+.m3uplayer {
     border:0;
     background-color:white;
 }
 
+.album-title {
+    color:#3181b7;
+    text-shadow: 1px 1px 1px #ececec; 
+    margin-bottom:8px;
+}
+
 .currentsong {
-
-}
-table {
-    border-collapse:collapse;
-    margin:0;
-    padding:4px;
-    background-color:white;
-}
-
-tr td:first-child {
     background-color:white;
     margin:0;
     padding:0;

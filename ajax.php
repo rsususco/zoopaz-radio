@@ -16,6 +16,7 @@ if ($_GET['action'] == "createPlaylistJs" && file_exists($cfg->defaultMp3Dir . '
     $playlist = buildPlaylistFromDir($_GET['dir']);
 
     file_put_contents($auth->currentPlaylist, $playlist);
+    file_put_contents($auth->currentPlaylistDir, $_GET['dir']);
 
     $html = buildPlayerHtml($playlist, $_GET['dir'], 'true');
 
@@ -34,6 +35,14 @@ if ($_GET['action'] == "createPlaylistJs" && file_exists($cfg->defaultMp3Dir . '
     die();
 } else if ($_GET['action'] == "search") {
     $pageContent = search($_GET['q']);
+
+    ob_start();
+    ob_implicit_flush(0);
+    print($pageContent);
+    print_gzipped_page();
+    die();
+} else if ($_GET['action'] == "addToPlaylist") {
+    $pageContent = addToPlaylist($_GET['dir']);
 
     ob_start();
     ob_implicit_flush(0);
