@@ -59,4 +59,3 @@ password: <input {$auth->disabled} type="password" name="password" id="password"
 eof;
     die();
 }
-// end: login
