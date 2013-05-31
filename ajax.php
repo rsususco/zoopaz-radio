@@ -5,12 +5,14 @@ session_start();
 $sessid = session_id();
 
 require_once("lib/auth.php");
-require_once("lib/config.php");
+require_once("lib/Config.php");
 require_once("lib/ws-php-library.php");
 require_once("lib/streams.lib.php");
 
-if ($_GET['action'] == "createPlaylistJs" && file_exists($defaultMp3Dir . '/' . $_GET['dir']) 
-        && is_dir($defaultMp3Dir . '/' . $_GET['dir'])) {
+$cfg = Config::getInstance();
+
+if ($_GET['action'] == "createPlaylistJs" && file_exists($cfg->defaultMp3Dir . '/' . $_GET['dir']) 
+        && is_dir($cfg->defaultMp3Dir . '/' . $_GET['dir'])) {
     $playlist = buildPlaylistFromDir($_GET['dir']);
 
     file_put_contents($auth->currentPlaylist, $playlist);

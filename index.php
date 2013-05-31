@@ -7,18 +7,20 @@ $sessid = session_id();
 ob_start("ob_gzhandler");
 
 require_once("lib/auth.php");
-require_once("lib/config.php");
+require_once("lib/Config.php");
 require_once("lib/ws-php-library.php");
 require_once("lib/stopwords.php");
 require_once("lib/streams.lib.php");
+
+$cfg = Config::getInstance();
 
 $currentPlaylist = null;
 if (file_exists($auth->currentPlaylist)) {
     $currentPlaylist = file_get_contents($auth->currentPlaylist);
 }
 
-if ($logging) {
-    file_put_contents($logfile, date("Y-m-d H:i:s") . " ::: " . $_SERVER['REMOTE_ADDR'] . " ::: " 
+if ($cfg->logging) {
+    file_put_contents($cfg->logfile, date("Y-m-d H:i:s") . " ::: " . $_SERVER['REMOTE_ADDR'] . " ::: " 
             . $_SERVER['HTTP_USER_AGENT'] . " ::: " . $_SERVER['REQUEST_URI'] . "\n", FILE_APPEND);
 }
 

@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined("STREAMS")) { die('CONFIG NOT DEFINED'); }
 
 if (!function_exists("handle")) {
     function handle($input) {
@@ -16,11 +16,12 @@ if (!function_exists("handle")) {
 }
 
 function openTheDir($dir) {
+    $cfg = Config::getInstance();
     $pageContent = "";
     // This is when you open a dir.
-    if (file_exists($GLOBALS['defaultMp3Dir'] . "/" . $_GET['dir'] . "/cover.jpg")) {
-        $pageContent .= "<div class=\"coverart\"><a target=\"_blank\" href=\"../music/{$_GET['dir']}"
-                . "/cover.jpg\"><img src=\"../music/{$_GET['dir']}/cover.jpg\" alt=\"cover\" /></a>"
+    if (file_exists($cfg->defaultMp3Dir . "/" . $dir . "/cover.jpg")) {
+        $pageContent .= "<div class=\"coverart\"><a target=\"_blank\" href=\"../music/{$dir}"
+                . "/cover.jpg\"><img src=\"../music/{$dir}/cover.jpg\" alt=\"cover\" /></a>"
                 . "</div><span class=\"clear\"></span>";
     }
     $pageContent .= getFileIndex($dir);
@@ -35,6 +36,7 @@ function containsMusic($dir) {
 }
 
 function buildIndex($a_files, $dirLink, $search=false) {
+    $cfg = Config::getInstance();
     $o = array();
     $o['index'] = "";
     $o['isMp3'] = false;
@@ -43,11 +45,11 @@ function buildIndex($a_files, $dirLink, $search=false) {
             $html_data_url = preg_replace("/\"/", "\\\"", $dirLink . $file);
             $html_file = htmlspecialchars($file);
 
-            if (file_exists("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}/small_montage.jpg")) {
-                $background_url = "{$GLOBALS['defaultMp3Url']}/{$dirLink}{$file}/small_montage.jpg";
+            if (file_exists("{$cfg->defaultMp3Dir}/{$dirLink}{$file}/small_montage.jpg")) {
+                $background_url = "{$cfg->defaultMp3Url}/{$dirLink}{$file}/small_montage.jpg";
                 $js_background_url = preg_replace("/'/", "\\'", $background_url);
-            } else if (file_exists("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}/small_cover.jpg")) {
-                $background_url = "{$GLOBALS['defaultMp3Url']}/{$dirLink}{$file}/small_cover.jpg";
+            } else if (file_exists("{$cfg->defaultMp3Dir}/{$dirLink}{$file}/small_cover.jpg")) {
+                $background_url = "{$cfg->defaultMp3Url}/{$dirLink}{$file}/small_cover.jpg";
                 $js_background_url = preg_replace("/'/", "\\'", $background_url);
             } else {
                 $background_url = "images/bigfolder.png";
@@ -55,7 +57,7 @@ function buildIndex($a_files, $dirLink, $search=false) {
             }
 
             $addToPlaylist = "";
-//            if (containsMusic("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}")) {
+//            if (containsMusic("{$cfg->defaultMp3Dir}/{$dirLink}{$file}")) {
 //                $addToPlaylist = "<span onclick=\"addToPlaylist(this)\" class=\"linkbutton addtoplaylist\" data-url=\"{$html_data_url}\">add to playlist</span>";
 //            }
 
@@ -77,7 +79,7 @@ eof;
                 $filesize = human_filesize($file);
                 $displayFile = $file;
 
-                $o['index'] .= "<li class='mp3'><span class=\"text\"><a target=\"_blank\" href=\"{$_SERVER['PHP_SELF']}?action=download&amp;file=" . urlencode($dirLink . $file) . "\">" . htmlspecialchars($displayFile) . "</a> <code>{$filesize}</code></span></li>";
+                $o['index'] .= "<li class='mp3'><span class=\"text\"><a target=\"_blank\" href=\"index.php?action=download&amp;file=" . urlencode($dirLink . $file) . "\">" . htmlspecialchars($displayFile) . "</a> <code>{$filesize}</code></span></li>";
                 continue;
             }
         }
@@ -86,17 +88,19 @@ eof;
 }
 
 function getFileIndex ($dir) {
+    $cfg = Config::getInstance();
+
     $curdir = getcwd();
 
     $chdir = "";
-    if ($dir === $GLOBALS['defaultMp3Dir']) {
-        $chdir = $GLOBALS['defaultMp3Dir'];
+    if ($dir === $cfg->defaultMp3Dir) {
+        $chdir = $cfg->defaultMp3Dir;
         $dirLink = "";
     } else {
-        if (!file_exists($GLOBALS['defaultMp3Dir'] . '/' . $dir)) {
+        if (!file_exists($cfg->defaultMp3Dir . '/' . $dir)) {
             return false;
         }
-        $chdir = $GLOBALS['defaultMp3Dir'] . '/' . $dir;
+        $chdir = $cfg->defaultMp3Dir . '/' . $dir;
         $_SESSION['currentDir'] = $dir;
         $dirLink = "{$dir}/";
     }
@@ -154,14 +158,14 @@ function getFileIndex ($dir) {
     if (preg_match("/\//", $dir)) {
         $previousDir = preg_replace("/^(.+)\/(.*)$/", "$1", $dir);
         $previousDirListItem = "<li class='previousDirectoryListItem'><span class='filesize_type'><a class=\"dirlink\" data-url=\"\">Home</a></span> {$backDirs}</li>";
-        if (count(glob("{$GLOBALS['defaultMp3Dir']}/{$dir}/*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE)) > 0) {
-            $previousDirListItem .= "<li class='previousDirectoryListItem' id='playercontrols'>{$createPlaylistLink} <a class=\"button download\" target=\"_blank\" href=\"{$_SERVER['PHP_SELF']}?action=downloadAlbum&amp;dir=" . urlencode($dir) . "\" onclick=\"return confirm('After clicking ok, it may take some time to prepare your download - please wait - your download will begin shortly.')\">Download</a></li>";
+        if (count(glob("{$cfg->defaultMp3Dir}/{$dir}/*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE)) > 0) {
+            $previousDirListItem .= "<li class='previousDirectoryListItem' id='playercontrols'>{$createPlaylistLink} <a class=\"button download\" target=\"_blank\" href=\"index.php?action=downloadAlbum&amp;dir=" . urlencode($dir) . "\" onclick=\"return confirm('After clicking ok, it may take some time to prepare your download - please wait - your download will begin shortly.')\">Download</a></li>";
         }
     } else if ($dir != "") {
         $previousDir = $dir;
         $previousDirListItem = "<li class='previousDirectoryListItem'>{$backDirs}</li>";
-        if (count(glob("{$GLOBALS['defaultMp3Dir']}/{$dir}/*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE)) > 0) {
-            $previousDirListItem .= "<li class='previousDirectoryListItem' id='playercontrols'>{$createPlaylistLink} <a class=\"button download\" target=\"_blank\" href=\"{$_SERVER['PHP_SELF']}?action=downloadAlbum&amp;dir=" . urlencode($dir) . "\" onclick=\"return confirm('After clicking ok, it may take some time to prepare your download - please wait - your download will begin shortly.')\">Download</a></li>";
+        if (count(glob("{$cfg->defaultMp3Dir}/{$dir}/*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE)) > 0) {
+            $previousDirListItem .= "<li class='previousDirectoryListItem' id='playercontrols'>{$createPlaylistLink} <a class=\"button download\" target=\"_blank\" href=\"index.php?action=downloadAlbum&amp;dir=" . urlencode($dir) . "\" onclick=\"return confirm('After clicking ok, it may take some time to prepare your download - please wait - your download will begin shortly.')\">Download</a></li>";
         }
     } else {
         $previousDir = "";
@@ -185,8 +189,9 @@ eof;
 }
 
 function getDropDownAlbums($url) {
+    $cfg = Config::getInstance();
     $curdir = getcwd();
-    chdir("{$GLOBALS['defaultMp3Dir']}/{$url}");
+    chdir("{$cfg->defaultMp3Dir}/{$url}");
     $a_available_dirs = glob("*", GLOB_ONLYDIR);
     $thelinks = "";
     foreach ($a_available_dirs as $k5=>$thisdir) {
@@ -197,9 +202,9 @@ function getDropDownAlbums($url) {
         $enc_html_thisdir = preg_replace("/\"/", "\\\"", $url . "/" . $thisdir);
         $enc_html_thisdir = singleSlashes($enc_html_thisdir);
         if (file_exists("{$thisdir}/small_montage.jpg")) {
-            $thelinks .= "<div class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"{$GLOBALS['defaultMp3Url']}/{$url}/{$html_thisdir}/small_montage.jpg\" alt=\"img\" /> <div class=\"droplink-text\">{$html_thisdir}</div></div>"; 
+            $thelinks .= "<div class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"{$cfg->defaultMp3Url}/{$url}/{$html_thisdir}/small_montage.jpg\" alt=\"img\" /> <div class=\"droplink-text\">{$html_thisdir}</div></div>"; 
         } else if (file_exists("{$thisdir}/small_cover.jpg")) {
-            $thelinks .= "<div class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"{$GLOBALS['defaultMp3Url']}/{$url}/{$html_thisdir}/small_cover.jpg\" alt=\"img\" /> <div class=\"droplink-text\">{$html_thisdir}</div></div>"; 
+            $thelinks .= "<div class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"{$cfg->defaultMp3Url}/{$url}/{$html_thisdir}/small_cover.jpg\" alt=\"img\" /> <div class=\"droplink-text\">{$html_thisdir}</div></div>"; 
         } else {
             $thelinks .= "<div class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"images/bigfolder.png\" alt=\"img\" /> <div class=\"droplink-text\">{$html_thisdir}</div></div>"; 
         }
@@ -291,6 +296,8 @@ function searchArray($regex, $a, $keys=array()) {
 } 
 
 function search($q) {
+    $cfg = Config::getInstance();
+
     $db = "search.db";
     $f = file($db);
     $results = searchArray($q, $f);
@@ -306,12 +313,12 @@ function search($q) {
         $dir = $r[0];
 
         // Don't return directories that don't contain music.
-        $cntmusic = count(glob("{$GLOBALS['defaultMp3Dir']}/{$dir}/*.{mp3,MP3,ogg,OGG,m4a,M4A}", GLOB_BRACE));
+        $cntmusic = count(glob("{$cfg->defaultMp3Dir}/{$dir}/*.{mp3,MP3,ogg,OGG,m4a,M4A}", GLOB_BRACE));
         if ($cntmusic < 1) {
             continue;
         }
 
-        if (!file_exists($GLOBALS['defaultMp3Dir'] . '/' . $dir)) {
+        if (!file_exists($cfg->defaultMp3Dir . '/' . $dir)) {
             return false;
         }
         $_SESSION['currentDir'] = $dir;
@@ -319,7 +326,7 @@ function search($q) {
 
         $reldir = preg_replace("/^.*\/(.*)$/", "\${1}", $dir);;
         $a_files[] = $reldir;
-        $chdir = preg_replace("/^(.*)\/.*$/", "\${1}", $GLOBALS['defaultMp3Dir'] . "/" . $dir);
+        $chdir = preg_replace("/^(.*)\/.*$/", "\${1}", $cfg->defaultMp3Dir . "/" . $dir);
         chdir($chdir);
         $o = buildIndex($a_files, $dirLink, true);
         $index .= $o['index'];
@@ -332,9 +339,11 @@ function search($q) {
 }
 
 function buildArrayFromDir($dir) {
+    $cfg = Config::getInstance();
+
     $curdir = getcwd();
 
-    chdir($GLOBALS['defaultMp3Dir'] . '/' . $dir);
+    chdir($cfg->defaultMp3Dir . '/' . $dir);
 
     $a_files = glob("*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE);
     chdir($curdir);
@@ -343,12 +352,14 @@ function buildArrayFromDir($dir) {
 }
 
 function buildPlaylistArrayFromDir($dir, $playlistArray=null) {
+    $cfg = Config::getInstance();
+
     $curdir = getcwd();
 
     $fileName = preg_replace("/[^a-zA-Z0-9-_\.]/", "_", $dir);
     $filename = preg_replace("/__+/", "_", $filename);
 
-    chdir($GLOBALS['streamsDir']);
+    chdir($cfg->streamsDir);
 
     $adir = explode("/", $dir);
     foreach ($adir as $adk=>$adv) {
@@ -362,8 +373,8 @@ function buildPlaylistArrayFromDir($dir, $playlistArray=null) {
         $enc_file = htmlspecialchars($dir . '/' . $mp3);
 
         $amp3 = rawurlencode($mp3);
-        $directMusicUrl = "{$GLOBALS['defaultMp3Url']}/{$tdir}/{$amp3}";
-        $js_directMusicUrl = "{$GLOBALS['defaultMp3Url']}/{$tdir}/{$amp3}";
+        $directMusicUrl = "{$cfg->defaultMp3Url}/{$tdir}/{$amp3}";
+        $js_directMusicUrl = "{$cfg->defaultMp3Url}/{$tdir}/{$amp3}";
 
         $js_mp3 = preg_replace("/'/", "\\\'", $mp3);
         $playlist[] = array("file"=>$js_directMusicUrl, "title"=>$js_mp3);
