@@ -320,12 +320,20 @@ function search($q) {
     return $index;
 }
 
-function buildPlaylist($dir, $playlist=null) {
+function buildArrayFromDir($dir) {
     $curdir = getcwd();
 
     chdir($GLOBALS['defaultMp3Dir'] . '/' . $dir);
 
     $a_files = glob("*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE);
+    chdir($curdir);
+
+    return $a_files;
+}
+
+function buildPlaylistArrayFromDir($dir, $playlistArray=null) {
+    $curdir = getcwd();
+
     $fileName = preg_replace("/[^a-zA-Z0-9-_\.]/", "_", $dir);
     $filename = preg_replace("/__+/", "_", $filename);
 
@@ -336,6 +344,9 @@ function buildPlaylist($dir, $playlist=null) {
         $adir[$adk] = rawurlencode($adv);
     }
     $tdir = implode("/", $adir);
+    $playlist = array();
+
+    $a_files = buildArrayFromDir($dir);
     foreach ($a_files as $k=>$mp3) {
         $enc_file = htmlspecialchars($dir . '/' . $mp3);
 
@@ -344,10 +355,34 @@ function buildPlaylist($dir, $playlist=null) {
         $js_directMusicUrl = "{$GLOBALS['defaultMp3Url']}/{$tdir}/{$amp3}";
 
         $js_mp3 = preg_replace("/'/", "\\\'", $mp3);
-        $playlist .= "{'file':'{$js_directMusicUrl}', 'title':'{$js_mp3}'},";
+        $playlist[] = array("file"=>$js_directMusicUrl, "title"=>$js_mp3);
     }
 
     chdir($curdir);
 
-    return $playlist;
+    $o = array();
+    if ($playlistArray != "") {
+        // TODO: Append the new $playlist onto $playlistArray and return.
+    } else {
+        $o = $playlist;
+    }
+
+    return $o;
+}
+
+/**
+ * @param $playlistArray Pass in a playlist array, and build another playlist from $dir. Append
+ * this new playlist to the one passed in and return a new playlist.
+ */
+function buildPlaylistFromDir($dir, $playlistArray=null) {
+    $playlist = buildPlaylistArrayFromDir($dir, $playlistArray);
+    $json = json_encode($playlist);
+    return $json;
+}
+
+// Not yet used.
+function buildPlaylistFromArray($playlistArray) {
+    $playlist = buildPlaylistArrayFromArray($dir, $playlistArray);
+    $json = json_encode($playlist);
+    return $json;
 }

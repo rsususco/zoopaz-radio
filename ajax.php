@@ -11,7 +11,8 @@ require_once("lib/streams.lib.php");
 
 if ($_GET['action'] == "createPlaylistJs" && file_exists($defaultMp3Dir . '/' . $_GET['dir']) 
         && is_dir($defaultMp3Dir . '/' . $_GET['dir'])) {
-    $playlist = buildPlaylist($_GET['dir']);
+    $playlist = buildPlaylistFromDir($_GET['dir']);
+
     $a_indextmpl = array("playlist" => $playlist);
     $flashPlayer = apply_template("tmpl/player.tmpl", $a_indextmpl);
 
