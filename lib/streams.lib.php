@@ -397,3 +397,24 @@ function buildPlaylistFromArray($playlistArray) {
     $json = json_encode($playlist);
     return $json;
 }
+
+function buildPlayerHtml($playlist, $dir) {
+    $a_indextmpl = array("playlist" => $playlist);
+    $flashPlayer = apply_template("tmpl/player.tmpl", $a_indextmpl);
+
+    // This #theurl span is required. Without it the player javascript
+    // doesn't function. The pause button will just restart and play the list.
+    $esc_dir = preg_replace("/\\\"/", "\"", $dir);
+    $esc_dir = preg_replace("/\"/", "\\\"", $esc_dir);
+    $html = <<<eof
+<span id="theurl" data-url="{$esc_dir}" />
+<div class='m3uplayer'><table>
+<tr><td class="currentsong">Current song: <span id="currentSong"></span> &#160;&#160;&#160; 
+<a style="cursor:pointer; text-decoration:underline;" onclick="shufflePlaylist()">shuffle</a></td></tr>
+<tr><td id="mediaplayer"></td></tr>
+</table>
+{$flashPlayer}
+</span>
+eof;
+    return $html;
+}

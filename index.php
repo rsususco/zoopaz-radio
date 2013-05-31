@@ -13,6 +13,13 @@ require_once("lib/stopwords.php");
 require_once("lib/streams.lib.php");
 require_once("ajax.php");
 
+$playlistObj = "{$auth->userDir}/playlist.obj";
+if (!file_exists($playlistObj)) {
+    $pl = new Playlist();
+} else {
+    $pl = unserialize($playlistObj);
+}
+
 if ($logging) {
     file_put_contents($logfile, date("Y-m-d H:i:s") . " ::: " . $_SERVER['REMOTE_ADDR'] . " ::: " 
             . $_SERVER['HTTP_USER_AGENT'] . " ::: " . $_SERVER['REQUEST_URI'] . "\n", FILE_APPEND);
