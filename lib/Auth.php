@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined("STREAMS")) { die('CONFIG NOT DEFINED'); }
 
 class Auth {
     public $maxTries = 100;

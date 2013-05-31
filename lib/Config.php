@@ -55,4 +55,3 @@ class Config {
         return self::$singleton;
     }
 }
-
