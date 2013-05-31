@@ -4,7 +4,7 @@ class Auth {
     public $maxTries = 100;
 
     // Set your users here.
-    public $users = array("wjsams@gmail.com"=>"ilovesiam", "nora.roggeveen@gmail.com"=>"pizers");
+    public $users = array("user1"=>"user1pass", "user2"=>"user2pass");
 
     // start: login
     public $year;
