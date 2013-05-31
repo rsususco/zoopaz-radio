@@ -6,12 +6,12 @@ $sessid = session_id();
 
 ob_start("ob_gzhandler");
 
+require_once("lib/Playlist.php");
 require_once("lib/auth.php");
 require_once("lib/config.php");
 require_once("lib/ws-php-library.php");
 require_once("lib/stopwords.php");
 require_once("lib/streams.lib.php");
-require_once("ajax.php");
 
 $playlistObj = "{$auth->userDir}/playlist.obj";
 if (!file_exists($playlistObj)) {
@@ -51,7 +51,13 @@ if (preg_match("/(Android|iPhone|Phone|iPad|Nexus)/i", $_SERVER['HTTP_USER_AGENT
     $mobileCss = apply_template("tmpl/mobile-css.tmpl", array());
 }
 
-$a_indextmpl = array("viewport" => $viewport, "pageContent" => $pageContent, "message" => $message, "jsMobileVar" => $jsMobileVar, "mobileCss" => $mobileCss);
+$contentPlayer = null;
+if (isset($pl->currentPlaylist) && strlen($pl->currentPlaylist) > 0) {
+    $contentPlayer = buildPlayerHtml($pl->currentPlaylist, null);
+}
+
+$a_indextmpl = array("viewport" => $viewport, "pageContent" => $pageContent, "message" => $message, "jsMobileVar" => $jsMobileVar, 
+        "mobileCss" => $mobileCss, "content-player"=>$contentPlayer);
 $html = apply_template("tmpl/index.tmpl", $a_indextmpl);
 
 /**

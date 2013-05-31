@@ -55,9 +55,9 @@ function buildIndex($a_files, $dirLink, $search=false) {
             }
 
             $addToPlaylist = "";
-            if (containsMusic("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}")) {
-                $addToPlaylist = "<span onclick=\"addToPlaylist(this)\" class=\"linkbutton addtoplaylist\" data-url=\"{$html_data_url}\">add to playlist</span>";
-            }
+//            if (containsMusic("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}")) {
+//                $addToPlaylist = "<span onclick=\"addToPlaylist(this)\" class=\"linkbutton addtoplaylist\" data-url=\"{$html_data_url}\">add to playlist</span>";
+//            }
 
             $coverListItem = <<<eof
 <li class="dirlink-cover dirlinkcover" style="background:url('{$js_background_url}') no-repeat left center; background-size:128px 128px;" data-url="{$html_data_url}">

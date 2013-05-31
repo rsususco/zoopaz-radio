@@ -20,7 +20,7 @@ function toggleMusicOn(url) {
 function createPlaylistJs(url) {
     $.ajax({
         type: "GET",  
-        url: "index.php",  
+        url: "ajax.php",  
         data: "action=createPlaylistJs&dir=" + encodeURIComponent(url),
         success: function(html){
             var width = $("#content").width();
@@ -43,7 +43,7 @@ function openDir(url) {
     location.hash = "#/open/" + encodeURIComponent(url);
     $.ajax({
         type: "GET",  
-        url: "index.php",  
+        url: "ajax.php",  
         data: "action=openDir&url=" + encodeURIComponent(url) + "&dir=" + encodeURIComponent(url),
         success: function(text){
             $("#content").html(text);
@@ -75,7 +75,7 @@ function search(q) {
     }
     $.ajax({
         type: "GET",  
-        url: "index.php",  
+        url: "ajax.php",  
         data: "action=search&q=" + encodeURIComponent(q),
         success: function(html){
             $("#musicindex").html(html);
