@@ -83,6 +83,12 @@ function search(q) {
     });
 }
 
+function addToPlaylist(e) {
+    e.cancelBubble = true;
+    if (e.stopPropagation) e.stopPropagation();
+    alert($(e).data('url'));
+}
+
 $(document).ready(function(){
     init();
 
@@ -105,6 +111,10 @@ $(document).ready(function(){
     $(document).on("click", ".dirlinkcover", function() {
         openDir($(this).data('url'));
     });
+
+    //$(document).on("click", ".addtoplaylist", function(e) {
+    //    addToPlaylist(e);
+    //});
 
     prevtime = parseInt(new Date().getTime());
     // Waits 500 milliseconds before performing search.

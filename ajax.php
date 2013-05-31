@@ -11,34 +11,7 @@ require_once("lib/streams.lib.php");
 
 if ($_GET['action'] == "createPlaylistJs" && file_exists($defaultMp3Dir . '/' . $_GET['dir']) 
         && is_dir($defaultMp3Dir . '/' . $_GET['dir'])) {
-    $curdir = getcwd();
-
-    chdir($defaultMp3Dir . '/' . $_GET['dir']);
-
-    $a_files = glob("*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE);
-    $fileName = preg_replace("/[^a-zA-Z0-9-_\.]/", "_", $_GET['dir']);
-    $filename = preg_replace("/__+/", "_", $filename);
-
-    chdir($streamsDir);
-
-    $adir = explode("/", $_GET['dir']);
-    foreach ($adir as $adk=>$adv) {
-        $adir[$adk] = rawurlencode($adv);
-    }
-    $tdir = implode("/", $adir);
-    foreach ($a_files as $k=>$mp3) {
-        $enc_file = htmlspecialchars($_GET['dir'] . '/' . $mp3);
-
-        $amp3 = rawurlencode($mp3);
-        $directMusicUrl = "{$defaultMp3Url}/{$tdir}/{$amp3}";
-        $js_directMusicUrl = "{$defaultMp3Url}/{$tdir}/{$amp3}";
-
-        $js_mp3 = preg_replace("/'/", "\\\'", $mp3);
-        $playlist .= "{'file':'{$js_directMusicUrl}', 'title':'{$js_mp3}'},";
-    }
-
-    chdir($curdir);
-
+    $playlist = buildPlaylist($_GET['dir']);
     $a_indextmpl = array("playlist" => $playlist);
     $flashPlayer = apply_template("tmpl/player.tmpl", $a_indextmpl);
 

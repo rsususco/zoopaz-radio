@@ -1,4 +1,20 @@
 <?php
+
+if (!function_exists("handle")) {
+    function handle($input) {
+        print("<pre>");
+        if (is_array($input)) {
+            print_r($input);
+        } elseif(is_object($input)) {
+            var_dump($input);
+        } else {
+            $input = preg_replace("/\n*$/", "", $input);
+            print($input . "\n");
+        }
+        print("</pre>");
+    }
+}
+
 function openTheDir($dir) {
     $pageContent = "";
     // This is when you open a dir.
@@ -18,17 +34,32 @@ function buildIndex($a_files, $dirLink, $search=false) {
     foreach ($a_files as $k=>$file) {
         if (is_dir($file)) {
             $html_data_url = preg_replace("/\"/", "\\\"", $dirLink . $file);
+            $html_file = htmlspecialchars($file);
+
+
             if (file_exists("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}/small_montage.jpg")) {
                 $background_url = "{$GLOBALS['defaultMp3Url']}/{$dirLink}{$file}/small_montage.jpg";
                 $js_background_url = preg_replace("/'/", "\\'", $background_url);
-                $o['index'] .= "<li class=\"dirlink-cover dirlinkcover\" style=\"background:url('{$js_background_url}') no-repeat left center; background-size:128px 128px;\" data-url=\"" . $html_data_url . "\"><div class=\"linknamediv\"><a class=\"linkname\">" . htmlspecialchars($file) . "</a></div><div class=\"clear\"></div></li>";
             } else if (file_exists("{$GLOBALS['defaultMp3Dir']}/{$dirLink}{$file}/small_cover.jpg")) {
                 $background_url = "{$GLOBALS['defaultMp3Url']}/{$dirLink}{$file}/small_cover.jpg";
                 $js_background_url = preg_replace("/'/", "\\'", $background_url);
-                $o['index'] .= "<li class=\"dirlink-cover dirlinkcover\" style=\"background:url('{$js_background_url}') no-repeat left center; background-size:128px 128px;\" data-url=\"" . $html_data_url . "\"><div class=\"linknamediv\"><a class=\"linkname\">" . htmlspecialchars($file) . "</a></div><div class=\"clear\"></div></li>";
             } else {
-                $o['index'] .= "<li class=\"dirlink-cover dirlinkcover\" style=\"background:url('images/bigfolder.png') no-repeat left center; background-size:128px 128px;\" data-url=\"" . $html_data_url . "\"><div class=\"linknamediv\"><a class=\"linkname\">" . htmlspecialchars($file) . "</a></div><div class=\"clear\"></div></li>";
+                $background_url = "images/bigfolder.png";
+                $js_background_url = $background_url;
             }
+
+            $coverListItem = <<<eof
+<li class="dirlink-cover dirlinkcover" style="background:url('{$js_background_url}') no-repeat left center; background-size:128px 128px;" data-url="{$html_data_url}">
+    <div class="linknamediv">
+        <div class="dirtext">
+            <a class="linkname">{$html_file}</a> 
+            <span onclick="addToPlaylist(this)" class="linkbutton addtoplaylist" data-url="{$html_data_url}">add to playlist</span>
+        </div>
+    </div><!--div.linknamediv-->
+    <div class="clear"></div><!--div.clear-->
+</li>
+eof;
+            $o['index'] .= $coverListItem;
         } else {
             if (preg_match("/\.(m4a|mp3|ogg|flac)$/i", $file)) {
                 $o['isMp3'] = true;
@@ -289,17 +320,34 @@ function search($q) {
     return $index;
 }
 
-if (!function_exists("handle")) {
-    function handle($input) {
-        print("<pre>");
-        if (is_array($input)) {
-            print_r($input);
-        } elseif(is_object($input)) {
-            var_dump($input);
-        } else {
-            $input = preg_replace("/\n*$/", "", $input);
-            print($input . "\n");
-        }
-        print("</pre>");
+function buildPlaylist($dir, $playlist=null) {
+    $curdir = getcwd();
+
+    chdir($GLOBALS['defaultMp3Dir'] . '/' . $dir);
+
+    $a_files = glob("*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE);
+    $fileName = preg_replace("/[^a-zA-Z0-9-_\.]/", "_", $dir);
+    $filename = preg_replace("/__+/", "_", $filename);
+
+    chdir($GLOBALS['streamsDir']);
+
+    $adir = explode("/", $dir);
+    foreach ($adir as $adk=>$adv) {
+        $adir[$adk] = rawurlencode($adv);
     }
+    $tdir = implode("/", $adir);
+    foreach ($a_files as $k=>$mp3) {
+        $enc_file = htmlspecialchars($dir . '/' . $mp3);
+
+        $amp3 = rawurlencode($mp3);
+        $directMusicUrl = "{$GLOBALS['defaultMp3Url']}/{$tdir}/{$amp3}";
+        $js_directMusicUrl = "{$GLOBALS['defaultMp3Url']}/{$tdir}/{$amp3}";
+
+        $js_mp3 = preg_replace("/'/", "\\\'", $mp3);
+        $playlist .= "{'file':'{$js_directMusicUrl}', 'title':'{$js_mp3}'},";
+    }
+
+    chdir($curdir);
+
+    return $playlist;
 }

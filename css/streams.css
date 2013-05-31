@@ -233,7 +233,7 @@ div.drop {
 span.dropwrapper:hover div.drop {
     display:block;
     position:absolute;
-    top:1em;
+    top:1.5em;
     left:0;
     /* extra fancying style */
     overflow:auto;
@@ -294,10 +294,13 @@ tr td:first-child {
 }
 
 .dirlink-cover a, .dirlink-cover a:link {
-    position:absolute;
-    top:50px;
     text-align:left;
     text-decoration:none;
+}
+
+.dirtext {
+    position:absolute;
+    top:50px;
 }
 
 .dirlink-cover a img {
@@ -319,4 +322,16 @@ tr td:first-child {
     -webkit-box-shadow:3px 3px 0px silver;
     -o-box-shadow:3px 3px 0px silver;
     box-shadow:3px 3px 0px silver;
+}
+
+.linkbutton {
+    cursor:pointer;
+    padding:2px 4px;
+    font-size:0.9em;
+    border:1px solid #ececec;
+    background-color:#efefef;
+}
+
+.linkbutton:hover {
+    background-color:#c2e8f9;
 }
