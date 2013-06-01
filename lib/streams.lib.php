@@ -442,12 +442,13 @@ function buildPlayerHtml($playlist, $dir, $autoplay='false') {
 function addToPlaylist($dir) {
     $auth = unserialize($_SESSION['auth']);
     $currentPlaylistArray = json_decode(file_get_contents($auth->currentPlaylist));
-    $toAddArray = json_decode(buildPlaylistFromDir($dir));
+    $toAddJson = buildPlaylistFromDir($dir);
+    $toAddArray = json_decode($toAddJson);
     $newPlaylist = array_merge($currentPlaylistArray, $toAddArray);
     $newPlaylistJson = json_encode($newPlaylist);
     file_put_contents($auth->currentPlaylist, $newPlaylistJson);
     file_put_contents($auth->currentPlaylistDir, "/Custom playlist");
-    return json_encode(array("status"=>"ok"));
+    return $toAddJson;
 }
 
 function logout() {

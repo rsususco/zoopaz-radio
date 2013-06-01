@@ -97,16 +97,16 @@ function hideWorking() {
     $("#loading").css("display", "none").css("visibility", "hidden");
 }
 
-function addToPlaylist(e) {
+function addToPlaylist(e, thiz) {
     var event = e || window.event;
+    var player = document.getElementById("mediaplayer");
+    var playlist = player.getPlaylist();
     displayWorking();
-    $.ajax({
-        type: "GET",  
-        url: "ajax.php",  
-        data: "action=addToPlaylist&dir=" + encodeURIComponent($(event).data('url')),
-        success: function(html){
-            hideWorking();
-        }
+    $.getJSON("ajax.php?action=addToPlaylist&dir=" + encodeURIComponent($(thiz).data('url')), function(json){
+        $(json).each(function(i, audioFile) {
+            playlist.push(audioFile);
+        });
+        hideWorking();
     });
     event.stopPropagation();
     event.stopImmediatePropagation();
@@ -151,7 +151,7 @@ $(document).ready(function(){
     });
 
     $(document).on("click", ".addtoplaylist", function(e) {
-        addToPlaylist(this);
+        addToPlaylist(e, this);
     });
 
     $(document).on("click", "#logout-link", function(e) {

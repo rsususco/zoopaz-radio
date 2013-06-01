@@ -50,13 +50,20 @@ if ($_GET['action'] == "login") {
 
 if (!$auth->is_logged_in || $auth->tries > $auth->maxTries) {
     $_SESSION['auth'] = serialize($auth);
-    print($auth->message);
-    print <<<eof
+    $pageContent = <<<eof
+{$auth->message}
 <form action="{$_SERVER['PHP_SELF']}?action=login" method="post">
-username: <input {$auth->disabled} type="text" name="username" id="username" /><br />
-password: <input {$auth->disabled} type="password" name="password" id="password" /><br />
-<input {$auth->disabled} type="submit" value="login" />
+    <fieldset>
+        <legend>Login</legend>
+        <input {$auth->disabled} type="text" name="username" id="username" placeholder="Email..." /><br />
+        <input {$auth->disabled} type="password" name="password" id="password" placeholder="Password..." /><br />
+        <input {$auth->disabled} type="submit" value="login" class="button" />
+    </fieldset>
 </form>
 eof;
+    $a_indextmpl = array("viewport" => $viewport, "pageContent" => $pageContent, "message" => $message, "jsMobileVar" => $jsMobileVar, 
+            "mobileCss" => $mobileCss);
+    $html = apply_template("tmpl/index.tmpl", $a_indextmpl);
+    print($html);
     die();
 }

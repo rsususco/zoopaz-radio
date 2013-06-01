@@ -364,3 +364,26 @@ div#loading div#loadinginner {
 
 .logout-link {
 }
+
+fieldset, legend {
+    border:1px solid #ececec;
+}
+
+fieldset {
+    background-color:#efefef;
+}
+
+legend {
+    padding:8px;
+    background-color:#ececec;
+}
+
+#username, #password {
+    padding:4px;
+    margin:4px;
+    width:256px;
+}
+#username {
+}
+#password {
+}
