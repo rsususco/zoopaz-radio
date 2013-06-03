@@ -8,7 +8,7 @@ See screenshots for various views.
 Features
 ========
 
-* Supports mp3, ogg and m4a using jwplayer.
+* Supports mp3, ogg and m4a using jplayer.
 * Interface is fully JavaScript/Ajax powered.
 * Cover is manually managed.
 * Folder montages of cover art for top level folders.
