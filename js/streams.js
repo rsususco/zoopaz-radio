@@ -1,13 +1,11 @@
 function toggleMusicOn(url) {
     if ($(".m3uplayer").length > 0 && url == $("#theurl").data("url")) {
-        var player = document.getElementById("mediaplayer");
-        var playlist = player.getPlaylist();
-        if (playlist.length > 0) {
+        if ($(".jp-playlist ul li").length > 0) {
             if ($("#playbutton").html() == "Play") {
-                player.sendEvent('PLAY', 'true');
+                $(".jp-play").click();
                 $("#playbutton").html("Pause");
             } else {
-                player.sendEvent('PLAY', 'false');
+                $(".jp-pause").click();
                 $("#playbutton").html("Play");
             }
         }
@@ -99,12 +97,10 @@ function hideWorking() {
 
 function addToPlaylist(e, thiz) {
     var event = e || window.event;
-    var player = document.getElementById("mediaplayer");
-    var playlist = player.getPlaylist();
     displayWorking();
     $.getJSON("ajax.php?action=addToPlaylist&dir=" + encodeURIComponent($(thiz).data('url')), function(json){
         $(json).each(function(i, audioFile) {
-            playlist.push(audioFile);
+            myPlaylist.add(audioFile);
         });
         hideWorking();
     });
@@ -136,6 +132,14 @@ $(document).ready(function(){
     
     $(document).on("click", "#playbutton", function() {
         toggleMusicOn($(this).data('url'));
+    });
+
+    $(document).on("click", ".jp-play", function() {
+        $("#playbutton").html("Pause");
+    });
+
+    $(document).on("click", ".jp-pause,.jp-stop", function() {
+        $("#playbutton").html("Play");
     });
 
     $(document).on("click", ".droplink", function() {

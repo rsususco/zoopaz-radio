@@ -357,9 +357,6 @@ function buildPlaylistArrayFromDir($dir, $playlistArray=null) {
 
     $curdir = getcwd();
 
-    $fileName = preg_replace("/[^a-zA-Z0-9-_\.]/", "_", $dir);
-    $filename = preg_replace("/__+/", "_", $filename);
-
     chdir($cfg->streamsDir);
 
     $adir = explode("/", $dir);
@@ -371,14 +368,12 @@ function buildPlaylistArrayFromDir($dir, $playlistArray=null) {
 
     $a_files = buildArrayFromDir($dir);
     foreach ($a_files as $k=>$mp3) {
-        $enc_file = htmlspecialchars($dir . '/' . $mp3);
-
         $amp3 = rawurlencode($mp3);
         $directMusicUrl = "{$cfg->defaultMp3Url}/{$tdir}/{$amp3}";
         $js_directMusicUrl = "{$cfg->defaultMp3Url}/{$tdir}/{$amp3}";
 
         $js_mp3 = preg_replace("/'/", "\\\'", $mp3);
-        $playlist[] = array("file"=>$js_directMusicUrl, "title"=>$js_mp3);
+        $playlist[] = array("mp3"=>$js_directMusicUrl, "title"=>$js_mp3);
     }
 
     chdir($curdir);
@@ -426,7 +421,7 @@ function buildPlayerAlbumTitle($dir) {
 
 function buildPlayerHtml($playlist, $dir, $autoplay='false') {
     $a_indextmpl = array("playlist" => $playlist, "autoplay" => $autoplay);
-    $flashPlayer = apply_template("tmpl/player.tmpl", $a_indextmpl);
+    $flashPlayer = apply_template("tmpl/jplayer.tmpl", $a_indextmpl);
 
     // This #theurl span is required. Without it the player javascript
     // doesn't function. The pause button will just restart and play the list.
