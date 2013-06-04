@@ -140,9 +140,9 @@ function id3($dir, $file) {
         $albumart = "data:image/jpeg;base64," . base64_encode($id3['comments']['picture'][0]['data']);
     } else {
         if (file_exists("{$cfg->defaultMp3Dir}/{$dir}/cover.jpg")) {
-            $albumart = "{$cfg->defaultMp3Dir}/{$dir}/cover.jpg";
+            $albumart = "{$cfg->defaultMp3Url}/{$dir}/cover.jpg";
         } else {
-            $albumart = "images/bigfolder.jpg";
+            $albumart = "images/bigfolder.png";
         }
     }
     $o['albumart'] = $albumart;
@@ -441,7 +441,7 @@ function buildPlaylistArrayFromDir($dir, $playlistArray=null) {
         $directMusicUrl = "{$cfg->defaultMp3Url}/{$tdir}/{$amp3}";
         $js_directMusicUrl = "{$cfg->defaultMp3Url}/{$tdir}/{$amp3}";
         $id3 = id3(rawurldecode($tdir), rawurldecode($amp3));
-        $playlist[] = array("mp3"=>$js_directMusicUrl, "title"=>$id3['playlistTitle']);
+        $playlist[] = array("mp3"=>$js_directMusicUrl, "title"=>"<img style=\"width:2em; height:2em;\" src=\"{$id3['albumart']}\" /> {$id3['playlistTitle']}");
     }
 
     $o = array();
@@ -564,7 +564,7 @@ function getRandomPlaylistJson($numItems) {
         $dir = preg_replace("/^(.*)\/.*$/", "\${1}", $audioFile);
         $mp3 = preg_replace("/^.*\/(.*)$/", "\${1}", $audioFile);
         $id3 = id3($dir, $mp3);
-        $playlist[] = array("mp3"=>$js_directMusicUrl, "title"=>$id3['playlistTitle']);
+        $playlist[] = array("mp3"=>$js_directMusicUrl, "title"=>"<img style=\"width:2em; height:2em;\" src=\"{$id3['albumart']}\" /> {$id3['playlistTitle']}");
     }
     return json_encode($playlist);
 }

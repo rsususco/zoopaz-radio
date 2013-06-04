@@ -129,7 +129,7 @@ function playRadio(e) {
     $.ajax({
         type: "GET",  
         url: "ajax.php",  
-        data: "action=playRadio&num=15",
+        data: "action=playRadio&num=10",
         success: function(html){
             var width = $("#content").width();
             $("#content-player").html(html);
