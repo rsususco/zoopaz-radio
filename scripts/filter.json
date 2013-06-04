@@ -1,0 +1,14 @@
+{
+    "filter": { 
+        "include": [
+            "/include files that match this regular expressions/i",
+            "/and these files but not case sensitive/"
+        ],
+        "exclude": [
+            "/Christmas/i",
+            "/\\/Exclude This Directory\\//",
+            "/[0-9]/",
+            "/\\.m4a$/"
+        ]
+    }
+}

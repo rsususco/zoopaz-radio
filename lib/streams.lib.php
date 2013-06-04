@@ -20,10 +20,16 @@ function openTheDir($dir) {
     $pageContent = "";
     // This is when you open a dir.
     if (file_exists($cfg->defaultMp3Dir . "/" . $dir . "/cover.jpg")) {
-        // TODO: Break into HTML template
-        $pageContent .= "<div class=\"coverart\"><a target=\"_blank\" href=\"../music/{$dir}"
-                . "/cover.jpg\"><img src=\"../music/{$dir}/cover.jpg\" alt=\"cover\" /></a>"
-                . "</div><span class=\"clear\"></span>";
+
+        $adir = explode("/", $dir);
+        foreach ($adir as $k=>$d) {
+            $adir[$k] = rawurlencode($d);
+        }
+        $enc_dir = implode("/", $adir);
+
+        $enc_cover = $cfg->defaultMp3Url . singleSlashes("/" . $enc_dir . "/cover.jpg");
+
+        $pageContent .= "<div class=\"coverart\"><a target=\"_blank\" href=\"{$enc_cover}\"><img src=\"{$enc_cover}\" alt=\"cover\" /></a></div><span class=\"clear\"></span>";
     }
     $pageContent .= getFileIndex($dir);
     return $pageContent;
@@ -102,6 +108,7 @@ function getFileIndex ($dir) {
 
     chdir($chdir);
     $a_files = glob("*");
+    natcasesort($a_files);
 
     $o = buildIndex($a_files, $dirLink);
     $index = $o['index'];
@@ -193,6 +200,7 @@ function getDropDownAlbums($url) {
     $curdir = getcwd();
     chdir("{$cfg->defaultMp3Dir}/{$url}");
     $a_available_dirs = glob("*", GLOB_ONLYDIR);
+    natcasesort($a_available_dirs);
     $thelinks = "";
     foreach ($a_available_dirs as $k5=>$thisdir) {
         $enc_thisdir = urlencode($url . "/" . $thisdir);
@@ -347,6 +355,7 @@ function buildArrayFromDir($dir) {
     chdir($cfg->defaultMp3Dir . '/' . $dir);
 
     $a_files = glob("*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE);
+    natcasesort($a_files);
     chdir($curdir);
 
     return $a_files;
@@ -357,8 +366,6 @@ function buildPlaylistArrayFromDir($dir, $playlistArray=null) {
 
     $curdir = getcwd();
 
-    chdir($cfg->streamsDir);
-
     $adir = explode("/", $dir);
     foreach ($adir as $adk=>$adv) {
         $adir[$adk] = rawurlencode($adv);
@@ -367,6 +374,7 @@ function buildPlaylistArrayFromDir($dir, $playlistArray=null) {
     $playlist = array();
 
     $a_files = buildArrayFromDir($dir);
+    natcasesort($a_files);
     foreach ($a_files as $k=>$mp3) {
         $amp3 = rawurlencode($mp3);
         $directMusicUrl = "{$cfg->defaultMp3Url}/{$tdir}/{$amp3}";
@@ -376,8 +384,6 @@ function buildPlaylistArrayFromDir($dir, $playlistArray=null) {
         $js_mp3 = $mp3;
         $playlist[] = array("mp3"=>$js_directMusicUrl, "title"=>$js_mp3);
     }
-
-    chdir($curdir);
 
     $o = array();
     if ($playlistArray != "") {

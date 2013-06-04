@@ -63,6 +63,9 @@ This script is responsible for building the search index. Currently the search i
 not configurable. The search index is named `search.db` and should live in the root of the application
 adjacent to `index.php`.
 
+Note, you must use an absolute path to both `search.db` and `files.db`. The `$curdir` variable is there
+to assist.
+
 Open [`buildSearchIndex.php`](buildSearchIndex.php) and edit `$db = "{$curdir}/../streams/search.db";`
 
 Also edit `$fdb = "{$curdir}/../streams/files.db";` This file contains a list of all music files in your
@@ -71,7 +74,37 @@ library. It is used for the radio mode.
 Note, both `$fdb` and `$db` must point to `search.db` and `files.db` and those two files must be placed
 in the root of your application adjacent to `index.php`.
 
-You place [`buildSearchIndex.php`](buildSearchIndex.php) in the root of your music directory and point `$db` to the root of your
-streams install.
+You place [`buildSearchIndex.php`](buildSearchIndex.php) in the root of your music directory and point 
+`$db` and `$fdb` to the root of your streams install.
+
+Also copy `lib/stopwords.php` in the same directory as `buildSearchIndex.php`.
 
 Just run the script with `php buildSearchIndex.php` on the command line to build the index.
+
+### Radio filters
+
+You can also provide a filter filter to include or exclude files from radio play. Just include a filter
+string as below. Your filter regular expressions should go in the `include` and `exclude` arrays. This
+JSON string should be in a file named `filter.json` that is in the same directory as `buildSearchIndex.php`.
+
+If you need to include a backslash in a regular expression, you must use two. i.e. `\\`
+
+<pre>
+{
+    "filter": {
+        "include": [
+            "/Phish/i",
+            "/The Doors/i"
+        ],
+        "exclude": [
+            "/\\.m4a$/",
+            "/\\/Bogus Directory\\//i",
+            "/Christmas/",
+        ]
+    }
+}
+</pre>
+
+Include always comes before exclude. The include and exclude arrays should contain `preg_` style regular 
+expressions and should begin and end with slashes. e.g. `/^some regex$/i` and can include modifiers such 
+as `i` or `g`.
