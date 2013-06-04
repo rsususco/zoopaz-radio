@@ -13,6 +13,7 @@ Features
 ========
 
 * Supports mp3, ogg and m4a using jplayer.
+* ID3 support. Currently id3v2, but more to follow.
 * Interface is fully JavaScript/Ajax powered.
 * Playlists
 * Infinite random playlist in radio mode. List may be filtered.
@@ -20,6 +21,11 @@ Features
 * Folder montages of cover art for top level folders.
 * No database, but could easily be supported in the future.
 * Mobile support. Chrome for iOS is supported when screen locked.
+
+License
+=======
+
+See MIT license, [`LICENSE.md`](LICENSE.md).
 
 Dependencies
 ============
@@ -42,7 +48,6 @@ Todo
 ====
 
 * Browser history.
-* ID3.
 * Manage music from web.
 * Manage configuration from web.
 * More playlist functionality.

@@ -9,6 +9,7 @@ ob_start("ob_gzhandler");
 require_once("lib/Config.php");
 require_once("lib/ws-php-library.php");
 require_once("lib/stopwords.php");
+require_once("lib/getid3/getid3/getid3.php");
 require_once("lib/streams.lib.php");
 
 $viewport = "";

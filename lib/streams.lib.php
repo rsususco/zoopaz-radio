@@ -79,12 +79,73 @@ function buildIndex($a_files, $dirLink, $search=false) {
                 $filesize = human_filesize($file);
                 $displayFile = $file;
 
+                $id3 = id3($dirLink, $file);
+
                 // TODO: Break into HTML template
-                $o['index'] .= "<li class='mp3'><span class=\"text\"><a target=\"_blank\" href=\"index.php?action=download&amp;file=" . urlencode($dirLink . $file) . "\">" . htmlspecialchars($displayFile) . "</a> <code>{$filesize}</code></span></li>";
+                $o['index'] .= "<li class='mp3'><span class=\"text\"><a target=\"_blank\" href=\"index.php?action=download&amp;file=" . urlencode($dirLink . $file) . "\">" . htmlspecialchars($id3['title']) . "</a> <code>{$filesize}</code></span></li>";
                 continue;
             }
         }
     }
+    return $o;
+}
+
+function id3($dir, $file) {
+    $cfg = Config::getInstance();
+    $dir = ltrim(rtrim($dir, "/"), "/");
+    $file = ltrim(rtrim($file, "/"), "/");
+    $fullPath = $cfg->defaultMp3Dir . "/" . $dir . "/" . $file;
+    $getID3 = new getID3();
+    $pageEncoding = 'UTF-8';
+    $getID3->setOption(array("encoding" => $pageEncoding));
+    $id3 = $getID3->analyze($fullPath);
+    $o = array();
+
+    $o['playlistTitle'] = "";
+
+    // Set artist
+    if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2']) 
+            && isset($id3['tags']['id3v2']['artist']) && isset($id3['tags']['id3v2']['artist'][0])) {
+        $artist = $id3['tags']['id3v2']['artist'][0];
+        $o['playlistTitle'] .= $artist . " &rsaquo; ";
+    } else {
+        $artist = "Unknown";
+    }
+    $o['artist'] = $artist;
+
+    // Set album
+    if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2']) 
+            && isset($id3['tags']['id3v2']['album']) && isset($id3['tags']['id3v2']['album'][0])) {
+        $album = $id3['tags']['id3v2']['album'][0];
+        $o['playlistTitle'] .= $album . " &rsaquo; ";
+    } else {
+        $album = "Unknown";
+    }
+    $o['album'] = $album;
+
+    // Set title
+    if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2']) 
+            && isset($id3['tags']['id3v2']['title']) && isset($id3['tags']['id3v2']['title'][0])) {
+        $title = $id3['tags']['id3v2']['title'][0];
+    } else {
+        $title = $file;
+    }
+    $o['playlistTitle'] .= $title . " &rsaquo; ";
+    $o['playlistTitle'] = rtrim($o['playlistTitle'], " &rsaquo; ");
+    $o['title'] = $title;
+
+    // Set album art
+    if (isset($id3) && isset($id3['comments']) && isset($id3['comments']['picture']) 
+            && isset($id3['comments']['picture'][0]) && isset($id3['comments']['picture'][0]['data'])) {
+        $albumart = "data:image/jpeg;base64," . base64_encode($id3['comments']['picture'][0]['data']);
+    } else {
+        if (file_exists("{$cfg->defaultMp3Dir}/{$dir}/cover.jpg")) {
+            $albumart = "{$cfg->defaultMp3Dir}/{$dir}/cover.jpg";
+        } else {
+            $albumart = "images/bigfolder.jpg";
+        }
+    }
+    $o['albumart'] = $albumart;
     return $o;
 }
 
@@ -379,10 +440,8 @@ function buildPlaylistArrayFromDir($dir, $playlistArray=null) {
         $amp3 = rawurlencode($mp3);
         $directMusicUrl = "{$cfg->defaultMp3Url}/{$tdir}/{$amp3}";
         $js_directMusicUrl = "{$cfg->defaultMp3Url}/{$tdir}/{$amp3}";
-
-        //$js_mp3 = preg_replace("/'/", "\\\'", $mp3);
-        $js_mp3 = $mp3;
-        $playlist[] = array("mp3"=>$js_directMusicUrl, "title"=>$js_mp3);
+        $id3 = id3(rawurldecode($tdir), rawurldecode($amp3));
+        $playlist[] = array("mp3"=>$js_directMusicUrl, "title"=>$id3['playlistTitle']);
     }
 
     $o = array();
@@ -502,8 +561,10 @@ function getRandomPlaylistJson($numItems) {
         $directMusicUrl = "{$cfg->defaultMp3Url}/{$taudioFile}";
         $js_directMusicUrl = "{$cfg->defaultMp3Url}/{$taudioFile}";
 
-        $js_mp3 = preg_replace("/^.*\/(.*?)$/", "\${1}", $audioFile);
-        $playlist[] = array("mp3"=>$js_directMusicUrl, "title"=>$js_mp3);
+        $dir = preg_replace("/^(.*)\/.*$/", "\${1}", $audioFile);
+        $mp3 = preg_replace("/^.*\/(.*)$/", "\${1}", $audioFile);
+        $id3 = id3($dir, $mp3);
+        $playlist[] = array("mp3"=>$js_directMusicUrl, "title"=>$id3['playlistTitle']);
     }
     return json_encode($playlist);
 }

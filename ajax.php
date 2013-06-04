@@ -5,6 +5,7 @@ session_start();
 $sessid = session_id();
 
 require_once("lib/ws-php-library.php");
+require_once("lib/getid3/getid3/getid3.php");
 require_once("lib/streams.lib.php");
 require_once("lib/auth.php");
 require_once("lib/Config.php");
