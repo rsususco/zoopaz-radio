@@ -21,6 +21,18 @@ Features
 * No database, but could easily be supported in the future.
 * Mobile support. Chrome for iOS is supported when screen locked.
 
+Dependencies
+============
+
+* PHP 5.3+
+* Webserver with PHP support.
+* Flash or HTML5 capable web browser.
+* UNIX tools. These are required to build search and radio indexes as well as cover art. These portions of the application are managed from the command line. In the future they may move into the application.
+    * `mogrify` and `montage` from ImageMagick
+    * `find`
+    * Command line `php`
+    * `coverlovin.py` if you want to find album art automatically.
+
 Setup
 =====
 
