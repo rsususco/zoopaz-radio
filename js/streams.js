@@ -27,7 +27,7 @@ function createPlaylistJs(url) {
 
             // Currently the player only works in iPhone with the Chrome browser.
             // We remove this playlist because it is not functional while playing.
-            if (isMobile()) {
+            if (isMobile && isMobile()) {
                 $("#musicindex").remove();
                 $("#playercontrols").remove();
                 var newwidth = width - 16;
@@ -102,6 +102,7 @@ function addToPlaylist(e, thiz) {
         $(json).each(function(i, audioFile) {
             myPlaylist.add(audioFile);
         });
+        $(".album-title").text("Custom playlist");
         hideWorking();
     });
     event.stopPropagation();
@@ -119,6 +120,47 @@ function logout(e) {
         success: function(html){
             hideWorking();
             location.href="index.php";
+        }
+    });
+}
+
+function playRadio(e) {
+    displayWorking();
+    $.ajax({
+        type: "GET",  
+        url: "ajax.php",  
+        data: "action=playRadio&num=15",
+        success: function(html){
+            var width = $("#content").width();
+            $("#content-player").html(html);
+            $(".album-title").text("Radio");
+
+            // Currently the player only works in iPhone with the Chrome browser.
+            // We remove this playlist because it is not functional while playing.
+            if (isMobile && isMobile()) {
+                $("#musicindex").remove();
+                $("#playercontrols").remove();
+                var newwidth = width - 16;
+                //alert('newwidth = ' + newwidth);
+                $("#mediaplayer_wrapper").css("width", newwidth + "px");
+            }
+
+            // After each song plays, remove the first song.
+            $("#mediaplayer").bind($.jPlayer.event.ended, function(event) {
+                var current = myPlaylist.current;
+                myPlaylist.remove(current - 1);
+                $.getJSON("ajax.php?action=getRandomPlaylist&num=1", function(json){
+                    $(json).each(function(i, audioFile) {
+                        myPlaylist.add(audioFile);
+                    });
+                });
+            }).bind($.jPlayer.event.play, function(event) {
+                // TODO: This is kind of a bug, but shouldn't happen with normal usage.
+                //       If you click the last item in the list, after it's done, the player will stop.
+                console.log("This is where we'll add an item to the list if playing the last item.");
+            });;
+
+            hideWorking();
         }
     });
 }
@@ -160,6 +202,10 @@ $(document).ready(function(){
 
     $(document).on("click", "#logout-link", function(e) {
         logout(this);
+    });
+
+    $(document).on("click", "#radio-button", function(e) {
+        playRadio(e);
     });
 
     prevtime = parseInt(new Date().getTime());

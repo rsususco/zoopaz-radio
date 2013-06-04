@@ -65,6 +65,12 @@ adjacent to `index.php`.
 
 Open [`buildSearchIndex.php`](buildSearchIndex.php) and edit `$db = "{$curdir}/../streams/search.db";`
 
+Also edit `$fdb = "{$curdir}/../streams/files.db";` This file contains a list of all music files in your
+library. It is used for the radio mode.
+
+Note, both `$fdb` and `$db` must point to `search.db` and `files.db` and those two files must be placed
+in the root of your application adjacent to `index.php`.
+
 You place [`buildSearchIndex.php`](buildSearchIndex.php) in the root of your music directory and point `$db` to the root of your
 streams install.
 

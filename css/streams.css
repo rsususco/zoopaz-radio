@@ -90,12 +90,53 @@ li {
     -webkit-box-shadow:0px 0px 4px #ececec;
     -o-box-shadow:0px 0px 4px #ececec;
     box-shadow:0px 0px 4px #ececec;
+
+    -webkit-transition:-moz-box-shadow 1.0s ease-out;
+    -moz-transition:-moz-box-shadow 1.0s ease-out;
+    -o-transition:-moz-box-shadow 1.0s ease-out;
+    transition:-moz-box-shadow 1.0s ease-out;
+
+    -webkit-transition:-webkit-box-shadow 1.0s ease-out;
+    -moz-transition:-webkit-box-shadow 1.0s ease-out;
+    -o-transition:-webkit-box-shadow 1.0s ease-out;
+    transition:-webkit-box-shadow 1.0s ease-out;
+
+    -webkit-transition:-o-box-shadow 1.0s ease-out;
+    -moz-transition:-o-box-shadow 1.0s ease-out;
+    -o-transition:-o-box-shadow 1.0s ease-out;
+    transition:-o-box-shadow 1.0s ease-out;
+
+    -webkit-transition:box-shadow 1.0s ease-out;
+    -moz-transition:box-shadow 1.0s ease-out;
+    -o-transition:box-shadow 1.0s ease-out;
+    transition:box-shadow 1.0s ease-out;
 }
+
 .dirlinkcover:hover {
     -moz-box-shadow:0px 0px 4px #3181b7;
     -webkit-box-shadow:0px 0px 4px #3181b7;
     -o-box-shadow:0px 0px 4px #3181b7;
     box-shadow:0px 0px 4px #3181b7;
+
+    -webkit-transition:-moz-box-shadow 0.1s ease-in;
+    -moz-transition:-moz-box-shadow 0.1s ease-in;
+    -o-transition:-moz-box-shadow 0.1s ease-in;
+    transition:-moz-box-shadow 0.1s ease-in;
+
+    -webkit-transition:-webkit-box-shadow 0.1s ease-in;
+    -moz-transition:-webkit-box-shadow 0.1s ease-in;
+    -o-transition:-webkit-box-shadow 0.1s ease-in;
+    transition:-webkit-box-shadow 0.1s ease-in;
+
+    -webkit-transition:-o-box-shadow 0.1s ease-in;
+    -moz-transition:-o-box-shadow 0.1s ease-in;
+    -o-transition:-o-box-shadow 0.1s ease-in;
+    transition:-o-box-shadow 0.1s ease-in;
+
+    -webkit-transition:box-shadow 0.1s ease-in;
+    -moz-transition:box-shadow 0.1s ease-in;
+    -o-transition:box-shadow 0.1s ease-in;
+    transition:box-shadow 0.1s ease-in;
 }
 
 .dirlink, .enddir {

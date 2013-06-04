@@ -6,6 +6,7 @@ $f = file("dir.list");
 $c = 0;
 $curdir = getcwd();
 $db = "{$curdir}/../streams/search.db";
+$fdb = "{$curdir}/../streams/files.db";
 
 $stopwords = array(
 "as", "able", "about", "above", "according",
@@ -119,11 +120,14 @@ $stopwords = array(
 "yourself", "yourselves", "zero");
 
 file_put_contents($db, "");
+file_put_contents($fdb, "");
 
 foreach ($f as $dir) {
+    // Base directory
     $dir = trim($dir);
 
     $start = "$dir:::";
+    // List of files.
     $l = "";
 
     chdir($dir);
@@ -131,10 +135,17 @@ foreach ($f as $dir) {
     $files = glob("*");
     foreach ($files as $file) {
         $file = trim($file);
+        $orgFile = $file;
         $file = strtolower($file);
         if (preg_match("/^(cover|small_cover|montage|small_montage).jpg$/", $file)) {
             continue;
         }
+
+        // Audio file matched
+        if (preg_match("/\.(mp3|m4a|ogg)$/i", $orgFile)) {
+            file_put_contents($fdb, "{$dir}/{$orgFile}\n", FILE_APPEND);
+        }
+
         $file = preg_replace("/\.(mp3|jpg|ogg|m4a|jpeg|png|txt|pdf)/i", "", $file);
         $file = preg_replace("/[0-9~!@#\$%\^\&\*\(\)_\+`\-\.\']/", "", $file);
         $file = preg_replace("/\s\s*/", " ", $file);

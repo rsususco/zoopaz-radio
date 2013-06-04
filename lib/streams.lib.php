@@ -182,7 +182,7 @@ function buildSearchBox() {
     // TODO: Break into HTML template
     $html = <<<eof
 <div id="searchbox">
-    <input type="text" id="search" placeholder="Find some music..." /> <input class="button" id="logout-link" type="button" value="Logout" />
+    <input class="button" id="radio-button" type="button" value="Radio" /> <input class="button" id="logout-link" type="button" value="Logout" /> <input type="text" id="search" placeholder="Find some music..." />
 </div><!--div#searchbox-->
 eof;
     return $html;
@@ -372,7 +372,8 @@ function buildPlaylistArrayFromDir($dir, $playlistArray=null) {
         $directMusicUrl = "{$cfg->defaultMp3Url}/{$tdir}/{$amp3}";
         $js_directMusicUrl = "{$cfg->defaultMp3Url}/{$tdir}/{$amp3}";
 
-        $js_mp3 = preg_replace("/'/", "\\\'", $mp3);
+        //$js_mp3 = preg_replace("/'/", "\\\'", $mp3);
+        $js_mp3 = $mp3;
         $playlist[] = array("mp3"=>$js_directMusicUrl, "title"=>$js_mp3);
     }
 
@@ -450,4 +451,59 @@ function logout() {
     unset($_SESSION['auth']);
     unset($_SESSION);
     session_destroy();
+}
+
+function getRandomPlaylistJson($numItems) {
+    $cfg = Config::getInstance();
+    $db = "files.db";
+    $f = file($db);
+    $c = count($f);
+
+    // Return if there are now files in the database.
+    if ($c === 0) {
+        return json_encode(array());
+    }
+
+    // Make sure the passed values is an integer.
+    $numItems = intval($numItems);
+
+    // Make sure the passed number is less than the total number of files.
+    if ($c < $numItems) {
+        $numItems = $c;
+    } else if ($numItems === 0) {
+        $numItems = 1;
+    }
+
+    // Make sure $items is an array. array_rand() returns an integer if there's only 1 value.
+    if ($numItems === 1) {
+        $items = array(array_rand($f, $numItems));
+    } else {
+        $items = array_rand($f, $numItems);
+    }
+
+    // Build the playlist
+    $playlist = array();
+    foreach ($items as $k=>$key) {
+        $audioFile = trim($f[$key]);
+
+        // URLEncode dir/file
+        $aaudioFile = explode("/", $audioFile);
+        foreach ($aaudioFile as $adk=>$adv) {
+            $aaudioFile[$adk] = rawurlencode($adv);
+        }
+        $taudioFile = implode("/", $aaudioFile);
+
+        $directMusicUrl = "{$cfg->defaultMp3Url}/{$taudioFile}";
+        $js_directMusicUrl = "{$cfg->defaultMp3Url}/{$taudioFile}";
+
+        $js_mp3 = preg_replace("/^.*\/(.*?)$/", "\${1}", $audioFile);
+        $playlist[] = array("mp3"=>$js_directMusicUrl, "title"=>$js_mp3);
+    }
+    return json_encode($playlist);
+}
+
+function playRadio($num) {
+    $playlist = getRandomPlaylistJson($num);
+    $html = buildPlayerHtml($playlist, null, 'true');
+    return $html;
 }

@@ -51,8 +51,8 @@
 </div>
 <script type="text/javascript">
     $("#mediaplayer").jPlayer({
-        swfPath: "js/jquery/plugins/jplayer",
-        solution: "html, flash",
+        swfPath: "js/jplayer",
+        solution: "flash, html",
         supplied: "ogg, oga, mp3",
         backgroundColor: "white",
         size: {
@@ -61,7 +61,7 @@
         volume: 1
     });
 
-    var myPlaylist = new jPlayerPlaylist(
+    myPlaylist = new jPlayerPlaylist(
         {
             jPlayer: "#mediaplayer",
             cssSelectorAncestor: "#jp_container_1",
@@ -71,7 +71,7 @@
             playlistOptions: {
                 enableRemoveControls: false
             },
-            swfPath: "js/jquery/plugins/jplayer",
+            swfPath: "js/jplayer",
             supplied: "mp3, ogg, m4a"
         }
     );

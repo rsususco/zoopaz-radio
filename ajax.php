@@ -4,10 +4,10 @@ define("STREAMS", 1);
 session_start();
 $sessid = session_id();
 
-require_once("lib/auth.php");
-require_once("lib/Config.php");
 require_once("lib/ws-php-library.php");
 require_once("lib/streams.lib.php");
+require_once("lib/auth.php");
+require_once("lib/Config.php");
 
 $cfg = Config::getInstance();
 
@@ -47,6 +47,22 @@ if ($_GET['action'] == "createPlaylistJs" && file_exists($cfg->defaultMp3Dir . '
     ob_start();
     ob_implicit_flush(0);
     print($pageContent);
+    print_gzipped_page();
+    die();
+} else if ($_GET['action'] == "getRandomPlaylist") {
+    $pageContent = getRandomPlaylistJson($_GET['num']);
+
+    ob_start();
+    ob_implicit_flush(0);
+    print($pageContent);
+    print_gzipped_page();
+    die();
+} else if ($_GET['action'] == "playRadio") {
+    $html = playRadio($_GET['num']);
+
+    ob_start();
+    ob_implicit_flush(0);
+    print($html);
     print_gzipped_page();
     die();
 } else if ($_GET['action'] == "logout") {
