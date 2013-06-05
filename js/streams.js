@@ -162,7 +162,11 @@ function playRadio(e) {
             }
 
             // After each song plays, remove the first song.
-            $("#mediaplayer").bind($.jPlayer.event.ended, function(event) {
+            $("#mediaplayer").bind($.jPlayer.event.play, function(event) {
+                // TODO: This is kind of a bug, but shouldn't happen with normal usage.
+                //       If you click the last item in the list, after it's done, the player will stop.
+                console.log("Playlist size: " + myPlaylist.playlist.length + ", Current position: " + myPlaylist.current);
+            }).bind($.jPlayer.event.ended, function(event) {
                 var current = myPlaylist.current;
                 myPlaylist.remove(current - 1);
                 $.getJSON("ajax.php?action=getRandomPlaylist&num=1", function(json){
@@ -170,11 +174,7 @@ function playRadio(e) {
                         myPlaylist.add(audioFile);
                     });
                 });
-            }).bind($.jPlayer.event.play, function(event) {
-                // TODO: This is kind of a bug, but shouldn't happen with normal usage.
-                //       If you click the last item in the list, after it's done, the player will stop.
-                console.log("This is where we'll add an item to the list if playing the last item.");
-            });;
+            });
 
             hideWorking();
         }
