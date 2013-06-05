@@ -22,15 +22,6 @@ limitations under the License.
  * on using them.
  */
 
-#$httphost = isset($httphost) ? trigger_error('$httphost is already defined',E_USER_WARNING) : sv('HTTP_HOST');
-#$useragent = isset($useragent) ? trigger_error('$useragent is already defined',E_USER_WARNING) : sv('HTTP_USER_AGENT');
-#$phpself = isset($phpself) ? trigger_error('$phpself is already defined',E_USER_WARNING) : sv('PHP_SELF');
-#$qs = isset($qs) ? trigger_error('$qs is already defined',E_USER_WARNING) : sv('QUERY_STRING');
-#$referer = isset($referer) ? trigger_error('$referer is already defined',E_USER_WARNING) : sv('HTTP_REFERER');
-#$remoteip = isset($remoteip) ? trigger_error('$remoteip is already defined',E_USER_WARNING) : sv('REMOTE_ADDR');
-#$requesturi = isset($requesturi) ? trigger_error('$requesturi is already defined',E_USER_WARNING) : sv('REQUEST_URI');
-#$whoami = isset($whoami) ? trigger_error('$whoami is already defined',E_USER_WARNING) : preg_replace("/\n/","",`whoami`); # On UNIX this will give you the username of the account you're running under.
-
 /**
  * text_preformatting() takes a string and returns it with any spaces
  * converted to &#160; and any tabs (\t) turned into five &#160;

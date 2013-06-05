@@ -29,14 +29,8 @@ require_once("lib/Config.php");
 
 $cfg = Config::getInstance();
 
-if ($_GET['action'] == "createPlaylistJs" && file_exists($cfg->defaultMp3Dir . '/' . $_GET['dir']) 
-        && is_dir($cfg->defaultMp3Dir . '/' . $_GET['dir'])) {
-    $playlist = buildPlaylistFromDir($_GET['dir']);
-
-    file_put_contents($auth->currentPlaylist, $playlist);
-    file_put_contents($auth->currentPlaylistDir, $_GET['dir']);
-
-    $html = buildPlayerHtml($playlist, $_GET['dir'], 'true');
+if ($_GET['action'] == "createPlaylistJs") {
+    $html = createPlaylistJs($_GET['dir']);
 
     ob_start();
     ob_implicit_flush(0);
@@ -85,4 +79,14 @@ if ($_GET['action'] == "createPlaylistJs" && file_exists($cfg->defaultMp3Dir . '
     die();
 } else if ($_GET['action'] == "logout") {
     logout();
+    die();
+} else if ($_GET['action'] == "getAlbumArt") {
+    $id3 = id3($_GET['dir'], $_GET['file']);
+    $html = json_encode(array("albumart"=>$id3['albumart']));
+
+    ob_start();
+    ob_implicit_flush(0);
+    print($html);
+    print_gzipped_page();
+    die();
 }

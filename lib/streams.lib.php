@@ -45,7 +45,8 @@ function openTheDir($dir) {
 
         $enc_cover = $cfg->defaultMp3Url . singleSlashes("/" . $enc_dir . "/cover.jpg");
 
-        $pageContent .= "<div class=\"coverart\"><a target=\"_blank\" href=\"{$enc_cover}\"><img src=\"{$enc_cover}\" alt=\"cover\" /></a></div><span class=\"clear\"></span>";
+        $a_tmpl['enc_cover'] = $enc_cover;
+        $pageContent = apply_template("{$cfg->streamsRootDir}/tmpl/coverArt.tmpl", $a_tmpl);
     }
     $pageContent .= getFileIndex($dir);
     return $pageContent;
@@ -94,11 +95,10 @@ function buildIndex($a_files, $dirLink, $search=false) {
                 $o['isMp3'] = true;
                 $filesize = human_filesize($file);
                 $displayFile = $file;
-
                 $id3 = id3($dirLink, $file);
-
-                // TODO: Break into HTML template
-                $o['index'] .= "<li class='mp3'><span class=\"text\"><a target=\"_blank\" href=\"index.php?action=download&amp;file=" . urlencode($dirLink . $file) . "\">" . htmlspecialchars($id3['title']) . "</a> <code>{$filesize}</code></span></li>";
+                $filePath = rawurlencode($dirLink . $file);
+                $a_tmpl = array("filePath"=>$filePath, "title"=>$id3['title'], "filesize"=>$filesize);
+                $o['index'] .= apply_template("{$cfg->streamsRootDir}/tmpl/albumListItem.tmpl", $a_tmpl);
                 continue;
             }
         }
@@ -120,37 +120,42 @@ function id3($dir, $file) {
     $o['playlistTitle'] = "";
 
     // Set artist
-    if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2']) 
-            && isset($id3['tags']['id3v2']['artist']) && isset($id3['tags']['id3v2']['artist'][0])) {
-        $artist = $id3['tags']['id3v2']['artist'][0];
-        $o['playlistTitle'] .= $artist . " &rsaquo; ";
+    $artist = getId3Artist($id3);
+    if ($artist) {
+        $o['artist'] = $artist;
     } else {
-        $artist = "Unknown";
+        $o['artist'] = "Unknown";
     }
-    $o['artist'] = $artist;
+    $o['playlistTitle'] .= $o['artist'] . " &rsaquo; ";
 
     // Set album
-    if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2']) 
-            && isset($id3['tags']['id3v2']['album']) && isset($id3['tags']['id3v2']['album'][0])) {
-        $album = $id3['tags']['id3v2']['album'][0];
-        $o['playlistTitle'] .= $album . " &rsaquo; ";
+    $album = getId3Album($id3, $dir, $file);
+    if ($album) {
+        $o['album'] = $album;
     } else {
-        $album = "Unknown";
+        $o['album'] = "Unknown";
     }
-    $o['album'] = $album;
+    $o['playlistTitle'] .= $o['album'] . " &rsaquo; ";
 
     // Set title
-    if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2']) 
-            && isset($id3['tags']['id3v2']['title']) && isset($id3['tags']['id3v2']['title'][0])) {
-        $title = $id3['tags']['id3v2']['title'][0];
+    $title = getId3Title($id3);
+    if ($title) {
+        $o['title'] = $title;
     } else {
-        $title = $file;
+        $o['title'] = $file;
     }
-    $o['playlistTitle'] .= $title . " &rsaquo; ";
+    $o['playlistTitle'] .= $o['title'] . " &rsaquo; ";
+
     $o['playlistTitle'] = rtrim($o['playlistTitle'], " &rsaquo; ");
-    $o['title'] = $title;
 
     // Set album art
+    $o['albumart'] = getAlbumArt($id3, $dir);
+
+    return $o;
+}
+
+function getAlbumArt($id3, $dir=null) {
+    $cfg = Config::getInstance();
     if (isset($id3) && isset($id3['comments']) && isset($id3['comments']['picture']) 
             && isset($id3['comments']['picture'][0]) && isset($id3['comments']['picture'][0]['data'])) {
         $albumart = "data:image/jpeg;base64," . base64_encode($id3['comments']['picture'][0]['data']);
@@ -161,12 +166,40 @@ function id3($dir, $file) {
             $albumart = "images/bigfolder.png";
         }
     }
-    $o['albumart'] = $albumart;
-    return $o;
+    return $albumart;
+}
+
+function getId3Artist($id3) {
+    $artist = false;
+    if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2']) 
+            && isset($id3['tags']['id3v2']['artist']) && isset($id3['tags']['id3v2']['artist'][0])) {
+        $artist = $id3['tags']['id3v2']['artist'][0];
+    }
+    return $artist;
+}
+
+function getId3Album($id3, $dir=null, $file=null) {
+    $cfg = Config::getInstance();
+    $album = false;
+    if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2']) 
+            && isset($id3['tags']['id3v2']['album']) && isset($id3['tags']['id3v2']['album'][0])) {
+        $album = $id3['tags']['id3v2']['album'][0];
+    }
+    return $album;
+}
+
+function getId3Title($id3) {
+    $title = false;
+    if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2']) 
+            && isset($id3['tags']['id3v2']['title']) && isset($id3['tags']['id3v2']['title'][0])) {
+        $title = $id3['tags']['id3v2']['title'][0];
+    }
+    return $title;
 }
 
 function getFileIndex ($dir) {
     $cfg = Config::getInstance();
+    $auth = unserialize($_SESSION['auth']);
 
     $curdir = getcwd();
 
@@ -203,72 +236,77 @@ function getFileIndex ($dir) {
     $cnt = 0;
     $url = "";
     foreach ($a_dir as $k=>$backDir) {
-        if ($cnt === 0) {
-            $url .= $backDir;
-        } else {
-            $url .= "/{$backDir}";
-        }
-        $enc_url = urlencode($url);
-        // TODO: Break into HTML template
-        if ($dirCnt === 1) {
-            $a_dir[$k] = "<span class='filesize_type'><span class=\"enddir\">{$backDir}</span></span>";
+        $url .= "/{$backDir}";
+
+        $enc_url = rawurlencode($url);
+
+        $url = singleSlashes($url);
+        $thelinks = getDropDownAlbums($url);
+        $a_tmpl = array("backDir" => $backDir);
+        if ($dirCnt === 2) {
+            // This is every directory after Home that's not the last.
+            // Apply the 'enddir' class.
+            $a_dir[$k] = apply_template("{$cfg->streamsRootDir}/tmpl/breadcrumb-nodrop.tmpl", $a_tmpl);
         } else if ($cnt === ($dirCnt - 1)) {
-            // Have drop-down of all available directories under this directory.
-            $thelinks = getDropDownAlbums($url);
+            // This is called for every directory after the first clicked directory when in Home
+            // including the last directory.
             if ($thelinks) {
-                $a_dir[$k] = "<span class='filesize_type'><span class=\"dropwrapper\">{$backDir}<div class=\"drop\">{$thelinks}</div><!--div.drop--></span><!--span.dropwrapper--></span><!--span.filesize_type-->";
+                // This is any album in-between the first (first after Home) and last.
+                $a_tmpl['thelinks'] = $thelinks;
+                $a_dir[$k] = apply_template("{$cfg->streamsRootDir}/tmpl/breadcrumb-withdrop.tmpl", $a_tmpl);
             } else {
-                $a_dir[$k] = "<span class='filesize_type'><span class='enddir'>{$backDir}</span></span><!--span.filesize_type-->";
+                // This is the album you've opened that has music in it. Basically when we
+                // call getDropDownAlbums(), if there are now, assume you're at the end.
+                // Apply the 'enddir' class.
+                $a_dir[$k] = apply_template("{$cfg->streamsRootDir}/tmpl/breadcrumb-nodrop.tmpl", $a_tmpl);
             }
         } else {
+            // This is called for every directory.
             // Have drop-down of all available directories under this directory.
             if (isset($url) && strlen($url) > 0) {
-                $thelinks = getDropDownAlbums($url);
-                $a_dir[$k] = "<span class='filesize_type'><span class=\"dropwrapper\"><a class=\"dirlink\" data-url=\"{$url}\">{$backDir}</a><div class=\"drop\">{$thelinks}</div><!--div.drop--></span><!--span.dropwrapper--></span><!--span.filesize_type-->";
+                $a_tmpl['url'] = $url;
+                $a_tmpl['thelinks'] = $thelinks;
+                $a_dir[$k] = apply_template("{$cfg->streamsRootDir}/tmpl/breadcrumb-withdrop-and-url.tmpl", $a_tmpl);
             }
         }
         $cnt++;
     }
     $backDirs = implode(" ", $a_dir);
 
-    $createPlaylistLink = "";
-    if ($isMp3) {
-        $createPlaylistLink = "<a id=\"playbutton\" class=\"button\" style='cursor:pointer;' data-url=\"" . $dir . "\">Play</a>";
+    // TODO: Break into HTML template
+    $controls = "";
+    $a_navtmpl = array("backDirs" => $backDirs);
+    if (preg_match("/\//", $dir)) {
+        $controls = apply_template("{$cfg->streamsRootDir}/tmpl/navigation-nodirs.tmpl", $a_navtmpl);
+    } else if ($dir != "") {
+        $controls = apply_template("{$cfg->streamsRootDir}/tmpl/navigation-dirs.tmpl", $a_navtmpl);
+    } else {
+        $controls = "";
     }
 
-    // TODO: Break into HTML template
-    if (preg_match("/\//", $dir)) {
-        $previousDir = preg_replace("/^(.+)\/(.*)$/", "$1", $dir);
-        $previousDirListItem = "<li class='previousDirectoryListItem'><span class='filesize_type'><a class=\"dirlink\" data-url=\"\">Home</a></span> {$backDirs}</li>";
-        if (count(glob("{$cfg->defaultMp3Dir}/{$dir}/*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE)) > 0) {
-            $previousDirListItem .= "<li class='previousDirectoryListItem' id='playercontrols'>{$createPlaylistLink} <a class=\"button download\" target=\"_blank\" href=\"index.php?action=downloadAlbum&amp;dir=" . urlencode($dir) . "\" onclick=\"return confirm('After clicking ok, it may take some time to prepare your download - please wait - your download will begin shortly.')\">Download</a></li>";
-        }
-    } else if ($dir != "") {
-        $previousDir = $dir;
-        $previousDirListItem = "<li class='previousDirectoryListItem'>{$backDirs}</li>";
-        if (count(glob("{$cfg->defaultMp3Dir}/{$dir}/*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE)) > 0) {
-            $previousDirListItem .= "<li class='previousDirectoryListItem' id='playercontrols'>{$createPlaylistLink} <a class=\"button download\" target=\"_blank\" href=\"index.php?action=downloadAlbum&amp;dir=" . urlencode($dir) . "\" onclick=\"return confirm('After clicking ok, it may take some time to prepare your download - please wait - your download will begin shortly.')\">Download</a></li>";
-        }
-    } else {
-        $previousDir = "";
-        $previousDirListItem = "";
+    if ($isMp3) {
+        $controls .= buildPlayerControls($dir);
     }
 
     $searchBox = buildSearchBox();
 
-    // TODO: Break into HTML template
-    $index = "{$searchBox}<ul id=\"navlist\">{$previousDirListItem}</ul><div class=\"clear\"></div><ul id=\"musicindex\">" . $index . "</ul>";
+    $a_indextmpl = array("searchBox" => $searchBox, "controls" => $controls, "index" => $index);
+    $index = apply_template("{$cfg->streamsRootDir}/tmpl/fileIndex.tmpl", $a_indextmpl);
 
     return $index;
 }
 
+function buildPlayerControls($dir) {
+    $cfg = Config::getInstance();
+    $enc_dir = rawurlencode($dir);
+    $a_tmpl = array("dir" => $dir, "enc_dir" => $enc_dir);
+    $controls = apply_template("{$cfg->streamsRootDir}/tmpl/playerControls.tmpl", $a_tmpl);
+    return $controls;
+}
+
 function buildSearchBox() {
-    // TODO: Break into HTML template
-    $html = <<<eof
-<div id="searchbox">
-    <input class="button" id="radio-button" type="button" value="Radio" /> <input class="button" id="logout-link" type="button" value="Logout" /> <input type="text" id="search" placeholder="Find some music..." />
-</div><!--div#searchbox-->
-eof;
+    $cfg = Config::getInstance();
+    $html = apply_template("{$cfg->streamsRootDir}/tmpl/searchBox.tmpl", array());
     return $html;
 }
 
@@ -286,14 +324,15 @@ function getDropDownAlbums($url) {
         $html_thisdir = singleSlashes($html_thisdir);
         $enc_html_thisdir = preg_replace("/\"/", "\\\"", $url . "/" . $thisdir);
         $enc_html_thisdir = singleSlashes($enc_html_thisdir);
-        // TODO: Break into HTML template
+        $a_tmpl = array("html_dir" => $html_thisdir, "enc_html_dir" => $enc_html_thisdir);
         if (file_exists("{$thisdir}/small_montage.jpg")) {
-            $thelinks .= "<div class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"{$cfg->defaultMp3Url}/{$url}/{$html_thisdir}/small_montage.jpg\" alt=\"img\" /> <div class=\"droplink-text\">{$html_thisdir}</div></div>"; 
+            $a_tmpl['src_img'] = "{$cfg->defaultMp3Url}/{$url}/{$html_thisdir}/small_montage.jpg";
         } else if (file_exists("{$thisdir}/small_cover.jpg")) {
-            $thelinks .= "<div class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"{$cfg->defaultMp3Url}/{$url}/{$html_thisdir}/small_cover.jpg\" alt=\"img\" /> <div class=\"droplink-text\">{$html_thisdir}</div></div>"; 
+            $a_tmpl['src_img'] = "{$cfg->defaultMp3Url}/{$url}/{$html_thisdir}/small_cover.jpg";
         } else {
-            $thelinks .= "<div class=\"droplink\" data-url=\"{$enc_html_thisdir}\"><img class=\"dropimg\" src=\"images/bigfolder.png\" alt=\"img\" /> <div class=\"droplink-text\">{$html_thisdir}</div></div>"; 
+            $a_tmpl['src_img'] = "images/bigfolder.png";
         }
+        $thelinks .= apply_template("{$cfg->streamsRootDir}/tmpl/drop-albums.tmpl", $a_tmpl);
     }
     chdir($curdir);
     if ( $thelinks == "" ) {
@@ -443,21 +482,14 @@ function buildPlaylistArrayFromDir($dir, $playlistArray=null) {
 
     $curdir = getcwd();
 
-    $adir = explode("/", $dir);
-    foreach ($adir as $adk=>$adv) {
-        $adir[$adk] = rawurlencode($adv);
-    }
-    $tdir = implode("/", $adir);
+    $tdir = urlEncodeDir($dir);
+
     $playlist = array();
 
     $a_files = buildArrayFromDir($dir);
     natcasesort($a_files);
-    foreach ($a_files as $k=>$mp3) {
-        $amp3 = rawurlencode($mp3);
-        $directMusicUrl = "{$cfg->defaultMp3Url}/{$tdir}/{$amp3}";
-        $js_directMusicUrl = "{$cfg->defaultMp3Url}/{$tdir}/{$amp3}";
-        $id3 = id3(rawurldecode($tdir), rawurldecode($amp3));
-        $playlist[] = array("mp3"=>$js_directMusicUrl, "title"=>"<img style=\"width:2em; height:2em;\" src=\"{$id3['albumart']}\" /> {$id3['playlistTitle']}");
+    foreach ($a_files as $k=>$file) {
+        $playlist[] = buildPlaylistItemArray($dir, $file);
     }
 
     $o = array();
@@ -502,8 +534,9 @@ function buildPlayerAlbumTitle($dir) {
 }
 
 function buildPlayerHtml($playlist, $dir, $autoplay='false') {
+    $cfg = Config::getInstance();
     $a_indextmpl = array("playlist" => $playlist, "autoplay" => $autoplay);
-    $flashPlayer = apply_template("tmpl/jplayer.tmpl", $a_indextmpl);
+    $flashPlayer = apply_template("{$cfg->streamsRootDir}/tmpl/jplayer.tmpl", $a_indextmpl);
 
     // This #theurl span is required. Without it the player javascript
     // doesn't function. The pause button will just restart and play the list.
@@ -511,7 +544,7 @@ function buildPlayerHtml($playlist, $dir, $autoplay='false') {
     $esc_dir = preg_replace("/\"/", "\\\"", $esc_dir);
     $html_dir = buildPlayerAlbumTitle($dir);
     $a_contentplayertmpl = array("esc_dir"=>$esc_dir, "html_dir"=>$html_dir, "flashPlayer"=>$flashPlayer);
-    $html = apply_template("tmpl/contentPlayer.tmpl", $a_contentplayertmpl);
+    $html = apply_template("{$cfg->streamsRootDir}/tmpl/contentPlayer.tmpl", $a_contentplayertmpl);
 
     return $html;
 }
@@ -567,26 +600,65 @@ function getRandomPlaylistJson($numItems) {
     foreach ($items as $k=>$key) {
         $audioFile = trim($f[$key]);
 
-        // URLEncode dir/file
-        $aaudioFile = explode("/", $audioFile);
-        foreach ($aaudioFile as $adk=>$adv) {
-            $aaudioFile[$adk] = rawurlencode($adv);
-        }
-        $taudioFile = implode("/", $aaudioFile);
-
-        $directMusicUrl = "{$cfg->defaultMp3Url}/{$taudioFile}";
-        $js_directMusicUrl = "{$cfg->defaultMp3Url}/{$taudioFile}";
-
         $dir = preg_replace("/^(.*)\/.*$/", "\${1}", $audioFile);
-        $mp3 = preg_replace("/^.*\/(.*)$/", "\${1}", $audioFile);
-        $id3 = id3($dir, $mp3);
-        $playlist[] = array("mp3"=>$js_directMusicUrl, "title"=>"<img style=\"width:2em; height:2em;\" src=\"{$id3['albumart']}\" /> {$id3['playlistTitle']}");
+        $file = preg_replace("/^.*\/(.*)$/", "\${1}", $audioFile);
+
+        $playlist[] = buildPlaylistItemArray($dir, $file);
     }
+
     return json_encode($playlist);
+}
+
+function buildPlaylistItemArray($dir, $file) {
+    $cfg = Config::getInstance();
+
+    $dir = singleSlashes($dir);
+    $file = singleSlashes($file);
+    $enc_dir = urlEncodeDir($dir);
+    $enc_file = rawurlencode($file);
+
+    $directMusicUrl = "{$cfg->defaultMp3Url}/{$enc_dir}/{$enc_file}";
+    $js_directMusicUrl = "{$cfg->defaultMp3Url}/{$enc_dir}/{$enc_file}";
+    $id3 = id3($dir, $file);
+
+    $playlist = array("mp3"=>$js_directMusicUrl, "title"=>buildPlaylistTitle($id3, $dir, $file));
+    return $playlist;
+}
+
+function urlEncodeDir($dir) {
+    $adir = explode("/", $dir);
+    foreach ($adir as $adk=>$adv) {
+        $adir[$adk] = rawurlencode($adv);
+    }
+    $enc_dir = implode("/", $adir);
+    return $enc_dir;
+}
+
+function buildPlaylistTitle($id3, $dir, $file) {
+    // TODO: Make this a config - show album art in playlist. It does slow things down.
+    $enc_dir = preg_replace("/\"/", "\\\"", $dir);
+    $enc_file = preg_replace("/\"/", "\\\"", $file);
+    $a_tmpl = array("albumart"=>$id3['albumart'], "playlistTitle"=>$id3['playlistTitle'], 
+            "dir"=>$enc_dir, "file"=>$enc_file);
+    $html = apply_template("tmpl/playlistTitle.tmpl", $a_tmpl);
+    return $html;
 }
 
 function playRadio($num) {
     $playlist = getRandomPlaylistJson($num);
     $html = buildPlayerHtml($playlist, null, 'true');
+    return $html;
+}
+
+function createPlaylistJs($dir) {
+    $cfg = Config::getInstance();
+    $auth = unserialize($_SESSION['auth']);
+    $html = "";
+    if (file_exists($cfg->defaultMp3Dir . '/' . $dir) && is_dir($cfg->defaultMp3Dir . '/' . $dir)) {
+        $playlist = buildPlaylistFromDir($dir);
+        file_put_contents($auth->currentPlaylist, $playlist);
+        file_put_contents($auth->currentPlaylistDir, $dir);
+        $html = buildPlayerHtml($playlist, $dir, 'false');
+    }
     return $html;
 }

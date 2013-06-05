@@ -29,6 +29,8 @@ require_once("lib/stopwords.php");
 require_once("lib/getid3/getid3/getid3.php");
 require_once("lib/streams.lib.php");
 
+$cfg = Config::getInstance();
+
 $viewport = "";
 // Current the styles do not look well on phones
 // Coming soon.
@@ -39,12 +41,10 @@ if (preg_match("/(Android|iPhone|Phone|iPad|Nexus)/i", $_SERVER['HTTP_USER_AGENT
     $viewport = '<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />';
     $isMobile = true;
     $jsMobileVar = "isMobile = true;";
-    $mobileCss = apply_template("tmpl/mobile-css.tmpl", array());
+    $mobileCss = apply_template("{$cfg->streamsRootDir}/tmpl/mobile-css.tmpl", array());
 }
 
 require_once("lib/auth.php");
-
-$cfg = Config::getInstance();
 
 $currentPlaylist = null;
 if (file_exists($auth->currentPlaylist) && file_exists($auth->currentPlaylistDir)) {
@@ -77,12 +77,12 @@ if (isset($currentPlaylist) && strlen($currentPlaylist) > 0) {
     $html_dir = buildPlayerAlbumTitle($currentPlaylistDir);
     $flashPlayer = buildPlayerHtml($currentPlaylist, null, 'false');
     $a_contentplayertmpl = array("esc_dir"=>$esc_dir, "html_dir"=>$html_dir, "flashPlayer"=>$flashPlayer);
-    $contentPlayer = apply_template("tmpl/contentPlayer.tmpl", $a_contentplayertmpl);
+    $contentPlayer = apply_template("{$cfg->streamsRootDir}/tmpl/contentPlayer.tmpl", $a_contentplayertmpl);
 }
 
-$a_indextmpl = array("viewport" => $viewport, "pageContent" => $pageContent, "message" => $message, "jsMobileVar" => $jsMobileVar, 
-        "mobileCss" => $mobileCss, "content-player"=>$contentPlayer);
-$html = apply_template("tmpl/index.tmpl", $a_indextmpl);
+$a_indextmpl = array("viewport" => $viewport, "pageContent" => $pageContent, "message" => $message, 
+        "jsMobileVar" => $jsMobileVar, "mobileCss" => $mobileCss, "content-player"=>$contentPlayer);
+$html = apply_template("{$cfg->streamsRootDir}/tmpl/index.tmpl", $a_indextmpl);
 
 /**
  * Return page

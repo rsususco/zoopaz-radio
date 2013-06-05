@@ -32,6 +32,7 @@ function toggleMusicOn(url) {
 }
 
 function createPlaylistJs(url) {
+    isRadioMode = false;
     displayWorking();
     $.ajax({
         type: "GET",  
@@ -141,6 +142,7 @@ function logout(e) {
 }
 
 function playRadio(e) {
+    isRadioMode = true;
     displayWorking();
     $.ajax({
         type: "GET",  
@@ -150,6 +152,7 @@ function playRadio(e) {
             var width = $("#content").width();
             $("#content-player").html(html);
             $(".album-title").text("Radio");
+            $("#playbutton").remove();
 
             // Currently the player only works in iPhone with the Chrome browser.
             // We remove this playlist because it is not functional while playing.
@@ -157,7 +160,6 @@ function playRadio(e) {
                 $("#musicindex").remove();
                 $("#playercontrols").remove();
                 var newwidth = width - 16;
-                //alert('newwidth = ' + newwidth);
                 $("#mediaplayer_wrapper").css("width", newwidth + "px");
             }
 
@@ -181,6 +183,7 @@ function playRadio(e) {
     });
 }
 
+isRadioMode = false;
 $(document).ready(function(){
     init();
 
@@ -240,4 +243,17 @@ $(document).ready(function(){
             return;
         }
     });
+    
+    // This allows the playlist to load with cover art in a non-blocking manner.
+    $(".playlist-albumart").livequery(function() {
+        var thiz = $(this);
+        if (!thiz.data("done")) {
+            $.getJSON("ajax.php?action=getAlbumArt&dir=" + encodeURIComponent(thiz.data("dir"))
+                    + "&file=" + encodeURIComponent(thiz.data("file")), function(json) {
+                thiz.attr("src", json['albumart']);
+                thiz.data("done", true).css("width", "2em").css("height", "2em");
+            });
+        }
+    });
+
 });

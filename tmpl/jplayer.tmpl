@@ -49,17 +49,6 @@
     </div>
 </div>
 <script type="text/javascript">
-    $("#mediaplayer").jPlayer({
-        swfPath: "js/jplayer",
-        solution: "flash, html",
-        supplied: "mp3, ogg, oga, m4a",
-        backgroundColor: "white",
-        size: {
-            width: "800px",
-        },
-        volume: 1
-    });
-
     myPlaylist = new jPlayerPlaylist(
         {
             jPlayer: "#mediaplayer",
@@ -72,7 +61,28 @@
                 shuffleOnLoop: true
             },
             swfPath: "js/jplayer",
-            supplied: "mp3, ogg, m4a"
+            supplied: "mp3, ogg, m4a",
+            solution: "flash, html",
+            supplied: "mp3, ogg, oga, m4a",
+            backgroundColor: "white",
+            //preload: "auto",
+            size: {
+                width: "800px",
+            },
+            volume: 1,
+            keyEnabled: true,
+            ready: function() {
+                if (";:autoplay:;" == "true") {
+                    $(this).jPlayer("play");
+                }
+            },
+            play: function() {
+                if (isRadioMode) {
+                    //alert('in radio mode');
+                } else {
+                    //alert('not in radio mode');
+                }
+            }
         }
     );
 </script>
