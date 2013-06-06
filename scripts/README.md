@@ -77,7 +77,7 @@ in the root of your application adjacent to `index.php`.
 You place [`buildSearchIndex.php`](buildSearchIndex.php) in the root of your music directory and point 
 `$db` and `$fdb` to the root of your streams install.
 
-Also copy `lib/stopwords.php` in the same directory as `buildSearchIndex.php`.
+Also copy `lib/StopWords.php` in the same directory as `buildSearchIndex.php`.
 
 Just run the script with `php buildSearchIndex.php` on the command line to build the index.
 

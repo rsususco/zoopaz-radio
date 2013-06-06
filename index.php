@@ -24,12 +24,13 @@ $sessid = session_id();
 ob_start("ob_gzhandler");
 
 require_once("lib/Config.php");
-require_once("lib/ws-php-library.php");
-require_once("lib/stopwords.php");
+require_once("lib/WsTmpl.php");
 require_once("lib/getid3/getid3/getid3.php");
-require_once("lib/streams.lib.php");
+require_once("lib/Streams.php");
 
 $cfg = Config::getInstance();
+$t = new WsTmpl();
+$streams = new Streams();
 
 $viewport = "";
 // Current the styles do not look well on phones
@@ -41,7 +42,9 @@ if (preg_match("/(Android|iPhone|Phone|iPad|Nexus)/i", $_SERVER['HTTP_USER_AGENT
     $viewport = '<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />';
     $isMobile = true;
     $jsMobileVar = "isMobile = true;";
-    $mobileCss = apply_template("{$cfg->streamsRootDir}/tmpl/mobile-css.tmpl", array());
+    $t->setData(array());
+    $t->setFile("{$cfg->streamsRootDir}/tmpl/mobile-css.tmpl");
+    $mobileCss = $t->compile();
 }
 
 require_once("lib/auth.php");
@@ -63,7 +66,7 @@ if (isset($_SESSION['u']) && strlen($_SESSION['u']) > 0) {
 
 require_once("lib/actions.php");
 
-$pageContent .= openTheDir($_GET['dir']);
+$pageContent .= $streams->openTheDir($_GET['dir']);
 
 if (isset($_SESSION['message']) && $_SESSION['message'] != "") {
     $message = "<div class='message'>{$_SESSION['message']}</div>";
@@ -74,13 +77,15 @@ $contentPlayer = null;
 if (isset($currentPlaylist) && strlen($currentPlaylist) > 0) {
     $esc_dir = preg_replace("/\\\"/", "\"", $currentPlaylistDir);
     $esc_dir = preg_replace("/\"/", "\\\"", $esc_dir);
-    $html_dir = buildPlayerAlbumTitle($currentPlaylistDir);
-    $contentPlayer = buildPlayerHtml($currentPlaylist, $currentPlaylistDir, 'false');
+    $html_dir = $streams->buildPlayerAlbumTitle($currentPlaylistDir);
+    $contentPlayer = $streams->buildPlayerHtml($currentPlaylist, $currentPlaylistDir, 'false');
 }
 
-$a_indextmpl = array("viewport" => $viewport, "pageContent" => $pageContent, "message" => $message, 
-        "jsMobileVar" => $jsMobileVar, "mobileCss" => $mobileCss, "content-player"=>$contentPlayer);
-$html = apply_template("{$cfg->streamsRootDir}/tmpl/index.tmpl", $a_indextmpl);
+$t->setData(array("viewport" => $viewport, "pageContent" => $pageContent, 
+        "message" => $message, "jsMobileVar" => $jsMobileVar, 
+        "mobileCss" => $mobileCss, "content-player"=>$contentPlayer));
+$t->setFile("{$cfg->streamsRootDir}/tmpl/index.tmpl");
+$html = $t->compile();
 
 /**
  * Return page
@@ -88,4 +93,4 @@ $html = apply_template("{$cfg->streamsRootDir}/tmpl/index.tmpl", $a_indextmpl);
 ob_start();
 ob_implicit_flush(0);
 print($html);
-print_gzipped_page();
+$streams->print_gzipped_page();

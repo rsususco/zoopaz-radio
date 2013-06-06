@@ -68,11 +68,14 @@ if ($_GET['action'] == "login") {
 if (!$auth->is_logged_in || $auth->tries > $auth->maxTries) {
     $_SESSION['auth'] = serialize($auth);
 
-    $a_formtmpl = array("message"=>$auth->message, "self"=>$_SERVER['PHP_SELF'], "disabled"=>$auth->disabled);
-    $pageContent = apply_template("{$cfg->streamsRootDir}/tmpl/loginForm.tmpl", $a_formtmpl);
+    $t->setData(array("message"=>$auth->message, "self"=>$_SERVER['PHP_SELF'], "disabled"=>$auth->disabled));
+    $t->setFile("{$cfg->streamsRootDir}/tmpl/loginForm.tmpl");
+    $pageContent = $t->compile();
 
-    $a_indextmpl = array("viewport" => $viewport, "pageContent" => $pageContent, "message" => $message, "jsMobileVar" => $jsMobileVar, "mobileCss" => $mobileCss);
-    $html = apply_template("{$cfg->streamsRootDir}/tmpl/index.tmpl", $a_indextmpl);
+    $t->setData(array("viewport" => $viewport, "pageContent" => $pageContent, 
+            "message" => $message, "jsMobileVar" => $jsMobileVar, "mobileCss" => $mobileCss));
+    $t->setFile("{$cfg->streamsRootDir}/tmpl/index.tmpl");
+    $html = $t->compile();
 
     print($html);
     die();

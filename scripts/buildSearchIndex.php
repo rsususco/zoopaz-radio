@@ -34,7 +34,7 @@ $filter = "{$curdir}/filter.json";
  * End Config
  */
 
-require_once("stopwords.php");
+require_once("StopWords.php");
 
 $useFilter = false;
 if (file_exists($filter)) {
@@ -120,7 +120,7 @@ foreach ($f as $dir) {
         $afile = explode(" ", $file);
         $nfile = "";
         foreach ($afile as $cfile) {
-            if (in_array($cfile, $stopwords)) {
+            if (in_array($cfile, StopWords::$stopwords)) {
                 continue;
             }
             $nfile = "$cfile ";

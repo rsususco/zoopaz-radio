@@ -21,88 +21,56 @@ define("STREAMS", 1);
 session_start();
 $sessid = session_id();
 
-require_once("lib/ws-php-library.php");
-require_once("lib/getid3/getid3/getid3.php");
-require_once("lib/streams.lib.php");
-require_once("lib/auth.php");
 require_once("lib/Config.php");
+require_once("lib/WsTmpl.php");
+require_once("lib/getid3/getid3/getid3.php");
+require_once("lib/Streams.php");
+require_once("lib/auth.php");
 
 $cfg = Config::getInstance();
+$streams = new Streams();
+
+ob_start();
+ob_implicit_flush(0);
 
 if ($_GET['action'] == "createPlaylistJs") {
-    $html = createPlaylistJs($_GET['dir']);
-
-    ob_start();
-    ob_implicit_flush(0);
-    print($html);
-    print_gzipped_page();
+    print($streams->createPlaylistJs($_GET['dir']));
+    $streams->print_gzipped_page();
     die();
 } else if ($_GET['action'] == "openDir") {
-    $pageContent = openTheDir($_GET['dir']);
-
-    ob_start();
-    ob_implicit_flush(0);
-    print($pageContent);
-    print_gzipped_page();
+    print($streams->openTheDir($_GET['dir']));
+    $streams->print_gzipped_page();
     die();
 } else if ($_GET['action'] == "search") {
-    $pageContent = search($_GET['q']);
-
-    ob_start();
-    ob_implicit_flush(0);
-    print($pageContent);
-    print_gzipped_page();
+    print($streams->search($_GET['q']));
+    $streams->print_gzipped_page();
     die();
 } else if ($_GET['action'] == "clearPlaylist") {
-    $pageContent = clearPlaylist();
-
-    ob_start();
-    ob_implicit_flush(0);
-    print($pageContent);
-    print_gzipped_page();
+    print($streams->clearPlaylist());
+    $streams->print_gzipped_page();
     die();
 } else if ($_GET['action'] == "addToPlaylist") {
-    $pageContent = addToPlaylist($_GET['dir']);
-
-    ob_start();
-    ob_implicit_flush(0);
-    print($pageContent);
-    print_gzipped_page();
+    print($streams->addToPlaylist($_GET['dir']));
+    $streams->print_gzipped_page();
     die();
 } else if ($_GET['action'] == "addToPlaylistFile") {
-    $pageContent = addToPlaylistFile($_GET['dir'], $_GET['file']);
-
-    ob_start();
-    ob_implicit_flush(0);
-    print($pageContent);
-    print_gzipped_page();
+    print($streams->addToPlaylistFile($_GET['dir'], $_GET['file']));
+    $streams->print_gzipped_page();
     die();
 } else if ($_GET['action'] == "getRandomPlaylist") {
-    $pageContent = getRandomPlaylistJson($_GET['num']);
-
-    ob_start();
-    ob_implicit_flush(0);
-    print($pageContent);
-    print_gzipped_page();
+    print($streams->getRandomPlaylistJson($_GET['num']));
+    $streams->print_gzipped_page();
     die();
 } else if ($_GET['action'] == "playRadio") {
-    $html = playRadio($_GET['num']);
-
-    ob_start();
-    ob_implicit_flush(0);
-    print($html);
-    print_gzipped_page();
+    print($streams->playRadio($_GET['num']));
+    $streams->print_gzipped_page();
     die();
 } else if ($_GET['action'] == "logout") {
-    logout();
+    print($streams->logout());
     die();
 } else if ($_GET['action'] == "getAlbumArt") {
-    $id3 = id3($_GET['dir'], $_GET['file']);
-    $html = json_encode(array("albumart"=>$id3['albumart']));
-
-    ob_start();
-    ob_implicit_flush(0);
-    print($html);
-    print_gzipped_page();
+    $id3 = $streams->id3($_GET['dir'], $_GET['file']);
+    print(json_encode(array("albumart"=>$id3['albumart'])));
+    $streams->print_gzipped_page();
     die();
 }
