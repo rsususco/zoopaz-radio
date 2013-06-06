@@ -604,6 +604,13 @@ function addToPlaylistFile($dir, $file) {
     return $toAddJson;
 }
 
+function clearPlaylist() {
+    $auth = unserialize($_SESSION['auth']);
+    file_put_contents($auth->currentPlaylist, json_encode(array()));
+    file_put_contents($auth->currentPlaylistDir, "/Custom playlist");
+    return "{}";
+}
+
 function logout() {
     unset($_SESSION['auth']);
     unset($_SESSION);

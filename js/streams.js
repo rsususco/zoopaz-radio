@@ -111,6 +111,12 @@ function hideWorking() {
     $("#loading").css("display", "none").css("visibility", "hidden");
 }
 
+function clearPlaylist(e, thiz) {
+    $.getJSON("ajax.php?action=clearPlaylist", function() {
+        myPlaylist.remove();
+    });
+}
+
 function addToPlaylist(e, thiz) {
     var event = e || window.event;
     displayWorking();
@@ -224,6 +230,10 @@ $(document).ready(function(){
 
     $(document).on("click", ".addtoplaylist", function(e) {
         addToPlaylist(e, this);
+    });
+
+    $(document).on("click", ".jp-clear-playlist", function(e) {
+        clearPlaylist(e, this);
     });
 
     $(document).on("click", "#logout-link", function(e) {

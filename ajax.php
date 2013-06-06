@@ -53,6 +53,14 @@ if ($_GET['action'] == "createPlaylistJs") {
     print($pageContent);
     print_gzipped_page();
     die();
+} else if ($_GET['action'] == "clearPlaylist") {
+    $pageContent = clearPlaylist();
+
+    ob_start();
+    ob_implicit_flush(0);
+    print($pageContent);
+    print_gzipped_page();
+    die();
 } else if ($_GET['action'] == "addToPlaylist") {
     $pageContent = addToPlaylist($_GET['dir']);
 
