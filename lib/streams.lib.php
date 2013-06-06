@@ -98,7 +98,14 @@ function buildIndex($a_files, $dirLink, $search=false) {
                 $displayFile = $file;
                 $id3 = id3($dirLink, $file);
                 $filePath = rawurlencode($dirLink . $file);
-                $a_tmpl = array("filePath"=>$filePath, "title"=>$id3['title'], "filesize"=>$filesize);
+
+                // add-to-playlist for single files 
+                $html_dir = rtrim(preg_replace("/\"/", "\\\"", $dirLink), "/");
+                $html_file = preg_replace("/\"/", "\\\"", $file);
+                $a_playlisttmpl = array("html_dir" => $html_dir, "html_file" => $html_file, "type" => "file");
+                $addToPlaylist = apply_template("{$cfg->streamsRootDir}/tmpl/add-to-playlist.tmpl", $a_playlisttmpl);
+
+                $a_tmpl = array("filePath"=>$filePath, "title"=>$id3['title'], "filesize"=>$filesize, "add-to-playlist"=>$addToPlaylist);
                 $o['index'] .= apply_template("{$cfg->streamsRootDir}/tmpl/albumListItem.tmpl", $a_tmpl);
                 continue;
             }
@@ -501,12 +508,37 @@ function buildPlaylistArrayFromDir($dir, $playlistArray=null) {
     return $o;
 }
 
+function buildPlaylistArrayFromFile($dir, $file, $playlistArray=null) {
+    $cfg = Config::getInstance();
+
+    $curdir = getcwd();
+
+    $playlist = array();
+
+    $playlist[] = buildPlaylistItemArray($dir, $file);
+
+    $o = array();
+    if ($playlistArray != "") {
+        // TODO: Append the new $playlist onto $playlistArray and return.
+    } else {
+        $o = $playlist;
+    }
+
+    return $o;
+}
+
 /**
  * @param $playlistArray Pass in a playlist array, and build another playlist from $dir. Append
  * this new playlist to the one passed in and return a new playlist.
  */
 function buildPlaylistFromDir($dir, $playlistArray=null) {
     $playlist = buildPlaylistArrayFromDir($dir, $playlistArray);
+    $json = json_encode($playlist);
+    return $json;
+}
+
+function buildPlaylistFromFile($dir, $file, $playlistArray=null) {
+    $playlist = buildPlaylistArrayFromFile($dir, $file, $playlistArray);
     $json = json_encode($playlist);
     return $json;
 }
@@ -552,6 +584,18 @@ function addToPlaylist($dir) {
     $auth = unserialize($_SESSION['auth']);
     $currentPlaylistArray = json_decode(file_get_contents($auth->currentPlaylist));
     $toAddJson = buildPlaylistFromDir($dir);
+    $toAddArray = json_decode($toAddJson);
+    $newPlaylist = array_merge($currentPlaylistArray, $toAddArray);
+    $newPlaylistJson = json_encode($newPlaylist);
+    file_put_contents($auth->currentPlaylist, $newPlaylistJson);
+    file_put_contents($auth->currentPlaylistDir, "/Custom playlist");
+    return $toAddJson;
+}
+
+function addToPlaylistFile($dir, $file) {
+    $auth = unserialize($_SESSION['auth']);
+    $currentPlaylistArray = json_decode(file_get_contents($auth->currentPlaylist));
+    $toAddJson = buildPlaylistFromFile($dir, $file);
     $toAddArray = json_decode($toAddJson);
     $newPlaylist = array_merge($currentPlaylistArray, $toAddArray);
     $newPlaylistJson = json_encode($newPlaylist);

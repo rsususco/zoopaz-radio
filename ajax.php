@@ -61,6 +61,14 @@ if ($_GET['action'] == "createPlaylistJs") {
     print($pageContent);
     print_gzipped_page();
     die();
+} else if ($_GET['action'] == "addToPlaylistFile") {
+    $pageContent = addToPlaylistFile($_GET['dir'], $_GET['file']);
+
+    ob_start();
+    ob_implicit_flush(0);
+    print($pageContent);
+    print_gzipped_page();
+    die();
 } else if ($_GET['action'] == "getRandomPlaylist") {
     $pageContent = getRandomPlaylistJson($_GET['num']);
 

@@ -114,7 +114,15 @@ function hideWorking() {
 function addToPlaylist(e, thiz) {
     var event = e || window.event;
     displayWorking();
-    $.getJSON("ajax.php?action=addToPlaylist&dir=" + encodeURIComponent($(thiz).data('dir')), function(json){
+    var type = $(thiz).data("type");
+    var action = "";
+    if (type == "dir") {
+        action = "addToPlaylist";
+    } else if (type == "file") {
+        action = "addToPlaylistFile";
+    }
+    $.getJSON("ajax.php?action=" + action + "&dir=" + encodeURIComponent($(thiz).data("dir")) 
+            + "&file=" + encodeURIComponent($(thiz).data("file")), function(json){
         $(json).each(function(i, audioFile) {
             myPlaylist.add(audioFile);
         });
