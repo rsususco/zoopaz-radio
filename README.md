@@ -21,6 +21,7 @@ Features
 * Folder montages of cover art for top level folders.
 * No database, but could easily be supported in the future.
 * Mobile support. Chrome for iOS is supported when screen locked.
+* Keyboard shortcuts: Up/Down for Volume, Left/Right for Track Advancement, Space for Play/Pause, Backspace for Mute.
 
 License
 =======

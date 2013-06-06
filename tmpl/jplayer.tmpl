@@ -65,7 +65,6 @@
             solution: "flash, html",
             supplied: "mp3, ogg, oga, m4a",
             backgroundColor: "white",
-            //preload: "auto",
             size: {
                 width: "800px",
             },
@@ -79,8 +78,10 @@
             play: function() {
                 if (isRadioMode) {
                     //alert('in radio mode');
+                    console.log("radio on: Playlist size: " + myPlaylist.playlist.length + ", Current position: " + myPlaylist.current);
                 } else {
                     //alert('not in radio mode');
+                    console.log("radio off: Playlist size: " + myPlaylist.playlist.length + ", Current position: " + myPlaylist.current);
                 }
             }
         }

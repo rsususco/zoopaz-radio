@@ -167,7 +167,7 @@ function playRadio(e) {
             $("#mediaplayer").bind($.jPlayer.event.play, function(event) {
                 // TODO: This is kind of a bug, but shouldn't happen with normal usage.
                 //       If you click the last item in the list, after it's done, the player will stop.
-                console.log("Playlist size: " + myPlaylist.playlist.length + ", Current position: " + myPlaylist.current);
+                console.log("bind: Playlist size: " + myPlaylist.playlist.length + ", Current position: " + myPlaylist.current);
             }).bind($.jPlayer.event.ended, function(event) {
                 var current = myPlaylist.current;
                 myPlaylist.remove(current - 1);
