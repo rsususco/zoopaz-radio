@@ -62,6 +62,9 @@ class Config {
         // Turn on logging and log to $this->loglocation
         $this->logging = true;
         $this->logfile = "access.log";
+
+        // Valid music types
+        $this->validMusicTypes = array("mp3", "m4a", "ogg");
     }
 
     public static function getInstance () {
@@ -69,5 +72,21 @@ class Config {
             self::$singleton = new Config();
         }
         return self::$singleton;
+    }
+
+    function getValidMusicTypes($type) {
+        $ao = array();
+        $o = "";
+        foreach($this->validMusicTypes as $k=>$t) {
+            $t = trim($t);
+            $ao[] = strtolower($t);
+            $ao[] = strtoupper($t);
+        }
+        if ($type == "preg") {
+            $o = implode("|", $ao);
+        } else if ($type == "glob") {
+            $o = implode(",", $ao);
+        }
+        return $o;
     }
 }

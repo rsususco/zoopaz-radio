@@ -26,7 +26,6 @@ function toggleMusicOn(url) {
             }
         }
     } else {
-        //location.href = "index.php?action=createPlaylist&dir=" + encodeURIComponent(url);
         createPlaylistJs(url);
     }
 }

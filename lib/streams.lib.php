@@ -53,7 +53,8 @@ function openTheDir($dir) {
 }
 
 function containsMusic($dir) {
-    if (count(glob("{$dir}/*.{mp3,MP3,ogg,OGG,m4a,M4A}", GLOB_BRACE)) > 0) {
+    $cfg = Config::getInstance();
+    if (count(glob("{$dir}/*.{" . $cfg->getValidMusicTypes("glob") . "}", GLOB_BRACE)) > 0) {
         return true;
     }
     return false;
@@ -91,7 +92,7 @@ function buildIndex($a_files, $dirLink, $search=false) {
             $coverListItem = apply_template("{$cfg->streamsRootDir}/tmpl/coverListItem.tmpl", $a_indextmpl);
             $o['index'] .= $coverListItem;
         } else {
-            if (preg_match("/\.(m4a|mp3|ogg|flac)$/i", $file)) {
+            if (preg_match("/\.(" . $cfg->getValidMusicTypes("preg") . ")$/i", $file)) {
                 $o['isMp3'] = true;
                 $filesize = human_filesize($file);
                 $displayFile = $file;
@@ -438,7 +439,7 @@ function search($q) {
         $dir = $r[0];
 
         // Don't return directories that don't contain music.
-        $cntmusic = count(glob("{$cfg->defaultMp3Dir}/{$dir}/*.{mp3,MP3,ogg,OGG,m4a,M4A}", GLOB_BRACE));
+        $cntmusic = count(glob("{$cfg->defaultMp3Dir}/{$dir}/*.{" . $cfg->getValidMusicTypes("glob") . "}", GLOB_BRACE));
         if ($cntmusic < 1) {
             continue;
         }
@@ -470,7 +471,7 @@ function buildArrayFromDir($dir) {
 
     chdir($cfg->defaultMp3Dir . '/' . $dir);
 
-    $a_files = glob("*.{m4a,MPA,mp3,MP3,ogg,OGG}", GLOB_BRACE);
+    $a_files = glob("*.{" . $cfg->getValidMusicTypes("glob") . "}", GLOB_BRACE);
     natcasesort($a_files);
     chdir($curdir);
 

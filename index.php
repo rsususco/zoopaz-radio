@@ -75,9 +75,7 @@ if (isset($currentPlaylist) && strlen($currentPlaylist) > 0) {
     $esc_dir = preg_replace("/\\\"/", "\"", $currentPlaylistDir);
     $esc_dir = preg_replace("/\"/", "\\\"", $esc_dir);
     $html_dir = buildPlayerAlbumTitle($currentPlaylistDir);
-    $flashPlayer = buildPlayerHtml($currentPlaylist, null, 'false');
-    $a_contentplayertmpl = array("esc_dir"=>$esc_dir, "html_dir"=>$html_dir, "flashPlayer"=>$flashPlayer);
-    $contentPlayer = apply_template("{$cfg->streamsRootDir}/tmpl/contentPlayer.tmpl", $a_contentplayertmpl);
+    $contentPlayer = buildPlayerHtml($currentPlaylist, $currentPlaylistDir, 'false');
 }
 
 $a_indextmpl = array("viewport" => $viewport, "pageContent" => $pageContent, "message" => $message, 
