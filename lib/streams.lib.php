@@ -66,8 +66,8 @@ function buildIndex($a_files, $dirLink, $search=false) {
     $o['isMp3'] = false;
     foreach ($a_files as $k=>$file) {
         if (is_dir($file)) {
-            $html_data_url = preg_replace("/\"/", "\\\"", $dirLink . $file);
-            $html_file = htmlspecialchars($file);
+            $html_dir = preg_replace("/\"/", "\\\"", $dirLink . $file);
+            $html_end_dir = htmlspecialchars($file);
 
             if (file_exists("{$cfg->defaultMp3Dir}{$dirLink}{$file}/small_montage.jpg")) {
                 $background_url = "{$cfg->defaultMp3Url}{$dirLink}{$file}/small_montage.jpg";
@@ -80,14 +80,14 @@ function buildIndex($a_files, $dirLink, $search=false) {
                 $js_background_url = $background_url;
             }
 
-            // TODO: Break into HTML template
             $addToPlaylist = "";
             if (containsMusic("{$cfg->defaultMp3Dir}{$dirLink}{$file}")) {
-                $addToPlaylist = "<span class=\"linkbutton addtoplaylist\" data-url=\"{$html_data_url}\">add to playlist</span>";
+                $a_playlisttmpl = array("html_dir" => $html_dir, "type" => "dir");
+                $addToPlaylist = apply_template("{$cfg->streamsRootDir}/tmpl/add-to-playlist.tmpl", $a_playlisttmpl);
             }
 
-            $a_indextmpl = array("js_background_url"=>$js_background_url, "html_data_url"=>$html_data_url, 
-                    "html_file"=>$html_file, "addToPlaylist"=>$addToPlaylist);
+            $a_indextmpl = array("js_background_url"=>$js_background_url, "html_dir"=>$html_dir, 
+                    "html_end_dir"=>$html_end_dir, "addToPlaylist"=>$addToPlaylist);
             $coverListItem = apply_template("{$cfg->streamsRootDir}/tmpl/coverListItem.tmpl", $a_indextmpl);
             $o['index'] .= $coverListItem;
         } else {
@@ -481,8 +481,6 @@ function buildPlaylistArrayFromDir($dir, $playlistArray=null) {
     $cfg = Config::getInstance();
 
     $curdir = getcwd();
-
-    $tdir = urlEncodeDir($dir);
 
     $playlist = array();
 

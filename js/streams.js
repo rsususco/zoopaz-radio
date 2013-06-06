@@ -115,7 +115,7 @@ function hideWorking() {
 function addToPlaylist(e, thiz) {
     var event = e || window.event;
     displayWorking();
-    $.getJSON("ajax.php?action=addToPlaylist&dir=" + encodeURIComponent($(thiz).data('url')), function(json){
+    $.getJSON("ajax.php?action=addToPlaylist&dir=" + encodeURIComponent($(thiz).data('dir')), function(json){
         $(json).each(function(i, audioFile) {
             myPlaylist.add(audioFile);
         });
