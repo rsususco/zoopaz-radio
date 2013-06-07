@@ -12,9 +12,9 @@ See screenshots for various views.
 Screenshots
 ===========
 
-[![Alt text](screenshots/thumb_screenshot1.png)](screenshots/screenshot1.png) &nbsp; [![Alt text](screenshots/thumb_screenshot2.png)](screenshots/screenshot2.png) &nbsp; [![Alt text](screenshots/thumb_screenshot3.png)](screenshots/screenshot3.png)
+<a target="_blank" href="screenshots/screenshot1.png"><img src="screenshots/thumb_screenshot1.png" alt="screenshot1.png" /></a> &nbsp; <a target="_blank" href="screenshots/screenshot2.png"><img src="screenshots/thumb_screenshot2.png" alt="screenshot2.png" /></a> &nbsp; <a target="_blank" href="screenshots/screenshot3.png"><img src="screenshots/thumb_screenshot3.png" alt="screenshot3.png" /></a>
 
-[![Alt text](screenshots/thumb_screenshot4.png)](screenshots/screenshot4.png) &nbsp; [![Alt text](screenshots/thumb_screenshot5.png)](screenshots/screenshot5.png) &nbsp; [![Alt text](screenshots/thumb_screenshot5.png)](screenshots/screenshot6.png)
+<a target="_blank" href="screenshots/screenshot4.png"><img src="screenshots/thumb_screenshot4.png" alt="screenshot4.png" /></a> &nbsp; <a target="_blank" href="screenshots/screenshot5.png"><img src="screenshots/thumb_screenshot5.png" alt="screenshot5.png" /></a> &nbsp; <a target="_blank" href="screenshots/screenshot6.png"><img src="screenshots/thumb_screenshot6.png" alt="screenshot6.png" /></a>
 
 Features
 ========
