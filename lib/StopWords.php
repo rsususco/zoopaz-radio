@@ -125,4 +125,6 @@ class StopWords {
             "within", "without", "wont", "wonder", "would",
             "wouldnt", "yes", "yet", "you", "youd",
             "youll", "youre", "youve", "your", "yours",
-            "yourself", "yourselves", "zero");
+            "yourself", "yourselves", "zero"
+    );
+}
