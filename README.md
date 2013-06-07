@@ -12,11 +12,9 @@ See screenshots for various views.
 Screenshots
 ===========
 
-[![Alt text](screenshots/thumb_screenshot1.png)](screenshots/screenshot1.png) [![Alt text](screenshots/thumb_screenshot2.png)](screenshots/screenshot2.png) [![Alt text](screenshots/thumb_screenshot3.png)](screenshots/screenshot3.png)
+[![Alt text](screenshots/thumb_screenshot1.png)](screenshots/screenshot1.png) &nbsp; [![Alt text](screenshots/thumb_screenshot2.png)](screenshots/screenshot2.png) &nbsp; [![Alt text](screenshots/thumb_screenshot3.png)](screenshots/screenshot3.png)
 
-[![Alt text](screenshots/thumb_screenshot4.png)](screenshots/screenshot4.png) [![Alt text](screenshots/thumb_screenshot5.png)](screenshots/screenshot5.png) [![Alt text](screenshots/thumb_screenshot5.png)](screenshots/screenshot6.png)
-
-<a style="border:2px solid gray;" target="_blank" href="screenshots/screenshot1.png"><img src="screenshots/thumb_screenshot1.png" /></a>
+[![Alt text](screenshots/thumb_screenshot4.png)](screenshots/screenshot4.png) &nbsp; [![Alt text](screenshots/thumb_screenshot5.png)](screenshots/screenshot5.png) &nbsp; [![Alt text](screenshots/thumb_screenshot5.png)](screenshots/screenshot6.png)
 
 Features
 ========
