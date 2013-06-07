@@ -18,11 +18,11 @@ Features
 ========
 
 * Supports mp3, ogg, m4a and other formats supported by jPlayer and your browser.
-* ID3 support. Currently id3v2, but more to follow.
+* ID3 support. Currently ID3v2, but more to follow.
 * Interface is fully JavaScript/Ajax powered.
 * Playlists
 * Infinite random playlist in radio mode. List may be filtered. In radio mode a random playlist will be generated and as each song finishes it's popped off the list and a new song is pushed onto the end.
-* Album art is manually managed. ID3 support to be implemented.
+* Album art is pulled from ID3v2 first and falls back to a `cover.jpg` image in each folder.
 * Folder montages of cover art for top level folders.
 * No database, but could easily be supported in the future.
 * Mobile support. Chrome for iOS is supported when screen locked.

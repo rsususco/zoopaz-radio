@@ -45,6 +45,9 @@ Run the script on the command line with `php getAlbumArt.php`
 This script creates montage.jpg and `small_montage.jpg` images in directories that contain no mp3s or oggs.
 It uses the Imagemagick command `montage`, as well as the UNIX `find` command.
 
+Currently, even though cover art shown in the web app is pulled from the ID3v2 tags, montages can only be
+generated if a `cover.jpg` exists in each album.
+
 You copy this script into your top level images directory along with the white.jpg image.
 
 When you run it, it will find all directories, and then for each directory it will look for `small_cover.jpg`
