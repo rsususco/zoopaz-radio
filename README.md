@@ -16,7 +16,7 @@ Screenshots
 
 [![Alt text](screenshots/thumb_screenshot4.png)](screenshots/screenshot4.png) [![Alt text](screenshots/thumb_screenshot5.png)](screenshots/screenshot5.png) [![Alt text](screenshots/thumb_screenshot5.png)](screenshots/screenshot6.png)
 
-<a target="_blank" href="screenshots/screenshot1.png"><img style="border:2px solid gray;" src="screenshots/thumb_screenshot1.png" /></a>
+<a style="border:2px solid gray;" target="_blank" href="screenshots/screenshot1.png"><img src="screenshots/thumb_screenshot1.png" /></a>
 
 Features
 ========
