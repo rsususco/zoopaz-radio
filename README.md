@@ -9,6 +9,11 @@ song is pushed onto the end.
 
 See screenshots for various views.
 
+Screenshots
+===========
+
+[![Alt text](screenshots/screenshot1.png)](screenshots/screenshot1.png) [![Alt text](screenshots/screenshot2.png)](screenshots/screenshot2.png) [![Alt text](screenshots/screenshot3.png)](screenshots/screenshot3.png) [![Alt text](screenshots/screenshot4.png)](screenshots/screenshot4.png) [![Alt text](screenshots/screenshot5.png)](screenshots/screenshot5.png) [![Alt text](screenshots/screenshot5.png)](screenshots/screenshot6.png)
+
 Features
 ========
 
