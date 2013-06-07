@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-exec("find . -type d | sed 's/^\.\///g' > dir.list");
+exec("find . -type d | sed 's/^\.\///g' | sort -h > dir.list");
 
 $f = file("dir.list");
 $c = 0;
