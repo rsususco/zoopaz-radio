@@ -17,7 +17,7 @@ Screenshots
 Features
 ========
 
-* Supports mp3, ogg and m4a using jplayer.
+* Supports mp3, ogg, m4a and other formats supported by jPlayer and your browser.
 * ID3 support. Currently id3v2, but more to follow.
 * Interface is fully JavaScript/Ajax powered.
 * Playlists
