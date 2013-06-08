@@ -62,9 +62,9 @@ function openDir(url) {
         type: "GET",  
         url: "ajax.php",  
         data: "action=openDir&url=" + encodeURIComponent(url) + "&dir=" + encodeURIComponent(url),
-        success: function(text){
+        success: function(html){
+            $("#content").html(html);
             hideWorking();
-            $("#content").html(text);
         }
     });
 }
@@ -112,7 +112,7 @@ function hideWorking() {
 }
 
 function clearPlaylist(e, thiz) {
-    $.getJSON("ajax.php?action=clearPlaylist", function() {
+    $.getJSON("ajax.php?action=clearPlaylist", function(json) {
         myPlaylist.remove();
     });
 }

@@ -1,4 +1,4 @@
-<?php if (!defined("STREAMS")) { die('CONFIG NOT DEFINED'); }
+<?php
 
 /*
 Copyright 2013 Weldon Sams

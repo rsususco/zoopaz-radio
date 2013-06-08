@@ -16,17 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-/**
- * Configuration
- */
-require_once("lib/Auth.php");
-
-if (!isset($_SESSION['auth'])) {
-    $auth = new Auth();
-} else {
-    $auth = unserialize($_SESSION['auth']);
-}
-
 if ($auth->tries > $auth->maxTries) {
     $auth->message = "<strong>Locked out.</strong><br />";
     $auth->disabled = "disabled='disabled'";

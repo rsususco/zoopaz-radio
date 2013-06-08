@@ -1,0 +1,10 @@
+{
+    "filter": { 
+        "include": [
+        ],
+        "exclude": [
+            "/\\.m4a$/i",
+            "/\\.ogg$/i"
+        ]
+    }
+}

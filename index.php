@@ -16,8 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-define("STREAMS", 1);
-
 session_start();
 $sessid = session_id();
 
@@ -27,10 +25,21 @@ require_once("lib/Config.php");
 require_once("lib/WsTmpl.php");
 require_once("lib/getid3/getid3/getid3.php");
 require_once("lib/Streams.php");
+require_once("lib/Auth.php");
+if (!isset($_SESSION['auth'])) {
+    $auth = new Auth();
+} else {
+    $auth = unserialize($_SESSION['auth']);
+}
 
 $cfg = Config::getInstance();
 $t = new WsTmpl();
-$streams = new Streams();
+$streams = new Streams($cfg, $auth, $t);
+
+if ($cfg->logging) {
+    file_put_contents($cfg->logfile, date("Y-m-d H:i:s") . " ::: " . $_SERVER['REMOTE_ADDR'] . " ::: " 
+            . $_SERVER['HTTP_USER_AGENT'] . " ::: " . $_SERVER['REQUEST_URI'] . "\n", FILE_APPEND);
+}
 
 $viewport = "";
 // Current the styles do not look well on phones
@@ -53,11 +62,6 @@ $currentPlaylist = null;
 if (file_exists($auth->currentPlaylist) && file_exists($auth->currentPlaylistDir)) {
     $currentPlaylist = file_get_contents($auth->currentPlaylist);
     $currentPlaylistDir = file_get_contents($auth->currentPlaylistDir);
-}
-
-if ($cfg->logging) {
-    file_put_contents($cfg->logfile, date("Y-m-d H:i:s") . " ::: " . $_SERVER['REMOTE_ADDR'] . " ::: " 
-            . $_SERVER['HTTP_USER_AGENT'] . " ::: " . $_SERVER['REQUEST_URI'] . "\n", FILE_APPEND);
 }
 
 if (isset($_SESSION['u']) && strlen($_SESSION['u']) > 0) {

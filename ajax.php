@@ -16,8 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-define("STREAMS", 1);
-
 session_start();
 $sessid = session_id();
 
@@ -25,10 +23,22 @@ require_once("lib/Config.php");
 require_once("lib/WsTmpl.php");
 require_once("lib/getid3/getid3/getid3.php");
 require_once("lib/Streams.php");
-require_once("lib/auth.php");
+
+require_once("lib/Auth.php");
+if (!isset($_SESSION['auth'])) {
+    $auth = new Auth();
+} else {
+    $auth = unserialize($_SESSION['auth']);
+}
+
+if (!$auth->is_logged_in) {
+    print(json_encode(array("is_logged_in" => false)));
+    die();
+}
 
 $cfg = Config::getInstance();
-$streams = new Streams();
+$t = new WsTmpl();
+$streams = new Streams($cfg, $auth, $t);
 
 ob_start();
 ob_implicit_flush(0);
