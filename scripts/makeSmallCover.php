@@ -29,10 +29,10 @@ foreach ($f as $k=>$l) {
     $l = trim($l);
     $l2 = preg_replace("/cover.jpg$/", "small_cover.jpg", $l);
 
-    print("[" . ($k+1) . " of $c] {$l}\n");
-
     if (file_exists($l)) {
         if (!file_exists($l2)) {
+            print("[" . ($k+1) . " of $c] {$l}\n");
+
             print("copy($l, $l2);\n");
             copy($l, $l2);
 

@@ -232,6 +232,9 @@ class Streams {
         if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2']) 
                 && isset($id3['tags']['id3v2']['artist']) && isset($id3['tags']['id3v2']['artist'][0])) {
             $artist = $id3['tags']['id3v2']['artist'][0];
+        } else if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v1']) 
+                && isset($id3['tags']['id3v1']['artist']) && isset($id3['tags']['id3v1']['artist'][0])) {
+            $artist = $id3['tags']['id3v1']['artist'][0];
         }
         return $artist;
     }
@@ -244,6 +247,9 @@ class Streams {
         if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2']) 
                 && isset($id3['tags']['id3v2']['album']) && isset($id3['tags']['id3v2']['album'][0])) {
             $album = $id3['tags']['id3v2']['album'][0];
+        } else if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v1']) 
+                && isset($id3['tags']['id3v1']['album']) && isset($id3['tags']['id3v1']['album'][0])) {
+            $album = $id3['tags']['id3v1']['album'][0];
         }
         return $album;
     }
@@ -256,6 +262,9 @@ class Streams {
         if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2']) 
                 && isset($id3['tags']['id3v2']['title']) && isset($id3['tags']['id3v2']['title'][0])) {
             $title = $id3['tags']['id3v2']['title'][0];
+        } else if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v1']) 
+                && isset($id3['tags']['id3v1']['title']) && isset($id3['tags']['id3v1']['title'][0])) {
+            $title = $id3['tags']['id3v1']['title'][0];
         }
         return $title;
     }

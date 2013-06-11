@@ -11,6 +11,7 @@ Each script is a command line script.
 * [`buildSearchIndex.php`](buildSearchIndex.php)
 * [`move.php`](move.php)
 * [`remove_trailing_spaces.php`](remove_trailing_spaces.php)
+* [`update_id3.php`](update_id3.php)
 
 *All of these scripts should be ran from the `scripts` directory.*
 
@@ -131,3 +132,16 @@ A help script that removes trailing spaces from files. Just drop it into a folde
 of files and run it.
 
 _Examine the script and make backups of the files before running._
+
+
+[`update_id3.php`](update_id3.php)
+----------------------------------
+This script can be used to update ID3 tags. Currently you must update `$base` so that it's an absolute
+directory to the root of this application.
+
+Then you put this script in a directory that contains mp3s.
+
+As the script stands, if an ID3v2 tag exists, it will take the basic properties - artist, album, title, track and year and
+set them and strip all other tags.
+
+This was useful to me, but the script serves as a skeleton if you need to update ID3 tags in another fashion.
