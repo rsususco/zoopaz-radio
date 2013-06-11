@@ -16,13 +16,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+require_once("../lib/Config.php");
+$cfg = Config::getInstance();
+$curdir = getcwd();
+
+chdir($cfg->defaultMp3Dir);
 exec("find . -iname 'cover.jpg' > cover.list");
 
 $f = file("cover.list");
-
-foreach ($f as $l) {
+$c = count($f);
+foreach ($f as $k=>$l) {
     $l = trim($l);
     $l2 = preg_replace("/cover.jpg$/", "small_cover.jpg", $l);
+
+    print("[" . ($k+1) . " of $c] {$l}\n");
 
     if (file_exists($l)) {
         if (!file_exists($l2)) {
@@ -37,3 +44,6 @@ foreach ($f as $l) {
         }
     }
 }
+
+unlink("cover.list");
+chdir($curdir);

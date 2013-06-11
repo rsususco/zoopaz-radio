@@ -5,6 +5,11 @@ require_once("../lib/getid3/getid3/getid3.php");
 require_once("../lib/WsTmpl.php");
 require_once("../lib/Streams.php");
 
+/**
+ * There are several instances of <code>file_put_contents()</code> that
+ * are commented out. This is to aid for template updates. The expected
+ * output html files will need to be updated.
+ */
 class WsTmplTest extends PHPUnit_Framework_TestCase {
 
     private $cfg;

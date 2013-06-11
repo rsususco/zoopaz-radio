@@ -21,6 +21,11 @@ if (isset($_SERVER['argv'][1])) {
     $in = $_SERVER['argv'][1];
 }
 
+require_once("../lib/Config.php");
+$cfg = Config::getInstance();
+$curdir = getcwd();
+
+chdir($cfg->defaultMp3Dir);
 exec("find {$in} -type d > dir.list");
 
 function traverse($dir) {
@@ -39,13 +44,15 @@ function traverse($dir) {
 
 file_put_contents("m.list", "");
 $f = file("dir.list");
+$numDirs = count($f);
 $c = 0;
+$realC = 0;
 foreach ($f as $dir) {
     $dir = trim($dir);
     $mp3 = glob($dir . "/*.{m4a,M4A,mp3,MP3,ogg,OGG}", GLOB_BRACE);
     $n = count($mp3);
     if ($n < 1) {
-        print("$c: Need a montage in $dir\n");
+        print("[" . ($realC+1) . " of {$numDirs} (actual montage created {$c}]\nNeed a montage in {$dir}\n\n");
         file_put_contents("m.list", "");
         traverse($dir);
         $m = file("m.list");
@@ -67,7 +74,7 @@ foreach ($f as $dir) {
                 $montage .= "\"$mon\" ";
             }
             for ($i=$k+1; $i<$splice; $i++) {
-                $montage .= "white.jpg ";
+                $montage .= "{$cfg->streamsRootDir}/scripts/white.jpg ";
             }
             if ($montage != "") {
                 print("system(\"montage -geometry 175x175+{$splicer}+{$splicer} {$montage} \\\"{$dir}/montage.jpg\\\"\");\n");
@@ -82,4 +89,8 @@ foreach ($f as $dir) {
         }
         $c++;
     }
+    $realC++;
 }
+
+unlink("dir.list");
+chdir($curdir);

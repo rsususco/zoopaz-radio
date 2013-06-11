@@ -34,38 +34,37 @@ file. If two slashes are in the file, it will take the last two directories of t
 just the last directory. For example, *The Doors > LA Woman*, would be printed.
 
 
-Edit [`lib/config.php`](lib/config.php).
-----------------------------------------
+[`lib/example.Config.php`](lib/example.Config.php)
+--------------------------------------------------
+Copy [`lib/example.Config.php`](lib/example.Config.php) to [`lib/Config.php`](lib/Config.php) and edit.
 
-See [`lib/config.php`](lib/config.php) - your music will live in `$defaultMp3Dir`. This directory
-should contain any level of sub-directories, but at least one more level
-deep. e.g. If `$defaultMp3Dir = '/var/www/mymusic'`, then put your music in
-`/var/www/mymusic/myalbum`. e.g. `/var/www/mymusic/Rock/TheDoors/L.A.Woman/*.mp3`
+See [`lib/example.Config.php`](lib/example.Config.php) - your music will live in `$defaultMp3Dir`. This directory
+should contain any level of sub-directories, but at least one more level deep. 
+e.g. If `$defaultMp3Dir = '/var/www/mymusic'`, then put your music in `/var/www/mymusic/myalbum`. 
+e.g. `/var/www/mymusic/Rock/TheDoors/L.A.Woman/*.mp3`
 
 See [`scripts/README.md`](scripts/README.md) for information on cover art. Each album can have a cover
 art image. The directory of music should contain two images,
 `cover.jpg` and `small_cover.jpg`
 
 
-Edit `auth.php`, or disable.
-----------------------------
+[`lib/example.Auth.php`](lib/example.Auth.php)
+----------------------------------------------
+Copy [`lib/example.Auth.php`](lib/example.Auth.php) to [`lib/Auth.php`](lib/Auth.php) and edit.
 
 This is a very simple authentication mechanism. It contains an array of username and password combinations.
-Just comment out `require_once("auth.php")` in [`index.php`](index.php) if you want to turn it off.
-By default after 6 unsuccessful tries you get locked out.
 
 See [`scripts/README.md`](scripts/README.md) for information on setting up the search index.
 
 
-Set search threshold
---------------------
-
-This is the time before an ajax query pings the server, by setting the
-`threshold` variable in [`js/streams.js`](js/streams.js). Current it is set to 500 milliseconds.
-You may need to tune this setting depending on your traffic or preference.
+[`lib/example.streams.config.js`](lib/example.streams.config.js)
+----------------------------------------------------------------
+Copy [`lib/example.streams.config.js`](lib/example.streams.config.js) to [`lib/streams.config.js`](lib/streams.config.js) and edit.
 
 
 Test application
 ----------------
 
 Open this application in a web browser and begin streaming your music.
+
+e.g. http://www.example.com/streams/

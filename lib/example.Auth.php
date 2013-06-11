@@ -17,10 +17,14 @@ limitations under the License.
 */
 
 class Auth {
+    // The maximum number of tries a user has to login before being locked out.
     public $maxTries = 100;
 
     // Set your users here.
-    public $users = array("user1"=>"user1pass", "user2"=>"user2pass");
+    // Note: This will be replaced for something more secure and configurable in the
+    //       future. It is just here to provide playlists for individual users and
+    //       in no way provides real world security.
+    public $users = array("user1"=>"user1password", "user2"=>"user2password");
 
     // start: login
     public $year;

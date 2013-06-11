@@ -25,10 +25,21 @@ if ( $_SERVER['argv'][1] == "-o" ) {
     $overwrite = "-o";
 }
 
+require_once("../lib/Config.php");
+$cfg = Config::getInstance();
+$curdir = getcwd();
+
+chdir($cfg->defaultMp3Dir);
 exec("find . -type d > dir.list");
 $a_list = file("dir.list");
 
+$c = count($a_list);
 foreach ($a_list as $k=>$v) {
+    print("[$k of $c] {$v}\n");
     $v = preg_replace("/(\r|\n)/", "", $v);
     exec("/root/src/coverlovin/coverlovin.py \"{$v}\" --size=large --name=cover.jpg {$overwrite}");
+    print("\n");
 }
+
+unlink("dir.list");
+chdir($curdir);

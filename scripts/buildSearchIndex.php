@@ -16,25 +16,31 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-exec("find . -type d | sed 's/^\.\///g' | sort -h > dir.list");
+require_once("../lib/Config.php");
+require_once("StopWords.php");
 
-$f = file("dir.list");
-$c = 0;
+$cfg = Config::getInstance();
 $curdir = getcwd();
+
+chdir($cfg->defaultMp3Dir);
+exec("find . -type d | sed 's/^\.\///g' | sort -h > {$cfg->streamsRootDir}/scripts/dir.list");
+
+$f = file("{$cfg->streamsRootDir}/scripts/dir.list");
+$c = 0;
 
 /**
  * Config
  */
 
-$db = "{$curdir}/../streams/search.db";
-$fdb = "{$curdir}/../streams/files.db";
+// You must prepend $curdir to $db, $fdb and $filter or make them absolute paths. These 
+// variables will be accessed from various directies and cannot then be relative paths.
+$db = "{$curdir}/../search.db";
+$fdb = "{$curdir}/../files.db";
 $filter = "{$curdir}/filter.json";
 
 /**
  * End Config
  */
-
-require_once("StopWords.php");
 
 $useFilter = false;
 if (file_exists($filter)) {
@@ -86,7 +92,8 @@ function filter($f, $a) {
 file_put_contents($db, "");
 file_put_contents($fdb, "");
 
-foreach ($f as $dir) {
+$c = count($f);
+foreach ($f as $k=>$dir) {
     // Base directory
     $dir = trim($dir);
 
@@ -94,7 +101,10 @@ foreach ($f as $dir) {
     // List of files.
     $l = "";
 
-    chdir($dir);
+    if ($dir != ".") {
+        print("[" . ($k+1) . " of $c] " . getcwd() . "/$dir\n");
+        chdir($dir);
+    }
 
     $files = glob("*");
     foreach ($files as $file) {
@@ -107,7 +117,7 @@ foreach ($f as $dir) {
 
         // Audio file matched
         if (preg_match("/\.(mp3|m4a|ogg)$/i", $orgFile)) {
-            if (filter($dir . "/" . $orgFile, $a_filter)) {
+            if ($useFilter && filter($dir . "/" . $orgFile, $a_filter)) {
                 continue;
             }
             file_put_contents($fdb, "{$dir}/{$orgFile}\n", FILE_APPEND);
@@ -138,5 +148,8 @@ foreach ($f as $dir) {
 
     file_put_contents($db, "{$l}\n", FILE_APPEND);
 
-    chdir($curdir);
+    chdir($cfg->defaultMp3Dir);
 }
+
+unlink("{$cfg->streamsRootDir}/scripts/dir.list");
+chdir($curdir);

@@ -157,10 +157,11 @@ function logout(e) {
 function playRadio(e) {
     isRadioMode = true;
     displayWorking();
+    var cfg = new StreamsConfig();
     $.ajax({
         type: "GET",  
         url: "ajax.php",  
-        data: "action=playRadio&num=10",
+        data: "action=playRadio&num=" + cfg.numberOfRadioItems,
         success: function(html){
             var width = $("#content").width();
             $("#content-player").html(html);
@@ -170,10 +171,12 @@ function playRadio(e) {
             // Currently the player only works in iPhone with the Chrome browser.
             // We remove this playlist because it is not functional while playing.
             if (isMobile && isMobile()) {
-                $("#musicindex").remove();
+                var musicIndex = $("#musicindex");
                 $("#playercontrols").remove();
                 var newwidth = width - 16;
                 $("#mediaplayer_wrapper").css("width", newwidth + "px");
+                var playerTop = $("#mediaplayer").offset().top;
+                window.scrollTo(0, playerTop);
             }
 
             // After each song plays, remove the first song.
@@ -246,17 +249,17 @@ $(document).ready(function(){
 
     prevtime = parseInt(new Date().getTime());
     // Waits 500 milliseconds before performing search.
-    threshold = 500;
     curval = "";
     t = null;
     $(document).on("keyup", "#search", function() {
+        var cfg = new StreamsConfig();
         curval = $(this).val();
         curtime = parseInt(new Date().getTime());
-        next = prevtime + threshold;
+        next = prevtime + cfg.searchThreshold;
         prevtime = curtime;
         if (curtime < next) {
             clearTimeout(t);
-            t = setTimeout("search('" + curval + "')", threshold);
+            t = setTimeout("search('" + curval + "')", cfg.searchThreshold);
             return;
         }
     });

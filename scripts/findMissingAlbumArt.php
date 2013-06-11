@@ -16,10 +16,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/**
+ * Config
+ */
+
+// This should be an absolute path.
+$f = getcwd() . "/findMissingAlbumArt.log";
+
+/**
+ * End Config
+ */
+
+require_once("../lib/Config.php");
+$cfg = Config::getInstance();
+$curdir = getcwd();
+
+chdir($cfg->defaultMp3Dir);
 exec("find . -type d > dir.list");
 $a_list = file("dir.list");
-
-$f = "findMissingAlbumArt.log";
 
 file_put_contents($f, "");
 
@@ -44,4 +58,7 @@ foreach ($a_list as $k=>$v) {
     }
 }
 
+print("See {$f} for missing album art log.\n");
+
 unlink("dir.list");
+chdir($curdir);
