@@ -64,6 +64,7 @@ Copy [`lib/example.streams.config.js`](lib/example.streams.config.js) to [`lib/s
 
 Test application
 ----------------
+Some functions search as search and radio require running [`scripts/buildSearchIndex.php`](scripts/buildSearchIndex.php).
 
 Open this application in a web browser and begin streaming your music.
 
