@@ -1,10 +1,11 @@
 Changes
 =======
 
-1.8.0 to x.y.z
+1.8.0 to 1.9.0
 --------------
 * Support for ID3v1.
 * Added script that assists with setting ID3 tags. [`scripts/update_id3.php`](scripts/update_id3.php)
+* Search supports multiple quoted strings and they appear first in the list.
 
 1.7.4 to 1.8.0
 --------------

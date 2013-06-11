@@ -504,6 +504,33 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, $got);
     }
 
+    public function testBuildSearchQuery() {
+        $regex = "test monkey";
+        $expected = array("test monkey", "test", "monkey");
+        $got = $this->streams->buildSearchQuery($regex);
+        $this->assertEquals($expected, $got);
+
+        $regex = "test monkey \"free trial\"";
+        $expected = array($regex, "free trial", "test", "monkey");
+        $got = $this->streams->buildSearchQuery($regex);
+        $this->assertEquals($expected, $got);
+
+        $regex = "\"mysql oracle mongodb\" test monkey \"free trial\"";
+        $expected = array($regex, "mysql oracle mongodb", "free trial", "test", "monkey");
+        $got = $this->streams->buildSearchQuery($regex);
+        $this->assertEquals($expected, $got);
+
+        $regex = "ice cream \"mysql oracle mongodb\" test monkey \"free trial\"";
+        $expected = array($regex, "mysql oracle mongodb", "free trial", "ice", "cream", "test", "monkey");
+        $got = $this->streams->buildSearchQuery($regex);
+        $this->assertEquals($expected, $got);
+
+        $regex = "ice cream sandwich";
+        $expected = array($regex, "ice", "cream", "sandwich");
+        $got = $this->streams->buildSearchQuery($regex);
+        $this->assertEquals($expected, $got);
+    }
+
     public function testSearchArray() {
         $db = "search.db";
         $f = file($db);
@@ -541,6 +568,45 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
         $q = "\"dezos happysongs\"";
         $got = $this->streams->searchArray($q, $f);
         $expected = array(3);
+        $this->assertEquals($expected, $got);
+
+        $testArray = array("sparkling water", "pumpkin", "beer garden", "rat race", 
+                "agile", "shoots and ladders");
+        $q = "\"sparkling water\"";
+        $got = $this->streams->searchArray($q, $testArray);
+        $expected = array(0);
+        $this->assertEquals($expected, $got);
+
+        $q = "\"sparkling water\" pumpkin \"rat race\"";
+        $got = $this->streams->searchArray($q, $testArray);
+        $expected = array(0, 3, 1);
+        $this->assertEquals($expected, $got);
+
+        $q = "\"shoots and ladders\" \"sparkling water\" pumpkin \"rat race\"";
+        $got = $this->streams->searchArray($q, $testArray);
+        $expected = array(5, 0, 3, 1);
+        $this->assertEquals($expected, $got);
+
+        $q = "pumpkin";
+        $got = $this->streams->searchArray($q, $testArray);
+        $expected = array(1);
+        $this->assertEquals($expected, $got);
+
+        $q = "pumpkin agile";
+        $got = $this->streams->searchArray($q, $testArray);
+        $expected = array(1, 4);
+        $this->assertEquals($expected, $got);
+
+        $q = "\"shoots and ladders\"";
+        $got = $this->streams->searchArray($q, $testArray);
+        $expected = array(5);
+        $this->assertEquals($expected, $got);
+
+        $testArray2 = array("ice cream sandwich", "ice", "vanilla", "cream", "chocolate");
+        $q = "ice cream sandwich";
+        $got = $this->streams->searchArray($q, $testArray2);
+        // The keys are 0, 2, 4 because array_unique() preserves keys.
+        $expected = array(0=>0, 2=>1, 4=>3);
         $this->assertEquals($expected, $got);
     }
 

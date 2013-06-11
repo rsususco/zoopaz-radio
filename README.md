@@ -19,6 +19,7 @@ Features
 
 * Supports mp3, ogg, m4a and other formats supported by jPlayer and your browser.
 * ID3 support. Currently ID3v2, but more to follow.
+* Search. Supports word and quoted phrase matches using OR. e.g. "The Doors" "Grant Green"
 * Interface is fully JavaScript/Ajax powered.
 * Playlists
 * Infinite random playlist in radio mode. List may be filtered. In radio mode a random playlist will be generated and as each song finishes it's popped off the list and a new song is pushed onto the end.
@@ -56,4 +57,4 @@ Todo
 * Browser history.
 * Manage music from web.
 * Manage configuration from web.
-* More playlist functionality.
+* Boolean search operators.

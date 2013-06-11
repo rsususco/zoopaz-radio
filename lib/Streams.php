@@ -126,7 +126,7 @@ class Streams {
                     $addToPlaylist = $this->t->compile();
                 }
 
-                $this->t->setData(array("js_background_url"=>$js_background_url, "html_dir"=>$html_dir, 
+                $this->t->setData(array("js_background_url"=>$js_background_url, "html_dir"=>$html_dir,
                         "html_end_dir"=>$html_end_dir, "addToPlaylist"=>$addToPlaylist));
                 $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/coverListItem.tmpl");
                 $coverListItem = $this->t->compile();
@@ -139,14 +139,14 @@ class Streams {
                     $id3 = $this->id3($dirLink, $file);
                     $filePath = rawurlencode($dirLink . $file);
 
-                    // add-to-playlist for single files 
+                    // add-to-playlist for single files
                     $html_dir = rtrim(preg_replace("/\"/", "\\\"", $dirLink), "/");
                     $html_file = preg_replace("/\"/", "\\\"", $file);
                     $this->t->setData(array("html_dir" => $html_dir, "html_file" => $html_file, "type" => "file"));
                     $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/add-to-playlist.tmpl");
                     $addToPlaylist = $this->t->compile();
 
-                    $this->t->setData(array("filePath"=>$filePath, "title"=>$id3['title'], 
+                    $this->t->setData(array("filePath"=>$filePath, "title"=>$id3['title'],
                             "filesize"=>$filesize, "add-to-playlist"=>$addToPlaylist));
                     $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/albumListItem.tmpl");
                     $o['index'] .= $this->t->compile();
@@ -211,7 +211,7 @@ class Streams {
      * @tested true
      */
     public function getAlbumArt($id3, $dir=null) {
-        if (isset($id3) && isset($id3['comments']) && isset($id3['comments']['picture']) 
+        if (isset($id3) && isset($id3['comments']) && isset($id3['comments']['picture'])
                 && isset($id3['comments']['picture'][0]) && isset($id3['comments']['picture'][0]['data'])) {
             $albumart = "data:image/jpeg;base64," . base64_encode($id3['comments']['picture'][0]['data']);
         } else {
@@ -229,10 +229,10 @@ class Streams {
      */
     public function getId3Artist($id3) {
         $artist = false;
-        if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2']) 
+        if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2'])
                 && isset($id3['tags']['id3v2']['artist']) && isset($id3['tags']['id3v2']['artist'][0])) {
             $artist = $id3['tags']['id3v2']['artist'][0];
-        } else if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v1']) 
+        } else if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v1'])
                 && isset($id3['tags']['id3v1']['artist']) && isset($id3['tags']['id3v1']['artist'][0])) {
             $artist = $id3['tags']['id3v1']['artist'][0];
         }
@@ -244,10 +244,10 @@ class Streams {
      */
     public function getId3Album($id3, $dir=null, $file=null) {
         $album = false;
-        if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2']) 
+        if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2'])
                 && isset($id3['tags']['id3v2']['album']) && isset($id3['tags']['id3v2']['album'][0])) {
             $album = $id3['tags']['id3v2']['album'][0];
-        } else if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v1']) 
+        } else if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v1'])
                 && isset($id3['tags']['id3v1']['album']) && isset($id3['tags']['id3v1']['album'][0])) {
             $album = $id3['tags']['id3v1']['album'][0];
         }
@@ -259,10 +259,10 @@ class Streams {
      */
     public function getId3Title($id3) {
         $title = false;
-        if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2']) 
+        if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v2'])
                 && isset($id3['tags']['id3v2']['title']) && isset($id3['tags']['id3v2']['title'][0])) {
             $title = $id3['tags']['id3v2']['title'][0];
-        } else if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v1']) 
+        } else if (isset($id3) && isset($id3['tags']) && isset($id3['tags']['id3v1'])
                 && isset($id3['tags']['id3v1']['title']) && isset($id3['tags']['id3v1']['title'][0])) {
             $title = $id3['tags']['id3v1']['title'][0];
         }
@@ -303,7 +303,7 @@ class Streams {
             $dir = "";
         }
 
-        // When we're at root (/) splitting would make it look like there 
+        // When we're at root (/) splitting would make it look like there
         // were 2 directories. You would see Home > (empty enddir).
         if ($dir == "/") {
             $a_dir = array();
@@ -483,8 +483,8 @@ class Streams {
      *
      * @tested true
      */
-    public function searchArray($regex, $a, $keys=array()) { 
-        if(is_array($a)) { 
+    public function searchArray_v1($regex, $a, $keys=array()) {
+        if(is_array($a)) {
             $regex = preg_replace("/\s\s*/", " ", $regex);
             if (preg_match("/\".*?\"/", $regex)) {
                 $a_regex[] = preg_replace("/\"(.*?)\"/", "\${1}", $regex);
@@ -492,20 +492,89 @@ class Streams {
                 $a_regex = preg_split("/ /", $regex);
             }
             foreach ($a_regex as $k2=>$word) {
-                foreach($a as $k=>$v) { 
+                foreach($a as $k=>$v) {
                     if(is_array($v)) {
-                        $this->searchArray($word, $val, $keys); 
-                    } else { 
+                        $this->searchArray($word, $val, $keys);
+                    } else {
                         if(preg_match("/" . preg_quote($word, "/") . "/i", $v)) {
-                            $keys[] = $k; 
+                            $keys[] = $k;
                         }
-                    } 
+                    }
                 }
             }
-            return $keys; 
-        } 
-        return false; 
-    } 
+            return $keys;
+        }
+        return false;
+    }
+
+    /**
+     * @tested false
+     */
+    public function cleanQuery($q) {
+        $q = trim($q);
+        $q = preg_replace("/\s\s*/", " ", $q);
+        return $q;
+    }
+
+    /**
+     * @tested true
+     */
+    public function buildSearchQuery($regex) {
+        $a_regex = array($regex);
+        if (preg_match("/\".*?\"/", $regex)) {
+            // Create phrase array
+            $phrase = array();
+            while (preg_match("/\"(.*?)\"/", $regex)) {
+                $phrase[]= preg_replace("/^.*\"(.*?)\".*$/", "\${1}", $regex);
+                $regex = preg_replace("/^(.*)\".*?\"(.*)$/", "\${1} \${2}", $regex);
+                $regex = $this->cleanQuery($regex);
+            }
+            $regex = $this->cleanQuery($regex);
+            // Split the rest of the terms into array
+            // We must first check to see if the resulting $regex still contains a query.
+            if (preg_match("/[^\s]/", $regex)) {
+                $rest = preg_split("/ /", $regex);
+                // Merge phrase and the rest.
+                $reversed = array_reverse($phrase);
+                $a_regex = array_merge($a_regex, $reversed, $rest);
+            } else {
+                $a_regex = array_merge($a_regex, $phrase);
+            }
+        } else {
+            $a_regex = array_merge($a_regex, preg_split("/ /", $regex));
+        }
+        return array_unique($a_regex);
+    }
+
+    /**
+     * Word searches. Each word is search on and merged with results.
+     * Exact phrase searches are possible when wrapped in quotations.
+     *
+     * @param $a Array with each value being the index for a particular album.
+     * @param $regex The search query string.
+     * @param $keys The keys from $a that match $regex.
+     *
+     * @tested true
+     */
+    public function searchArray($regex, $a, $keys=array()) {
+        $regex = $this->cleanQuery($regex);
+        if(is_array($a)) {
+            $a_regex = $this->buildSearchQuery($regex);
+            foreach ($a_regex as $k2=>$word) {
+                foreach($a as $k=>$v) {
+                    if(is_array($v)) {
+                        $this->searchArray($word, $val, $keys);
+                    } else {
+                        if(preg_match("/" . preg_quote($word, "/") . "/i", $v)) {
+                            $keys[] = $k;
+                        }
+                    }
+                }
+            }
+            return array_unique($keys);
+        }
+        return false;
+    }
 
     /**
      * @tested true
@@ -526,7 +595,7 @@ class Streams {
             $dir = $r[0];
 
             // Don't return directories that don't contain music.
-            $cntmusic = count(glob("{$this->cfg->defaultMp3Dir}/{$dir}/*.{" 
+            $cntmusic = count(glob("{$this->cfg->defaultMp3Dir}/{$dir}/*.{"
                     . $this->cfg->getValidMusicTypes("glob") . "}", GLOB_BRACE));
             if ($cntmusic < 1) {
                 continue;
@@ -796,7 +865,7 @@ class Streams {
     public function buildPlaylistTitle($id3, $dir, $file) {
         $enc_dir = preg_replace("/\"/", "\\\"", $dir);
         $enc_file = preg_replace("/\"/", "\\\"", $file);
-        $this->t->setData(array("albumart"=>$id3['albumart'], "playlistTitle"=>$id3['playlistTitle'], 
+        $this->t->setData(array("albumart"=>$id3['albumart'], "playlistTitle"=>$id3['playlistTitle'],
                 "dir"=>$enc_dir, "file"=>$enc_file));
         $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/playlistTitle.tmpl");
         $html = $this->t->compile();
@@ -817,7 +886,7 @@ class Streams {
      */
     public function createPlaylistJs($dir) {
         $html = "";
-        if (file_exists($this->cfg->defaultMp3Dir . '/' . $dir) 
+        if (file_exists($this->cfg->defaultMp3Dir . '/' . $dir)
                 && is_dir($this->cfg->defaultMp3Dir . '/' . $dir)) {
             $playlist = $this->buildPlaylistFromDir($dir);
             file_put_contents($this->auth->currentPlaylist, $playlist);
