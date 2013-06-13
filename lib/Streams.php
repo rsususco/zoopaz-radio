@@ -478,36 +478,6 @@ class Streams {
     }
 
     /**
-     * Word searches. Each word is search on and merged with results.
-     * Exact phrase searches are possible when wrapped in quotations.
-     *
-     * @tested true
-     */
-    public function searchArray_v1($regex, $a, $keys=array()) {
-        if(is_array($a)) {
-            $regex = preg_replace("/\s\s*/", " ", $regex);
-            if (preg_match("/\".*?\"/", $regex)) {
-                $a_regex[] = preg_replace("/\"(.*?)\"/", "\${1}", $regex);
-            } else {
-                $a_regex = preg_split("/ /", $regex);
-            }
-            foreach ($a_regex as $k2=>$word) {
-                foreach($a as $k=>$v) {
-                    if(is_array($v)) {
-                        $this->searchArray($word, $val, $keys);
-                    } else {
-                        if(preg_match("/" . preg_quote($word, "/") . "/i", $v)) {
-                            $keys[] = $k;
-                        }
-                    }
-                }
-            }
-            return $keys;
-        }
-        return false;
-    }
-
-    /**
      * @tested false
      */
     public function cleanQuery($q) {
@@ -571,16 +541,19 @@ class Streams {
                     }
                 }
             }
-            return array_unique($keys);
+            $u = array_unique($keys);
+            if (is_array($u)) {
+                return $u;
+            }
         }
-        return false;
+        return array();
     }
 
     /**
      * @tested true
      */
     public function search($q) {
-        $db = "search.db";
+        $db = $this->cfg->streamsRootDir . "/search.db";
         $f = file($db);
         $results = $this->searchArray($q, $f);
 
@@ -611,6 +584,9 @@ class Streams {
             $chdir = preg_replace("/^(.*)\/.*$/", "\${1}", $this->cfg->defaultMp3Dir . "/" . $dir);
             chdir($chdir);
             $o = $this->buildIndex($a_files, $dirLink, true);
+            if ($k > $this->cfg->maxSearchResults) {
+                break;
+            }
             $index .= $o['index'];
             unset($o);
             unset($a_files);

@@ -16,13 +16,14 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
     private $auth;
     private $t;
     private $streams;
-    private $htmlDir = "resources/Streams/html";
+    private $htmlDir;
 
     public function __construct() {
         $this->cfg = new Config();
         $this->auth = new Auth();
         $this->t = new WsTmpl();
         $this->streams = new Streams($this->cfg, $this->auth, $this->t);
+        $this->htmlDir = getcwd() . "/resources/Streams/html";
     }
 
     public function __destruct() {
@@ -529,45 +530,46 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
         $expected = array($regex, "ice", "cream", "sandwich");
         $got = $this->streams->buildSearchQuery($regex);
         $this->assertEquals($expected, $got);
+
+        $regex = "+chocolate -vanilla +\"ice cream\" -sandwich +cone";
+        $expected = array($regex, "+\"ice cream\"", "+chocolate", "-vanilla", "-sandwich", "+cone");
+        $got = $this->streams->buildSearchQuery($regex);
+        //$this->assertEquals($expected, $got);
     }
 
+    // TODO: Let's not use search.db. This is integration oriented. Let's create a dummy array.
     public function testSearchArray() {
-        $db = "search.db";
-        $f = file($db);
+        $f = array("test", "the bestalbum ever", "logged in", "album", "bestalbum", "time");
 
         $q = "bestalbum";
         $got = $this->streams->searchArray($q, $f);
-        $expected = array(7, 9);
+        $expected = array(1, 4);
         $this->assertEquals($expected, $got);
 
-        $q = "songs";
+        $q = "test";
         $got = $this->streams->searchArray($q, $f);
-        $expected = array(3, 4, 5);
+        $expected = array(0);
         $this->assertEquals($expected, $got);
 
-        $q = "sonGS";
+        $q = "aLBum TIME";
         $got = $this->streams->searchArray($q, $f);
-        $expected = array(3, 4, 5);
+        $expected = array(1, 3, 4, 5);
         $this->assertEquals($expected, $got);
 
-        $q = "songs bestalbum";
+        $q = "album test";
         $got = $this->streams->searchArray($q, $f);
-        $expected = array(3, 4, 5, 7, 9);
+        $expected = array(1, 3, 4, 0);
         $this->assertEquals($expected, $got);
 
-        $q = "bestalbum songs";
+        $q = "\"the bestalbum ever\"";
         $got = $this->streams->searchArray($q, $f);
-        $expected = array(7, 9, 3, 4, 5);
+        $expected = array(1);
         $this->assertEquals($expected, $got);
 
-        $q = "BestAlbum sOngs";
+        $q = "the bestalbum ever";
         $got = $this->streams->searchArray($q, $f);
-        $expected = array(7, 9, 3, 4, 5);
-        $this->assertEquals($expected, $got);
-
-        $q = "\"dezos happysongs\"";
-        $got = $this->streams->searchArray($q, $f);
-        $expected = array(3);
+        // Keys are preserved when using array_unique() in searchArray().
+        $expected = array(0=>1, 3=>4);
         $this->assertEquals($expected, $got);
 
         $testArray = array("sparkling water", "pumpkin", "beer garden", "rat race", 
@@ -605,7 +607,6 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
         $testArray2 = array("ice cream sandwich", "ice", "vanilla", "cream", "chocolate");
         $q = "ice cream sandwich";
         $got = $this->streams->searchArray($q, $testArray2);
-        // The keys are 0, 2, 4 because array_unique() preserves keys.
         $expected = array(0=>0, 2=>1, 4=>3);
         $this->assertEquals($expected, $got);
     }
@@ -614,25 +615,25 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
         $q = "songs";
         $expected = @file_get_contents("{$this->htmlDir}/search-songs.html");
         $got = $this->streams->search($q);
-        file_put_contents("{$this->htmlDir}/search-songs.html", $got);
+        //file_put_contents("{$this->htmlDir}/search-songs.html", $got);
         $this->assertEquals($expected, $got);
 
         $q = "bestAlbum";
         $expected = @file_get_contents("{$this->htmlDir}/search-bestalbum.html");
         $got = $this->streams->search($q);
-        file_put_contents("{$this->htmlDir}/search-bestalbum.html", $got);
+        //file_put_contents("{$this->htmlDir}/search-bestalbum.html", $got);
         $this->assertEquals($expected, $got);
 
         $q = "songs bestAlbum";
         $expected = @file_get_contents("{$this->htmlDir}/search-songs-bestalbum.html");
         $got = $this->streams->search($q);
-        file_put_contents("{$this->htmlDir}/search-songs-bestalbum.html", $got);
+        //file_put_contents("{$this->htmlDir}/search-songs-bestalbum.html", $got);
         $this->assertEquals($expected, $got);
 
         $q = "\"dezos happysongs\"";
         $expected = @file_get_contents("{$this->htmlDir}/search-quoted-dezos-happysongs.html");
         $got = $this->streams->search($q);
-        file_put_contents("{$this->htmlDir}/search-songs-quoted-dezos-happysongs.html", $got);
+        //file_put_contents("{$this->htmlDir}/search-songs-quoted-dezos-happysongs.html", $got);
         $this->assertEquals($expected, $got);
     }
 

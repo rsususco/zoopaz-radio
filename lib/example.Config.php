@@ -54,6 +54,12 @@ class Config {
 
         // Valid music types
         $this->validMusicTypes = array("mp3", "m4a", "ogg");
+
+        // Disable stopwords when generating search index
+        $this->disableStopwords = false;
+
+        // Maximum number of search results.
+        $this->maxSearchResults = 100;
     }
 
     public static function getInstance () {

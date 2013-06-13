@@ -17,6 +17,7 @@ limitations under the License.
 */
 
 require_once("../lib/Config.php");
+require_once("../lib/getid3/getid3/getid3.php");
 require_once("StopWords.php");
 
 $cfg = Config::getInstance();
@@ -89,6 +90,10 @@ function filter($f, $a) {
     return false;
 }
 
+$getID3 = new getID3();
+$pageEncoding = 'UTF-8';
+$getID3->setOption(array("encoding" => $pageEncoding));
+
 file_put_contents($db, "");
 file_put_contents($fdb, "");
 
@@ -121,26 +126,34 @@ foreach ($f as $k=>$dir) {
                 continue;
             }
             file_put_contents($fdb, "{$dir}/{$orgFile}\n", FILE_APPEND);
+
+            // Get ID3 tags.
+            //$id3 = $getID3->analyze($orgFile);
+            //if ($id3) {
+            //    $file .= strtolower(serialize($id3['tags'])) . " " . $file;
+            //}
         }
 
         $file = preg_replace("/\.(mp3|jpg|ogg|m4a|jpeg|png|txt|pdf)/i", "", $file);
-        $file = preg_replace("/[0-9~!@#\$%\^\&\*\(\)_\+`\-\.\']/", "", $file);
+        $file = preg_replace("/[^a-zA-Z0-9-_ ,']/", "", $file);
         $file = preg_replace("/\s\s*/", " ", $file);
 
         $afile = explode(" ", $file);
         $nfile = "";
         foreach ($afile as $cfile) {
-            if (in_array($cfile, StopWords::$stopwords)) {
+            $cfile = trim($cfile);
+            if (!$cfg->disableStopwords && in_array($cfile, StopWords::$stopwords)) {
                 continue;
             }
-            $nfile = "$cfile ";
+            $nfile .= "$cfile ";
         }
         $file = rtrim($nfile);
 
         $l .= "{$file} ";
         $al = explode(" ", $l);
-        $ul = array_unique($al);
-        $l = implode(" ", $ul);
+        // This is not always a good idea. Quoted search may not always work.
+        //$ul = array_unique($al);
+        $l = implode(" ", $al);
     }
     unset($files);
 
