@@ -4,12 +4,15 @@ INSTALL
 Your mp3s or oggs should be stored in a web accessible directory - it does
 not have to be inside this application. But this application and your music
 archive must be on the same machine and in a web accessible directory. 
-The application should have read access to your music archive.
+The application should have read access to your music archive. These directories
+will be configured in [`lib/Auth.php`](lib/Auth.php).
 
 Music location
 --------------
 
-I organize my music archive by directories. For example,
+Personally, I organize my music archive by directories. i.e. `/RootMusicDir/Genre/BandName/AlbumName/01.MusicFiles.mp3`
+
+For example,
 
 <pre>
 /path/to/music/

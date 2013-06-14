@@ -1,9 +1,9 @@
 Description
 ===========
 
-An audio player web app for streaming mp3, ogg, m4a and other formats 
-supported by jPlayer. It's built upon PHP, JavaScript, HTML, CSS and 
-some UNIX utilties - no database required.
+An audio player web app with mobile support for streaming mp3, ogg, m4a and 
+other formats supported by jPlayer. It's built upon PHP, JavaScript, HTML, 
+CSS and some UNIX utilties - no database required.
 
 See features and screenshots below.
 
@@ -54,7 +54,7 @@ See [`INSTALL.md`](INSTALL.md)
 Todo
 ====
 
+* Boolean search operators. Current development.
 * Browser history.
 * Manage music from web.
 * Manage configuration from web.
-* Boolean search operators.
