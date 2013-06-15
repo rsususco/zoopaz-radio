@@ -614,7 +614,7 @@ class Streams {
     /**
      * @tested true
      */
-    public function buildPlaylistArrayFromDir($dir, $playlistArray=null) {
+    public function buildPlaylistArrayFromDir($dir) {
         $curdir = getcwd();
 
         $playlist = array();
@@ -625,11 +625,10 @@ class Streams {
             $playlist[] = $this->buildPlaylistItemArray($dir, $file);
         }
 
-        $o = array();
-        if ($playlistArray != "") {
-            // TODO: Append the new $playlist onto $playlistArray and return.
-        } else {
+        if (is_array($playlist)) {
             $o = $playlist;
+        } else {
+            $o = array();
         }
 
         return $o;
@@ -638,18 +637,17 @@ class Streams {
     /**
      * @tested true
      */
-    public function buildPlaylistArrayFromFile($dir, $file, $playlistArray=null) {
+    public function buildPlaylistArrayFromFile($dir, $file) {
         $curdir = getcwd();
 
         $playlist = array();
 
         $playlist[] = $this->buildPlaylistItemArray($dir, $file);
 
-        $o = array();
-        if ($playlistArray != "") {
-            // TODO: Append the new $playlist onto $playlistArray and return.
-        } else {
+        if (is_array($playlist)) {
             $o = $playlist;
+        } else {
+            $o = array();
         }
 
         return $o;
@@ -661,8 +659,8 @@ class Streams {
      *
      * @tested true
      */
-    public function buildPlaylistFromDir($dir, $playlistArray=null) {
-        $playlist = $this->buildPlaylistArrayFromDir($dir, $playlistArray);
+    public function buildPlaylistFromDir($dir) {
+        $playlist = $this->buildPlaylistArrayFromDir($dir);
         $json = json_encode($playlist);
         return $json;
     }
@@ -670,15 +668,15 @@ class Streams {
     /**
      * @tested true
      */
-    public function buildPlaylistFromFile($dir, $file, $playlistArray=null) {
-        $playlist = $this->buildPlaylistArrayFromFile($dir, $file, $playlistArray);
+    public function buildPlaylistFromFile($dir, $file) {
+        $playlist = $this->buildPlaylistArrayFromFile($dir, $file);
         $json = json_encode($playlist);
         return $json;
     }
 
     /**
-     * TODO: We should look for the artist and album from ID3 tags first. If we do
-     *       we won't be sure because it could be a compilation directory.
+     * TODO: We should look for the artist and album from ID3 tags first. If we look at the current 
+     *       directory and the one above, we can't be sure they are album and artist respectively.
      *
      * @tested true
      */

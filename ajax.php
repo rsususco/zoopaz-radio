@@ -83,4 +83,6 @@ if ($_GET['action'] == "createPlaylistJs") {
     print(json_encode(array("albumart"=>$id3['albumart'])));
     $streams->print_gzipped_page();
     die();
+} else {
+    die("Unused action.");
 }
