@@ -1,6 +1,10 @@
 Changes
 =======
 
+1.9.0 to 1.10.0 (not yet released)
+----------------------------------
+* Handle logout after session timesout or is logged out from another tab and an action is performed.
+
 1.8.0 to 1.9.0
 --------------
 * Support for ID3v1.

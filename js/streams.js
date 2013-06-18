@@ -63,6 +63,7 @@ function openDir(url) {
         url: "ajax.php",  
         data: "action=openDir&url=" + encodeURIComponent(url) + "&dir=" + encodeURIComponent(url),
         success: function(html){
+            handleLogoutHtml(html);
             $("#content").html(html);
             hideWorking();
         }
@@ -97,6 +98,7 @@ function search(q) {
         url: "ajax.php",  
         data: "action=search&q=" + encodeURIComponent(q),
         success: function(html){
+            handleLogoutHtml(html);
             $("#musicindex").html(html);
             hideWorking();
         }
@@ -129,6 +131,8 @@ function addToPlaylist(e, thiz) {
     }
     $.getJSON("ajax.php?action=" + action + "&dir=" + encodeURIComponent($(thiz).data("dir")) 
             + "&file=" + encodeURIComponent($(thiz).data("file")), function(json){
+        handleLogoutJson(json);
+
         $(json).each(function(i, audioFile) {
             myPlaylist.add(audioFile);
         });
@@ -154,6 +158,17 @@ function logout(e) {
     });
 }
 
+function handleLogoutHtml(html) {
+    var json = JSON.parse(html);
+    handleLogoutJson(json);
+}
+
+function handleLogoutJson(json) {
+    if (!json.is_logged_in) {
+        logout();
+    }
+}
+
 function playRadio(e) {
     isRadioMode = true;
     displayWorking();
@@ -163,6 +178,8 @@ function playRadio(e) {
         url: "ajax.php",  
         data: "action=playRadio&num=" + cfg.numberOfRadioItems,
         success: function(html){
+            handleLogoutHtml(html);
+
             var width = $("#content").width();
             $("#content-player").html(html);
             $(".album-title").text("Radio");
