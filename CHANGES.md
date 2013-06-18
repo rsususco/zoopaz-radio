@@ -1,9 +1,13 @@
 Changes
 =======
 
-1.9.0 to 1.10.0 (not yet released)
-----------------------------------
+1.9.0 to 1.10.0
+---------------
 * Handle logout after session timesout or is logged out from another tab and an action is performed.
+* Fixed a bug when parsing HTML as JSON.
+* Fixed bug in unit tests - missing some Config parameters.
+* After searching, if you erase a search the main index returns. More work to be done.
+* Login page style update.
 
 1.8.0 to 1.9.0
 --------------

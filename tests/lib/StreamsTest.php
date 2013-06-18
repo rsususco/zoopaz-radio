@@ -613,27 +613,27 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
 
     function testSearch() {
         $q = "songs";
-        $expected = @file_get_contents("{$this->htmlDir}/search-songs.html");
+        $expected = file_get_contents("{$this->htmlDir}/search-songs.html");
         $got = $this->streams->search($q);
         //file_put_contents("{$this->htmlDir}/search-songs.html", $got);
         $this->assertEquals($expected, $got);
 
         $q = "bestAlbum";
-        $expected = @file_get_contents("{$this->htmlDir}/search-bestalbum.html");
+        $expected = file_get_contents("{$this->htmlDir}/search-bestalbum.html");
         $got = $this->streams->search($q);
         //file_put_contents("{$this->htmlDir}/search-bestalbum.html", $got);
         $this->assertEquals($expected, $got);
 
         $q = "songs bestAlbum";
-        $expected = @file_get_contents("{$this->htmlDir}/search-songs-bestalbum.html");
+        $expected = file_get_contents("{$this->htmlDir}/search-songs-bestalbum.html");
         $got = $this->streams->search($q);
         //file_put_contents("{$this->htmlDir}/search-songs-bestalbum.html", $got);
         $this->assertEquals($expected, $got);
 
         $q = "\"dezos happysongs\"";
-        $expected = @file_get_contents("{$this->htmlDir}/search-quoted-dezos-happysongs.html");
         $got = $this->streams->search($q);
-        //file_put_contents("{$this->htmlDir}/search-songs-quoted-dezos-happysongs.html", $got);
+        //file_put_contents("{$this->htmlDir}/search-quoted-dezos-happysongs.html", $got);
+        $expected = file_get_contents("{$this->htmlDir}/search-quoted-dezos-happysongs.html");
         $this->assertEquals($expected, $got);
     }
 
@@ -921,6 +921,14 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
         $this->auth->currentPlaylistDir = "{$this->htmlDir}/currentPlaylistDir.obj";
         $html = "{$this->htmlDir}/create-playlist-js.html";
         $got = $this->streams->createPlaylistJs($dir);
+        //file_put_contents($html, $got);
+        $expected = file_get_contents($html);
+        $this->assertEquals($expected, $got);
+    }
+
+    public function testGetHomeIndex() {
+        $got = $this->streams->getHomeIndex();
+        $html = "{$this->htmlDir}/get-home-index.html";
         //file_put_contents($html, $got);
         $expected = file_get_contents($html);
         $this->assertEquals($expected, $got);

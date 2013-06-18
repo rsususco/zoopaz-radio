@@ -47,7 +47,6 @@ function createPlaylistJs(url) {
                 $("#musicindex").remove();
                 $("#playercontrols").remove();
                 var newwidth = width - 16;
-                //alert('newwidth = ' + newwidth);
                 $("#mediaplayer_wrapper").css("width", newwidth + "px");
             }
             hideWorking();
@@ -86,7 +85,7 @@ function init() {
 
 function search(q) {
     if (q.length < 3) {
-        return false;
+        return getHomeIndex();
     }
     if ($("#playbutton").length > 0) {
         var p = $("#playbutton").parent();
@@ -97,6 +96,20 @@ function search(q) {
         type: "GET",  
         url: "ajax.php",  
         data: "action=search&q=" + encodeURIComponent(q),
+        success: function(html){
+            handleLogoutHtml(html);
+            $("#musicindex").html(html);
+            hideWorking();
+        }
+    });
+}
+
+function getHomeIndex() {
+    displayWorking();
+    $.ajax({
+        type: "GET",  
+        url: "ajax.php",  
+        data: "action=getHomeIndex",
         success: function(html){
             handleLogoutHtml(html);
             $("#musicindex").html(html);
@@ -158,12 +171,31 @@ function logout(e) {
     });
 }
 
+function isJson(input) {
+    if (!input.match(/^\s*{/)) {
+        return false;
+    }
+    if (!input.match(/^\s*\[/)) {
+        return false;
+    }
+    if (input.match(/^\s*$/)) {
+        return false;
+    }
+    return true;
+}
+
 function handleLogoutHtml(html) {
+    if (!isJson(html)) {
+        return false;
+    }
     var json = JSON.parse(html);
     handleLogoutJson(json);
 }
 
 function handleLogoutJson(json) {
+    if (!isJson(json)) {
+        return false;
+    }
     if (!json.is_logged_in) {
         logout();
     }

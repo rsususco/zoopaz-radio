@@ -83,6 +83,9 @@ if ($_GET['action'] == "createPlaylistJs") {
     print(json_encode(array("albumart"=>$id3['albumart'])));
     $streams->print_gzipped_page();
     die();
+} else if ($_GET['action'] == "getHomeIndex") {
+    print($streams->getHomeIndex());
+    die();
 } else {
     die("Unused action.");
 }

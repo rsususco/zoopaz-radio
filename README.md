@@ -58,3 +58,4 @@ Todo
 * Browser history.
 * Manage music from web.
 * Manage configuration from web.
+* Radio are you still listening? Would stop play after X amount of time.

@@ -60,6 +60,12 @@ class Config {
 
         // Maximum number of search results.
         $this->maxSearchResults = 100;
+
+        // Location of search index file.
+        $this->searchDatabase = $this->streamsRootDir . "/search.db";
+
+        // Location of radio files index.
+        $this->radioDatabase = $this->streamsRootDir . "/files.db";
     }
 
     public static function getInstance () {

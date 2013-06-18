@@ -553,8 +553,7 @@ class Streams {
      * @tested true
      */
     public function search($q) {
-        $db = $this->cfg->streamsRootDir . "/search.db";
-        $f = file($db);
+        $f = file($this->cfg->searchDatabase);
         $results = $this->searchArray($q, $f);
 
         $curdir = getcwd();
@@ -575,7 +574,7 @@ class Streams {
             }
 
             if (!file_exists($this->cfg->defaultMp3Dir . '/' . $dir)) {
-                return false;
+                continue;
             }
             $dirLink = "/" . preg_replace("/^(.*)\/.*$/", "\${1}", $dir) . "/";
 
@@ -591,6 +590,11 @@ class Streams {
             unset($o);
             unset($a_files);
             chdir($curdir);
+        }
+        if ($index == "") {
+            $this->t->setData(array("title"=>"No results"));
+            $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/albumListItem.tmpl");
+            $index .= $this->t->compile();
         }
 
         return $index;
@@ -764,8 +768,7 @@ class Streams {
      * @tested true
      */
     public function getRandomPlaylistJson($numItems) {
-        $db = "files.db";
-        $f = file($db);
+        $f = file($this->cfg->radioDatabase);
         $c = count($f);
 
         // Return if there are now files in the database.
@@ -868,6 +871,36 @@ class Streams {
             $html = $this->buildPlayerHtml($playlist, $dir, 'false');
         }
         return $html;
+    }
+
+    /**
+     * @tested true
+     */
+    public function getHomeIndex() {
+        // TODO: Break this $dirLink logic into function. Follow openTheDir() > getFileIndex()
+        //       to find uses. This was taken from there. Possibly other uses.
+        $dir = "/";
+        $curdir = getcwd();
+        $chdir = "";
+        if ($dir === $this->cfg->defaultMp3Dir) {
+            $chdir = $this->cfg->defaultMp3Dir;
+            $dirLink = "";
+        } else {
+            if (!file_exists($this->cfg->defaultMp3Dir . '/' . $dir)) {
+                return false;
+            }
+            $chdir = $this->cfg->defaultMp3Dir . '/' . $dir;
+            $dirLink = "{$dir}/";
+        }
+        chdir($chdir);
+        $a_files = glob("*");
+        natcasesort($a_files);
+
+        $o = $this->buildIndex($a_files, $dirLink);
+        $index = $o['index'];
+        $isMp3 = $o['isMp3'];
+        chdir($curdir);
+        return $index;
     }
 
 }

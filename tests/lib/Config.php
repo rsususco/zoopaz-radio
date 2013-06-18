@@ -65,6 +65,18 @@ class Config {
 
         // Valid music types
         $this->validMusicTypes = array("mp3", "m4a", "ogg");
+
+        // Disable stopwords when generating search index
+        $this->disableStopwords = true;
+
+        // Maximum number of search results.
+        $this->maxSearchResults = 100;
+
+        // Location of search index file.
+        $this->searchDatabase = $this->streamsRootDir . "/tests/search.db";
+
+        // Location of radio files index.
+        $this->radioDatabase = $this->streamsRootDir . "/tests/files.db";
     }
 
     public static function getInstance () {
