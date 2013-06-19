@@ -7,6 +7,10 @@ CSS and some UNIX utilties - no database required.
 
 See features and screenshots below.
 
+Download
+========
+[https://github.com/wsams/WsMp3Streamer/tags](Download) one of the releases. Or [https://github.com/wsams/WsMp3Streamer.git](clone) this repository. [https://github.com/wsams/WsMp3Streamer/fork](Fork) me if you like. Have fun playing your music.
+
 Screenshots
 ===========
 
