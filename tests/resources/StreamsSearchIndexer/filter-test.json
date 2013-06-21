@@ -1,0 +1,10 @@
+{
+    "filter": { 
+        "include": [
+            "/IncludeMe/i"
+        ],
+        "exclude": [
+            "/ExcludeMe/i"
+        ]
+    }
+}

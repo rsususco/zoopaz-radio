@@ -214,29 +214,34 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testOpenTheDir() {
-        $expected = file_get_contents("{$this->htmlDir}/open-the-dir-root.html");
+        $html = "{$this->htmlDir}/open-the-dir-root.html";
+        $expected = file_get_contents($html);
         $got = $this->streams->openTheDir("/");
-        //file_put_contents("{$this->htmlDir}/open-the-dir-root.html", $got);
+        //file_put_contents($html, $got);
         $this->assertEquals($expected, $got);
 
-        $expected = file_get_contents("{$this->htmlDir}/open-the-dir-mymusic.html");
+        $html = "{$this->htmlDir}/open-the-dir-mymusic.html";
+        $expected = file_get_contents($html);
         $got = $this->streams->openTheDir("/MyMusic");
-        //file_put_contents("{$this->htmlDir}/open-the-dir-mymusic.html", $got);
+        //file_put_contents($html, $got);
         $this->assertEquals($expected, $got);
 
-        $expected = file_get_contents("{$this->htmlDir}/open-the-dir-mymusic-rock.html");
+        $html = "{$this->htmlDir}/open-the-dir-mymusic-rock.html";
+        $expected = file_get_contents($html);
         $got = $this->streams->openTheDir("/MyMusic/Rock");
-        //file_put_contents("{$this->htmlDir}/open-the-dir-mymusic-rock.html", $got);
+        //file_put_contents($html, $got);
         $this->assertEquals($expected, $got);
 
-        $expected = file_get_contents("{$this->htmlDir}/open-the-dir-mymusic-rock-foobar.html");
+        $html = "{$this->htmlDir}/open-the-dir-mymusic-rock-foobar.html";
+        $expected = file_get_contents($html);
         $got = $this->streams->openTheDir("/MyMusic/Rock/Foobar");
-        //file_put_contents("{$this->htmlDir}/open-the-dir-mymusic-rock-foobar.html", $got);
+        //file_put_contents($html, $got);
         $this->assertEquals($expected, $got);
 
-        $expected = file_get_contents("{$this->htmlDir}/open-the-dir-mymusic-rock-foobar-bestalbum.html");
+        $html = "{$this->htmlDir}/open-the-dir-mymusic-rock-foobar-bestalbum.html";
+        $expected = file_get_contents($html);
         $got = $this->streams->openTheDir("/MyMusic/Rock/Foobar/BestAlbum");
-        //file_put_contents("{$this->htmlDir}/open-the-dir-mymusic-rock-foobar-bestalbum.html", $got);
+        file_put_contents($html, $got);
         $this->assertEquals($expected, $got);
 
         $expected = "";
@@ -278,8 +283,10 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
         $dirLink = "/MyMusic/Jazz/SallyTheBand/Dezos/";
         $dir = $this->streams->singleSlashes("{$this->cfg->defaultMp3Dir}/{$dirLink}");
         $a_files = glob("{$dir}/*");
-        $expected = file_get_contents("{$this->htmlDir}/build-index-sally-dezos.html");
+        $html = "{$this->htmlDir}/build-index-sally-dezos.html";
+        $expected = file_get_contents($html);
         $got = $this->streams->buildIndex($a_files, $dirLink, $search=false);
+        //file_put_contents($html, $got['index']);
         $this->assertEquals($expected, $got['index']);
         $expected = true;
         $this->assertEquals($expected, $got['isMp3']);
@@ -397,33 +404,38 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
 
     public function testGetFileIndex() {
         $dir = "/";
-        $expected = file_get_contents("{$this->htmlDir}/get-file-index-root.html");
+        $html = "{$this->htmlDir}/get-file-index-root.html";
+        $expected = file_get_contents($html);
         $got = $this->streams->getFileIndex($dir);
-        //file_put_contents("{$this->htmlDir}/get-file-index-root.html", $got);
+        //file_put_contents($html, $got);
         $this->assertEquals($expected, $got);
 
         $dir = "/MyMusic";
-        $expected = file_get_contents("{$this->htmlDir}/get-file-index-mymusic.html");
+        $html = "{$this->htmlDir}/get-file-index-mymusic.html";
+        $expected = file_get_contents($html);
         $got = $this->streams->getFileIndex($dir);
-        //file_put_contents("{$this->htmlDir}/get-file-index-mymusic.html", $got);
+        //file_put_contents($html, $got);
         $this->assertEquals($expected, $got);
 
         $dir = "/MyMusic/Rock";
+        $html = "{$this->htmlDir}/get-file-index-mymusic-rock.html";
         $expected = file_get_contents("{$this->htmlDir}/get-file-index-mymusic-rock.html");
         $got = $this->streams->getFileIndex($dir);
-        //file_put_contents("{$this->htmlDir}/get-file-index-mymusic-rock.html", $got);
+        //file_put_contents($html, $got);
         $this->assertEquals($expected, $got);
 
         $dir = "/MyMusic/Rock/Foobar";
-        $expected = file_get_contents("{$this->htmlDir}/get-file-index-mymusic-rock-foobar.html");
+        $html = "{$this->htmlDir}/get-file-index-mymusic-rock-foobar.html";
+        $expected = file_get_contents($html);
         $got = $this->streams->getFileIndex($dir);
-        //file_put_contents("{$this->htmlDir}/get-file-index-mymusic-rock-foobar.html", $got);
+        //file_put_contents($html, $got);
         $this->assertEquals($expected, $got);
 
         $dir = "/MyMusic/Rock/Foobar/BestAlbum";
-        $expected = file_get_contents("{$this->htmlDir}/get-file-index-mymusic-rock-foobar-bestalbum.html");
+        $html = "{$this->htmlDir}/get-file-index-mymusic-rock-foobar-bestalbum.html";
+        $expected = file_get_contents($html);
         $got = $this->streams->getFileIndex($dir);
-        //file_put_contents("{$this->htmlDir}/get-file-index-mymusic-rock-foobar-bestalbum.html", $got);
+        //file_put_contents($html, $got);
         $this->assertEquals($expected, $got);
     }
 
@@ -613,27 +625,31 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
 
     function testSearch() {
         $q = "songs";
-        $expected = file_get_contents("{$this->htmlDir}/search-songs.html");
+        $html = "{$this->htmlDir}/search-songs.html";
         $got = $this->streams->search($q);
-        //file_put_contents("{$this->htmlDir}/search-songs.html", $got);
+        //file_put_contents($html, $got);
+        $expected = file_get_contents($html);
         $this->assertEquals($expected, $got);
 
         $q = "bestAlbum";
-        $expected = file_get_contents("{$this->htmlDir}/search-bestalbum.html");
+        $html = "{$this->htmlDir}/search-bestalbum.html";
         $got = $this->streams->search($q);
-        //file_put_contents("{$this->htmlDir}/search-bestalbum.html", $got);
+        //file_put_contents($html, $got);
+        $expected = file_get_contents($html);
         $this->assertEquals($expected, $got);
 
         $q = "songs bestAlbum";
-        $expected = file_get_contents("{$this->htmlDir}/search-songs-bestalbum.html");
+        $html = "{$this->htmlDir}/search-songs-bestalbum.html";
         $got = $this->streams->search($q);
-        //file_put_contents("{$this->htmlDir}/search-songs-bestalbum.html", $got);
+        //file_put_contents($html, $got);
+        $expected = file_get_contents($html);
         $this->assertEquals($expected, $got);
 
         $q = "\"dezos happysongs\"";
+        $html = "{$this->htmlDir}/search-quoted-dezos-happysongs.html";
         $got = $this->streams->search($q);
-        //file_put_contents("{$this->htmlDir}/search-quoted-dezos-happysongs.html", $got);
-        $expected = file_get_contents("{$this->htmlDir}/search-quoted-dezos-happysongs.html");
+        //file_put_contents($html, $got);
+        $expected = file_get_contents($html);
         $this->assertEquals($expected, $got);
     }
 

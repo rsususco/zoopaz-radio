@@ -66,6 +66,12 @@ class Config {
 
         // Location of radio files index.
         $this->radioDatabase = $this->streamsRootDir . "/files.db";
+
+        // Location of radio files index.
+        $this->personalRadioDatabase = "default-radio.db";
+
+        // File used by the search indexer temporarily.
+        $this->dirlistFile = $this->streamsRootDir . "/scripts/dir.list";
     }
 
     public static function getInstance () {

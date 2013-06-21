@@ -35,7 +35,7 @@ class Config {
 
         // This is the root directory of this streaming application.
         // Absolute path - no trailing slash.
-        $this->streamsRootDir = "{$this->webroot}/../";
+        $this->streamsRootDir = "{$this->webroot}/..";
 
         // This is the root URL to the root location of this streaming application. {@see $this->streamsRootDir}
         // No trailing slash.
@@ -77,6 +77,12 @@ class Config {
 
         // Location of radio files index.
         $this->radioDatabase = $this->streamsRootDir . "/tests/files.db";
+
+        // Location of radio files index.
+        $this->personalRadioDatabase = "default-radio.db";
+
+        // File used by the search indexer temporarily.
+        $this->dirlistFile = $this->streamsRootDir . "/tests/resources/tmp/dir.list";
     }
 
     public static function getInstance () {

@@ -104,6 +104,9 @@ class Streams {
         $o['index'] = "";
         $o['isMp3'] = false;
         foreach ($a_files as $k=>$file) {
+            $this->t->setData(array("html_dir" => $html_dir));
+            $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/create-add-radio.tmpl");
+            $createAddRadioButton = $this->t->compile();
             if (is_dir($file)) {
                 $html_dir = preg_replace("/\"/", "\\\"", $dirLink . $file);
                 $html_end_dir = htmlspecialchars($file);
@@ -127,7 +130,7 @@ class Streams {
                 }
 
                 $this->t->setData(array("js_background_url"=>$js_background_url, "html_dir"=>$html_dir,
-                        "html_end_dir"=>$html_end_dir, "addToPlaylist"=>$addToPlaylist));
+                        "html_end_dir"=>$html_end_dir, "addToPlaylist"=>$addToPlaylist, "createAddRadioButton"=>$createAddRadioButton));
                 $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/coverListItem.tmpl");
                 $coverListItem = $this->t->compile();
                 $o['index'] .= $coverListItem;
@@ -142,7 +145,7 @@ class Streams {
                     // add-to-playlist for single files
                     $html_dir = rtrim(preg_replace("/\"/", "\\\"", $dirLink), "/");
                     $html_file = preg_replace("/\"/", "\\\"", $file);
-                    $this->t->setData(array("html_dir" => $html_dir, "html_file" => $html_file, "type" => "file"));
+                    $this->t->setData(array("html_dir" => $html_dir, "html_file" => $html_file, "type" => "file", "createAddRadioButton"=>$createAddRadioButton));
                     $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/add-to-playlist.tmpl");
                     $addToPlaylist = $this->t->compile();
 

@@ -111,7 +111,20 @@ function getHomeIndex() {
         url: "ajax.php",  
         data: "action=getHomeIndex",
         success: function(html){
+
+
+//            TODO: Make this a JSON variable that contains navlist and musicindex.
+//                  getHomeIndex() in ajax.php should return a JSON object.
+//
+//                  Look in,
+//                  public function getFileIndex ($dir) {
+//
+//                  We also need to show Home when performin openDir("/"). This is
+//                  when we're just logging in. Basically more than one case.
+
+
             handleLogoutHtml(html);
+            $("#navlist").html(html);
             $("#musicindex").html(html);
             hideWorking();
         }

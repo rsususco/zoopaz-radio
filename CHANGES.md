@@ -1,6 +1,12 @@
 Changes
 =======
 
+1.10.0 to 1.11.0
+----------------
+* (Not finished) Personalized radio.
+* (Not finished) Persistant Home button.
+* Refactored `buildSearchIndex.php` into into `StreamsSearchIndexer` and updated `buildSearchIndex.php` accordingly. Also added unit tests.
+
 1.9.0 to 1.10.0
 ---------------
 * Handle logout after session timesout or is logged out from another tab and an action is performed.
