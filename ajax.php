@@ -22,6 +22,7 @@ $sessid = session_id();
 require_once("lib/Config.php");
 require_once("lib/WsTmpl.php");
 require_once("lib/getid3/getid3/getid3.php");
+require_once("lib/StreamsSearchIndexer.php");
 require_once("lib/Streams.php");
 
 require_once("lib/Auth.php");
@@ -68,7 +69,12 @@ if ($_GET['action'] == "createPlaylistJs") {
     $streams->print_gzipped_page();
     die();
 } else if ($_GET['action'] == "getRandomPlaylist") {
-    print($streams->getRandomPlaylistJson($_GET['num']));
+    if (isset($_GET['personal']) && $_GET['personal'] == "yes") {
+        $o = $streams->getRandomPlaylistJson($_GET['num'], "{$auth->userDir}/{$cfg->personalRadioDatabase}");
+    } else {
+        $o = $streams->getRandomPlaylistJson($_GET['num']);
+    }
+    print($o);
     $streams->print_gzipped_page();
     die();
 } else if ($_GET['action'] == "playRadio") {
@@ -85,6 +91,12 @@ if ($_GET['action'] == "createPlaylistJs") {
     die();
 } else if ($_GET['action'] == "getHomeIndex") {
     print($streams->getHomeIndex());
+    die();
+} else if ($_GET['action'] == "createPersonalRadio") {
+    print($streams->createPersonalRadio($_GET['dir'], $_GET['num']));
+    die();
+} else if ($_GET['action'] == "addToPersonalRadio") {
+    print($streams->addToPersonalRadio($_GET['dir']));
     die();
 } else {
     die("Unused action.");

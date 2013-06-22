@@ -3,7 +3,7 @@ Changes
 
 1.10.0 to 1.11.0
 ----------------
-* (Not finished) Personalized radio.
+* Personalized radio.
 * (Not finished) Persistant Home button.
 * Refactored `buildSearchIndex.php` into into `StreamsSearchIndexer` and updated `buildSearchIndex.php` accordingly. Also added unit tests.
 

@@ -24,6 +24,7 @@ ob_start("ob_gzhandler");
 require_once("lib/Config.php");
 require_once("lib/WsTmpl.php");
 require_once("lib/getid3/getid3/getid3.php");
+require_once("lib/StreamsSearchIndexer.php");
 require_once("lib/Streams.php");
 require_once("lib/Auth.php");
 if (!isset($_SESSION['auth'])) {

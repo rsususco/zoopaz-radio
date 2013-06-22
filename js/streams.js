@@ -131,6 +131,9 @@ function getHomeIndex() {
     });
 }
 
+function displayWorkingMsg(msg) {
+}
+
 function displayWorking() {
     $("#loading").css("display", "block").css("visibility", "visible");
 }
@@ -206,7 +209,7 @@ function handleLogoutHtml(html) {
 }
 
 function handleLogoutJson(json) {
-    if (!isJson(json)) {
+    if (undefined === json.is_logged_in) {
         return false;
     }
     if (!json.is_logged_in) {
@@ -261,6 +264,70 @@ function playRadio(e) {
     });
 }
 
+function createPersonalRadio(e, thiz) {
+    var event = e || window.event;
+    isRadioMode = true;
+    displayWorking();
+    var dir = $(thiz).data("dir");
+    var cfg = new StreamsConfig();
+    $.getJSON("ajax.php?action=createPersonalRadio&dir=" 
+            + encodeURIComponent(dir) + "&num=" + cfg.numberOfRadioItems, function(json){
+        handleLogoutJson(json);
+
+        var width = $("#content").width();
+        $("#content-player").html(json['contentPlayer']);
+        $(".album-title").text("Radio " + dir);
+        $("#playbutton").remove();
+
+        // Currently the player only works in iPhone with the Chrome browser.
+        // We remove this playlist because it is not functional while playing.
+        if (isMobile && isMobile()) {
+            var musicIndex = $("#musicindex");
+            $("#playercontrols").remove();
+            var newwidth = width - 16;
+            $("#mediaplayer_wrapper").css("width", newwidth + "px");
+            var playerTop = $("#mediaplayer").offset().top;
+            window.scrollTo(0, playerTop);
+        }
+
+        // After each song plays, remove the first song.
+        $("#mediaplayer").bind($.jPlayer.event.play, function(event) {
+            // TODO: This is kind of a bug, but shouldn't happen with normal usage.
+            //       If you click the last item in the list, after it's done, the player will stop.
+            console.log("bind: Playlist size: " + myPlaylist.playlist.length + ", Current position: " + myPlaylist.current);
+        }).bind($.jPlayer.event.ended, function(event) {
+            var current = myPlaylist.current;
+            myPlaylist.remove(current - 1);
+            $.getJSON("ajax.php?action=getRandomPlaylist&num=1&personal=yes", function(json){
+                $(json).each(function(i, audioFile) {
+                    myPlaylist.add(audioFile);
+                });
+            });
+        });
+
+        hideWorking();
+    });
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    event.cancelBubble = true;
+    return false;
+}
+
+function addToPersonalRadio(e, thiz) {
+    var event = e || window.event;
+    displayWorking();
+    var dir = $(thiz).data("dir");
+    $.getJSON("ajax.php?action=addToPersonalRadio&dir=" 
+            + encodeURIComponent(dir), function(json){
+        handleLogoutJson(json);
+        hideWorking();
+    });
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    event.cancelBubble = true;
+    return false;
+}
+
 isRadioMode = false;
 $(document).ready(function(){
     init();
@@ -307,6 +374,14 @@ $(document).ready(function(){
 
     $(document).on("click", "#radio-button", function(e) {
         playRadio(e);
+    });
+
+    $(document).on("click", ".createradiobutton", function(e) {
+        createPersonalRadio(e, this);
+    });
+
+    $(document).on("click", ".addtoradiobutton", function(e) {
+        addToPersonalRadio(e, this);
     });
 
     prevtime = parseInt(new Date().getTime());

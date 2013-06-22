@@ -3,6 +3,7 @@ require_once("lib/Config.php");
 require_once("lib/Auth.php");
 require_once("../lib/getid3/getid3/getid3.php");
 require_once("../lib/WsTmpl.php");
+require_once("../lib/StreamsSearchIndexer.php");
 require_once("../lib/Streams.php");
 
 /**
@@ -24,6 +25,15 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
         $this->t = new WsTmpl();
         $this->streams = new Streams($this->cfg, $this->auth, $this->t);
         $this->htmlDir = getcwd() . "/resources/Streams/html";
+        if (!file_exists(getcwd() . "/sessions")) {
+            mkdir(getcwd() . "/sessions");
+        }
+        if (!file_exists(getcwd() . "/sessions/users")) {
+            mkdir(getcwd() . "/sessions/users");
+        }
+        if (!file_exists(getcwd() . "/sessions/users/foobar")) {
+            mkdir(getcwd() . "/sessions/users/foobar");
+        }
     }
 
     public function __destruct() {
@@ -215,33 +225,33 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
 
     public function testOpenTheDir() {
         $html = "{$this->htmlDir}/open-the-dir-root.html";
-        $expected = file_get_contents($html);
         $got = $this->streams->openTheDir("/");
         //file_put_contents($html, $got);
+        $expected = file_get_contents($html);
         $this->assertEquals($expected, $got);
 
         $html = "{$this->htmlDir}/open-the-dir-mymusic.html";
-        $expected = file_get_contents($html);
         $got = $this->streams->openTheDir("/MyMusic");
         //file_put_contents($html, $got);
+        $expected = file_get_contents($html);
         $this->assertEquals($expected, $got);
 
         $html = "{$this->htmlDir}/open-the-dir-mymusic-rock.html";
-        $expected = file_get_contents($html);
         $got = $this->streams->openTheDir("/MyMusic/Rock");
         //file_put_contents($html, $got);
+        $expected = file_get_contents($html);
         $this->assertEquals($expected, $got);
 
         $html = "{$this->htmlDir}/open-the-dir-mymusic-rock-foobar.html";
-        $expected = file_get_contents($html);
         $got = $this->streams->openTheDir("/MyMusic/Rock/Foobar");
         //file_put_contents($html, $got);
+        $expected = file_get_contents($html);
         $this->assertEquals($expected, $got);
 
         $html = "{$this->htmlDir}/open-the-dir-mymusic-rock-foobar-bestalbum.html";
-        $expected = file_get_contents($html);
         $got = $this->streams->openTheDir("/MyMusic/Rock/Foobar/BestAlbum");
-        file_put_contents($html, $got);
+        //file_put_contents($html, $got);
+        $expected = file_get_contents($html);
         $this->assertEquals($expected, $got);
 
         $expected = "";
@@ -284,9 +294,9 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
         $dir = $this->streams->singleSlashes("{$this->cfg->defaultMp3Dir}/{$dirLink}");
         $a_files = glob("{$dir}/*");
         $html = "{$this->htmlDir}/build-index-sally-dezos.html";
-        $expected = file_get_contents($html);
         $got = $this->streams->buildIndex($a_files, $dirLink, $search=false);
         //file_put_contents($html, $got['index']);
+        $expected = file_get_contents($html);
         $this->assertEquals($expected, $got['index']);
         $expected = true;
         $this->assertEquals($expected, $got['isMp3']);
@@ -405,37 +415,37 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
     public function testGetFileIndex() {
         $dir = "/";
         $html = "{$this->htmlDir}/get-file-index-root.html";
-        $expected = file_get_contents($html);
         $got = $this->streams->getFileIndex($dir);
         //file_put_contents($html, $got);
+        $expected = file_get_contents($html);
         $this->assertEquals($expected, $got);
 
         $dir = "/MyMusic";
         $html = "{$this->htmlDir}/get-file-index-mymusic.html";
-        $expected = file_get_contents($html);
         $got = $this->streams->getFileIndex($dir);
         //file_put_contents($html, $got);
+        $expected = file_get_contents($html);
         $this->assertEquals($expected, $got);
 
         $dir = "/MyMusic/Rock";
         $html = "{$this->htmlDir}/get-file-index-mymusic-rock.html";
-        $expected = file_get_contents("{$this->htmlDir}/get-file-index-mymusic-rock.html");
         $got = $this->streams->getFileIndex($dir);
         //file_put_contents($html, $got);
+        $expected = file_get_contents("{$this->htmlDir}/get-file-index-mymusic-rock.html");
         $this->assertEquals($expected, $got);
 
         $dir = "/MyMusic/Rock/Foobar";
         $html = "{$this->htmlDir}/get-file-index-mymusic-rock-foobar.html";
-        $expected = file_get_contents($html);
         $got = $this->streams->getFileIndex($dir);
         //file_put_contents($html, $got);
+        $expected = file_get_contents($html);
         $this->assertEquals($expected, $got);
 
         $dir = "/MyMusic/Rock/Foobar/BestAlbum";
         $html = "{$this->htmlDir}/get-file-index-mymusic-rock-foobar-bestalbum.html";
-        $expected = file_get_contents($html);
         $got = $this->streams->getFileIndex($dir);
         //file_put_contents($html, $got);
+        $expected = file_get_contents($html);
         $this->assertEquals($expected, $got);
     }
 
@@ -786,11 +796,11 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
 
         // TODO: These names are hard-coded in Streams. Maybe we shouldn't do that.
         $this->auth->currentPlaylist = "{$this->htmlDir}/currentPlaylist.obj";
-        file_put_contents($this->auth->currentPlaylist, $playlist);
+        //file_put_contents($this->auth->currentPlaylist, $playlist);
 
         $this->auth->currentPlaylistDir = "{$this->htmlDir}/currentPlaylistDir.obj";
         $playlistDir = "Foobar &rsaquo; Sure";
-        file_put_contents($this->auth->currentPlaylistDir, $playlistDir);
+        //file_put_contents($this->auth->currentPlaylistDir, $playlistDir);
 
         $got = $this->streams->addToPlaylist($dir);
         //file_put_contents("{$this->htmlDir}/add-to-playlist.json", $got);
@@ -947,6 +957,39 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
         $html = "{$this->htmlDir}/get-home-index.html";
         //file_put_contents($html, $got);
         $expected = file_get_contents($html);
+        $this->assertEquals($expected, $got);
+    }
+
+    public function testCreatePersonalRadio() {
+        $this->auth->userDir = "tests/sessions/users/foobar";
+        $db = "{$this->cfg->streamsRootDir}/{$this->auth->userDir}/search.db";
+        $fdb = "{$this->cfg->streamsRootDir}/{$this->auth->userDir}/files.db";
+
+        $dir = "/MyMusic/Jazz/SallyTheBand/Dezos";
+        $num = 10;
+        $this->streams->createPersonalRadio($dir, $num);
+        $got = file_get_contents($fdb);
+        $testdb = "{$this->htmlDir}/create-personal-radio.db";
+        //file_put_contents($testdb, $got);
+        $expected = file_get_contents($testdb);
+        $this->assertEquals($expected, $got);
+        return $json;
+    }
+
+    /**
+     * @depends testCreatePersonalRadio
+     */
+    public function tesAddToPersonalRadio($json) {
+        $this->auth->userDir = "tests/sessions/users/foobar";
+        $db = "{$this->cfg->streamsRootDir}/{$this->auth->userDir}/search.db";
+        $fdb = "{$this->cfg->streamsRootDir}/{$this->auth->userDir}/files.db";
+
+        $dir = "/MyMusic/Rock/Foobar/Sure";
+        $testdbAdd = "{$this->htmlDir}/add-to-personal-radio.db";
+        $this->streams->addToPersonalRadio($dir);
+        //file_put_contents($testdbAdd, file_get_contents($fdb));
+        $expected = file_get_contents($jsonAdd);
+        $got = file_get_contents($json);
         $this->assertEquals($expected, $got);
     }
 

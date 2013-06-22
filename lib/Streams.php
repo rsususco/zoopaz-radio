@@ -103,13 +103,17 @@ class Streams {
         $o = array();
         $o['index'] = "";
         $o['isMp3'] = false;
+        $dirLink = $this->singleSlashes($dirLink);
         foreach ($a_files as $k=>$file) {
-            $this->t->setData(array("html_dir" => $html_dir));
-            $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/create-add-radio.tmpl");
-            $createAddRadioButton = $this->t->compile();
+            $file = $this->singleSlashes($file);
             if (is_dir($file)) {
                 $html_dir = preg_replace("/\"/", "\\\"", $dirLink . $file);
                 $html_end_dir = htmlspecialchars($file);
+
+                // Add create and add-to radio buttons.
+                $this->t->setData(array("html_dir" => $html_dir));
+                $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/create-add-radio.tmpl");
+                $createAddRadioButton = $this->t->compile();
 
                 if (file_exists("{$this->cfg->defaultMp3Dir}{$dirLink}{$file}/small_montage.jpg")) {
                     $background_url = "{$this->cfg->defaultMp3Url}{$dirLink}{$file}/small_montage.jpg";
@@ -770,8 +774,13 @@ class Streams {
     /**
      * @tested true
      */
-    public function getRandomPlaylistJson($numItems) {
-        $f = file($this->cfg->radioDatabase);
+    public function getRandomPlaylistJson($numItems, $personalRadioDatabase=null) {
+        $radioDatabase = $this->cfg->radioDatabase;
+        if (isset($personalRadioDatabase)) {
+            $radioDatabase = $personalRadioDatabase;
+        }
+
+        $f = file($radioDatabase);
         $c = count($f);
 
         // Return if there are now files in the database.
@@ -904,6 +913,41 @@ class Streams {
         $isMp3 = $o['isMp3'];
         chdir($curdir);
         return $index;
+    }
+
+    public function createPersonalRadio($dir, $num) {
+        $dir = $this->singleSlashes($dir);
+        $indexer = new StreamsSearchIndexer($this->cfg, $this->auth);
+        $userDir = $this->auth->userDir;
+        $db = "{$this->cfg->streamsRootDir}/{$userDir}/search.db";
+        $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/files.db";
+        $indexer->setDb($db);
+        $indexer->setFdb($fdb);
+        $indexer->setVerbose(false);
+        $indexer->setDir($dir);
+        $indexer->setDirlistFile($this->cfg->streamsRootDir . "/" . $userDir . "/dir.list");
+        $indexer->index();
+        $playlist = $this->getRandomPlaylistJson($num, $fdb);
+        $html = $this->buildPlayerHtml($playlist, null, 'true');
+        $o = array("status"=>"ok", "message"=>"Playing radio for {$dir}", "contentPlayer"=>$html);
+        return json_encode($o);
+    }
+
+    public function addToPersonalRadio($dir) {
+        $dir = $this->singleSlashes($dir);
+        $indexer = new StreamsSearchIndexer($this->cfg, $this->auth);
+        $userDir = $this->auth->userDir;
+        $db = "{$this->cfg->streamsRootDir}/{$userDir}/search.db";
+        $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/files.db";
+        $indexer->setDb($db);
+        $indexer->setFdb($fdb);
+        $indexer->setVerbose(false);
+        $indexer->setDir($dir);
+        $indexer->setDirlistFile($this->cfg->streamsRootDir . "/" . $userDir . "/dir.list");
+        $indexer->setAddToIndex(true);
+        $indexer->index();
+        $o = array("status"=>"ok", "message"=>"Added {$dir} to personal radio station.");
+        return json_encode($o);
     }
 
 }

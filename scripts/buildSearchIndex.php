@@ -35,7 +35,7 @@ $db = "{$curdir}/../search.db";
 $fdb = "{$curdir}/../files.db";
 $filter = "{$curdir}/filter.json";
 
-$indexer->setDb($db);
-$indexer->setFdb($fdb);
+$indexer->setDb($cfg->searchDatabase);
+$indexer->setFdb($cfg->radioDatabase);
 $indexer->setFilter($filter);
 $indexer->index();

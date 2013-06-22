@@ -28,11 +28,16 @@ class StreamsSearchIndexer {
     private $filter;
     private $curdir;
     private $verbose;
+    private $dir;
+    private $dirlistFile;
+    private $addToIndex;
 
     public function __construct($cfg=null, $auth=null) {
         $this->cfg = $cfg;
         $this->auth = $auth;
         $this->verbose = true;
+        $this->addToIndex = false;
+        $this->dirlistFile = $this->cfg->dirlistFile;
     }
 
     public function setCfg($cfg) {
@@ -91,10 +96,42 @@ class StreamsSearchIndexer {
         return $this->verbose;
     }
 
+    public function setDir($dir) {
+        $this->dir = $dir;
+    }
+
+    public function getDir() {
+        return $this->dir;
+    }
+
+    public function setDirlistFile($dirlistFile) {
+        $this->dirlistFile = $dirlistFile;
+    }
+
+    public function getDirlistFile() {
+        return $this->dirlistFile;
+    }
+
+    public function setAddToIndex($addToIndex) {
+        $this->addToIndex = $addToIndex;
+    }
+
+    public function getAddToIndex() {
+        return $this->addToIndex;
+    }
+
     public function buildDirList() {
         $this->curdir = getcwd();
+        $dir = "";
+        if (isset($this->dir)) {
+            $dir = $this->dir;
+        }
         chdir($this->cfg->defaultMp3Dir);
-        exec("find . -type d | sed 's/^\.\///g' | sort -h > {$this->cfg->dirlistFile}");
+        if (isset($this->dirlistFile)) {
+            exec("find \".{$dir}\" -type d | sed 's/^\.\///g' | sort -h > {$this->dirlistFile}");
+        } else {
+            exec("find \".{$dir}\" -type d | sed 's/^\.\///g' | sort -h > dir.list");
+        }
         chdir($this->curdir);
     }
 
@@ -102,7 +139,7 @@ class StreamsSearchIndexer {
      * @tested true
      */
     public function getDirListArray() {
-        $f = file($this->cfg->dirlistFile);
+        $f = file($this->dirlistFile);
         return $f;
     }
 
@@ -141,8 +178,12 @@ class StreamsSearchIndexer {
         $a_filter = $o['a_filter'];
         $useFilter = $o['useFilter'];
 
-        file_put_contents($this->db, "");
-        file_put_contents($this->fdb, "");
+        chdir($this->cfg->defaultMp3Dir);
+
+        if (!$this->addToIndex) {
+            file_put_contents($this->db, "");
+            file_put_contents($this->fdb, "");
+        }
 
         $c = count($f);
         foreach ($f as $k=>$dir) {
@@ -155,7 +196,13 @@ class StreamsSearchIndexer {
 
             if ($dir != ".") {
                 if ($this->verbose) {
-                    print("[" . ($k+1) . " of $c] " . getcwd() . "/$dir\n");
+                    print("[" . ($k+1) . " of $c] " . getcwd() . "/$dir<br />\n");
+                }
+                if ($this->cfg->logging && !file_exists($dir)) {
+                    $this->logfile = $this->streamsRootDir . "/access.log";
+                    file_put_contents($cfg->logfile, date("Y-m-d H:i:s") . " ::: " . $_SERVER['REMOTE_ADDR'] . " ::: " 
+                            . $_SERVER['HTTP_USER_AGENT'] . " ::: " . $_SERVER['REQUEST_URI'] . " ::: " 
+                            . getcwd() . "/{$dir} does not exist.\n", FILE_APPEND);
                 }
                 chdir($dir);
             }
@@ -207,7 +254,7 @@ class StreamsSearchIndexer {
             chdir($this->cfg->defaultMp3Dir);
         }
 
-        unlink("{$this->cfg->dirlistFile}");
+        unlink("{$this->dirlistFile}");
         chdir($this->curdir);
     }
 
