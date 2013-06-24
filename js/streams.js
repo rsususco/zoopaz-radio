@@ -328,6 +328,29 @@ function addToPersonalRadio(e, thiz) {
     return false;
 }
 
+pt = null;
+
+function playTimeout() {
+    clearTimeout(pt);
+    $(".jp-pause").click();
+    $("#playbutton").html("Play");
+    var c = confirm("Are you still listening?");
+    if (c) {
+        $(".jp-play").click();
+        $("#playbutton").html("Pause");
+        setPlayTimeout();
+    }
+    return false;
+}
+
+function setPlayTimeout() {
+    var cfg = new StreamsConfig();
+    if (!cfg.usePlayTimeout) {
+        return false;
+    }
+    pt = setTimeout("playTimeout()", parseInt(cfg.playTimeout) * 1000);
+}
+
 isRadioMode = false;
 $(document).ready(function(){
     init();

@@ -32,6 +32,7 @@ Features
 * No database, but could easily be supported in the future.
 * Mobile support. Chrome for iOS is supported when screen locked.
 * Keyboard shortcuts: Up/Down for Volume, Left/Right for Track Advancement, Space for Play/Pause, Backspace for Mute.
+* Auto-timeout of player after X amount of time. Presents an "Are you still listening?" message with confirm dialog.
 
 License
 =======

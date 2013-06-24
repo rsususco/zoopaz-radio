@@ -80,6 +80,9 @@
             ready: function() {
                 if ("true" == "true") {
                     $(this).jPlayer("play");
+
+                    // TODO(k92j9f): This instance is for radio mode because the play event doesn't fire.
+                    setPlayTimeout();
                 }
             },
             play: function() {
@@ -90,6 +93,9 @@
                     //alert('not in radio mode');
                     console.log("radio off: Playlist size: " + myPlaylist.playlist.length + ", Current position: " + myPlaylist.current);
                 }
+
+                // TODO(k92j9f): This instance is for normal non-radio mode because the play event doesn't fire in radio mode.
+                setPlayTimeout();
             }
         }
     );

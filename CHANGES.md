@@ -1,6 +1,10 @@
 Changes
 =======
 
+1.11.0 to 1.12.0
+----------------
+* Automatic timeout of player. Configurable in [`js/streams.config.js`](js/streams.config.js).
+
 1.10.0 to 1.11.0
 ----------------
 * Personalized radio.
