@@ -63,7 +63,9 @@ function openDir(url) {
         data: "action=openDir&url=" + encodeURIComponent(url) + "&dir=" + encodeURIComponent(url),
         success: function(html){
             handleLogoutHtml(html);
-            if (JSON.parse(html)) {
+            if (/^[\],:{}\s]*$/.test(html.replace(/\\["\\\/bfnrtu]/g, '@')
+                    .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
+                    .replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
                 var json = JSON.parse(html);
                 if (json['is_logged_in']) {
                     $("#content").html(html);
