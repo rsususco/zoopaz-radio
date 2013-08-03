@@ -26,6 +26,11 @@ class Auth {
     //       in no way provides real world security.
     public $users = array("user1"=>"user1password", "user2"=>"user2password");
 
+    // These users are restricted in some manner by Streams.isRestricted($file).
+    // Currently it prevents audio purchased from iTunes or Amazon from being served
+    // to these users. Set to a key (username) from the $users array.
+    public $restrictedUsers = array("user2");
+
     // start: login
     public $year;
     public $month;
