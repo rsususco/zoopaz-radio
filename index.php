@@ -19,8 +19,6 @@ limitations under the License.
 session_start();
 $sessid = session_id();
 
-ob_start("ob_gzhandler");
-
 require_once("lib/Config.php");
 require_once("lib/WsTmpl.php");
 require_once("lib/getid3/getid3/getid3.php");
@@ -70,6 +68,9 @@ if (isset($_SESSION['u']) && strlen($_SESSION['u']) > 0) {
 }
 
 require_once("lib/actions.php");
+
+// This must come after lib/actions.php in order to send album downloads properly.
+ob_start("ob_gzhandler");
 
 $pageContent .= $streams->openTheDir($_GET['dir']);
 

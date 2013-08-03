@@ -146,6 +146,10 @@ class Streams {
                     $id3 = $this->id3($dirLink, $file);
                     $filePath = rawurlencode($dirLink . $file);
 
+                    if ($this->isRestricted($dirLink . $file)) {
+                        continue;
+                    }
+
                     // add-to-playlist for single files
                     $html_dir = rtrim(preg_replace("/\"/", "\\\"", $dirLink), "/");
                     $html_file = preg_replace("/\"/", "\\\"", $file);
@@ -948,6 +952,26 @@ class Streams {
         $indexer->index();
         $o = array("status"=>"ok", "message"=>"Added {$dir} to personal radio station.");
         return json_encode($o);
+    }
+
+    public function isRestricted($file) {
+        if (!is_array($this->auth->restrictedUsers)) {
+            return false;
+        }
+        $fullPath = $this->cfg->defaultMp3Dir . $file;
+        if (in_array($this->auth->username, $this->auth->restrictedUsers)) {
+            $getID3 = new getID3();
+            $getID3->setOption(array("encoding" => "UTF-8"));
+            $id3 = $getID3->analyze($fullPath);
+            $id3String = serialize($id3);
+            if (preg_match("/amazon/i", $id3String)) {
+                return true;
+            }
+            if (preg_match("/itunes/i", $id3String)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
