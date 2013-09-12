@@ -19,6 +19,8 @@ limitations under the License.
 session_start();
 $sessid = session_id();
 
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
+
 require_once("lib/Config.php");
 require_once("lib/WsTmpl.php");
 require_once("lib/getid3/getid3/getid3.php");
