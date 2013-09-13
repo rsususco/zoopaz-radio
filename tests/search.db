@@ -1,0 +1,13 @@
+.:::mymusic stopwordsphp buildsearchindexphp coverlist dirlist filterjson mlist makemontagesphp makesmallcoverphp white 
+MyMusic:::jazz rock testband 
+MyMusic/Jazz:::sallytheband 
+MyMusic/Jazz/SallyTheBand:::dezos happysongs 
+MyMusic/Jazz/SallyTheBand/Dezos:::1 - song's 10 - song's 11 - song's 2 - song's 3 - song's 4 - song's 5 - song's 6 - song's 7 - song's 8 - song's 9 - song's 
+MyMusic/Jazz/SallyTheBand/HappySongs:::1 - song's 10 - song's 11 - song's 2 - song's 3 - song's 4 - song's 5 - song's 6 - song's 7 - song's 8 - song's 9 - song's 
+MyMusic/Rock:::foobar 
+MyMusic/Rock/Foobar:::anotherone bestalbum sure 
+MyMusic/Rock/Foobar/AnotherOne:::01song 02song 03song 04song 
+MyMusic/Rock/Foobar/BestAlbum:::01song 02song 03song 04song 
+MyMusic/Rock/Foobar/Sure:::01song 02song 03song 04song 
+MyMusic/TestBand:::testalbum 
+MyMusic/TestBand/TestAlbum:::test-noid3 test 
