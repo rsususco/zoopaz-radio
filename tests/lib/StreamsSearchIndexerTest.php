@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
 require_once("lib/Config.php");
 require_once("lib/Auth.php");
 require_once("../lib/StreamsSearchIndexer.php");

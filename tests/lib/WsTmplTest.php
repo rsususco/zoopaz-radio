@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
 require_once("../lib/WsTmpl.php");
 
 class WsTmplTest extends PHPUnit_Framework_TestCase {
