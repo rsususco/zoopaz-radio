@@ -291,9 +291,12 @@ class WsTmplTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testBuildIndex() {
-        $dirLink = "/MyMusic/Jazz/SallyTheBand/Dezos/";
-        $dir = $this->streams->singleSlashes("{$this->cfg->defaultMp3Dir}/{$dirLink}");
-        $a_files = glob("{$dir}/*");
+        $relDirLink = "MyMusic/Jazz/SallyTheBand/Dezos";
+        $dirLink = "/{$relDirLink}";
+        $curdir = getcwd();
+        chdir($this->cfg->defaultMp3Dir . $dirLink);
+        $a_files = glob("*");
+        chdir($curdir);
         $html = "{$this->htmlDir}/build-index-sally-dezos.html";
         $got = $this->streams->buildIndex($a_files, $dirLink, $search=false);
         //file_put_contents($html, $got['index']);
