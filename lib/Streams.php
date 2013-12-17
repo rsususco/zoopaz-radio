@@ -280,6 +280,31 @@ class Streams {
         return $title;
     }
 
+    public function buildFileIndexCache ($dir) {
+        $dir = $this->singleSlashes($dir);
+
+        $curdir = getcwd();
+
+        $chdir = "";
+        if ($dir === $this->cfg->defaultMp3Dir) {
+            $chdir = $this->cfg->defaultMp3Dir;
+            $dirLink = "";
+        } else {
+            if (!file_exists($this->cfg->defaultMp3Dir . '/' . $dir)) {
+                return false;
+            }
+            $chdir = $this->cfg->defaultMp3Dir . '/' . $dir;
+            $dirLink = "{$dir}/";
+        }
+
+        chdir($chdir);
+        $a_files = glob("*");
+        natcasesort($a_files);
+        file_put_contents("fileIndex.obj", serialize($a_files));
+
+        chdir($curdir);
+    }
+
     /**
      * @tested true
      */
@@ -301,7 +326,10 @@ class Streams {
         }
 
         chdir($chdir);
-        $a_files = glob("*");
+        if (!file_exists("fileIndex.obj")) {
+            $this->buildFileIndexCache($dir);
+        }
+        $a_files = unserialize(file_get_contents("fileIndex.obj"));
         natcasesort($a_files);
 
         $o = $this->buildIndex($a_files, $dirLink);
@@ -392,12 +420,23 @@ class Streams {
         return $index;
     }
 
+    public function getPublicListenHash($dir) {
+        return sha1($this->cfg->publicListenKey . $dir);
+    }
+
+    public function getPermaLink($dir) {
+        $enc_dir = rawurlencode($dir);
+        $hash = $this->getPublicListenHash($dir);
+        return $this->cfg->streamsRootDirUrl . "/index.php?h={$hash}&dir={$enc_dir}";
+    }
+
     /**
      * @tested true
      */
     public function buildPlayerControls($dir) {
         $enc_dir = rawurlencode($dir);
-        $this->t->setData(array("dir" => $dir, "enc_dir" => $enc_dir));
+        $permalink = $this->getPermaLink($dir);
+        $this->t->setData(array("dir" => $dir, "enc_dir" => $enc_dir, "permalink" => $permalink));
         $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/playerControls.tmpl");
         $controls = $this->t->compile();
         return $controls;

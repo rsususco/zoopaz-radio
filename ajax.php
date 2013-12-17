@@ -26,22 +26,22 @@ require_once("lib/WsTmpl.php");
 require_once("lib/getid3/getid3/getid3.php");
 require_once("lib/StreamsSearchIndexer.php");
 require_once("lib/Streams.php");
-
 require_once("lib/Auth.php");
+
 if (!isset($_SESSION['auth'])) {
     $auth = new Auth();
 } else {
     $auth = unserialize($_SESSION['auth']);
 }
 
+$cfg = Config::getInstance();
+$t = new WsTmpl();
+$streams = new Streams($cfg, $auth, $t);
+
 if (!$auth->is_logged_in) {
     print(json_encode(array("is_logged_in" => false)));
     die();
 }
-
-$cfg = Config::getInstance();
-$t = new WsTmpl();
-$streams = new Streams($cfg, $auth, $t);
 
 ob_start();
 ob_implicit_flush(0);
