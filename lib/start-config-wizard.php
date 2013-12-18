@@ -1,5 +1,8 @@
 <?php
 
+$_SESSION['config'] = array();
+$_SESSION['auth'] = array();
+
 if (isset($_GET['a']) && $_GET['a'] == "setConfigWizard") {
     $_SESSION['step'] = "config-wizard";
     header("Location:{$_SERVER['PHP_SELF']}");
@@ -38,7 +41,10 @@ eof;
 
 $_SESSION['foundAllDeps'] = true;
 
-$pageContent .= buildCommandTable("find");
+$cmds = array("find", "montage", "mogrify", "zip", "rm");
+foreach ($cmds as $cmd) {
+    $pageContent .= buildCommandTable($cmd);
+}
 
 $pageContent .= <<<eof
     </tbody>
@@ -49,5 +55,5 @@ if (!$_SESSION['foundAllDeps']) {
     $pageContent .= "<div class=\"alert alert-danger\">The setup process cannot continue until all dependencies are met.</div>";
 } else {
     $pageContent .= "<div class=\"alert alert-success\">All dependencies found. Time to configure the application.</div>";
-    $pageContent .= "<button type=\"button\" class=\"btn btn-primary\" onclick=\"location.href='{$_SERVER['PHP_SELF']}?a=setConfigWizard'\">Next</button>";
+    $pageContent .= "<button type=\"button\" class=\"btn btn-primary\" onclick=\"location.href='{$_SERVER['PHP_SELF']}?a=setConfigWizard'\" id=\"nextButton\">Next</button>";
 }

@@ -69,6 +69,7 @@ $t = new WsTmpl();
 if (isset($_GET['a']) && $_GET['a'] == "start-over") {
     unset($_SESSION['step']);
     unset($_SESSION['config-step']);
+    unset($_SESSION['auth-step']);
     header("Location:{$_SERVER['PHP_SELF']}");
     exit();
 }

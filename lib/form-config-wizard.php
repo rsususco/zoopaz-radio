@@ -12,11 +12,16 @@ if (!isset($_SESSION['config-step'])) {
 }
 
 if (isset($_GET['a']) && $_GET['a'] == "setConfig") {
-
     if (isset($_POST['setConfigButton']) && $_POST['setConfigButton'] == "next-button") {
         $next = $_GET['next'];
     } else if (isset($_POST['setConfigButton']) && $_POST['setConfigButton'] == "previous-button") {
         $next = $_GET['prev'];
+    }
+
+    if (isset($_POST['fieldValue']) && isset($_GET['field'])) {
+        $field = $_GET['field'];
+        $fieldValue = $_POST['fieldValue'];
+        $_SESSION['config'][] = array($field => $fieldValue);
     }
 
     if (intval($next) > 0) {
@@ -49,10 +54,10 @@ if (intval($currentField) == intval($totalFields)) {
     // In-between
     $nextField = $currentField + 1;
     $prevField = $currentField - 1;
-    $nextButton = "<button type=\"submit\" value=\"next-button\" name=\"setConfigButton\" class=\"btn btn-primary\">Next</button>";
-    $prevButton = "<button type=\"submit\" value=\"previous-button\" name=\"setConfigButton\" class=\"btn btn-primary\">Previous</button>";
+    $nextButton = "<button type=\"submit\" value=\"next-button\" name=\"setConfigButton\" class=\"btn btn-primary\" id=\"nextButton\">Next</button>";
+    $prevButton = "<button type=\"submit\" value=\"previous-button\" name=\"setConfigButton\" class=\"btn btn-primary\" id=\"prevButton\">Previous</button>";
 }
-$link = "{$_SERVER['PHP_SELF']}?a=setConfig&amp;next={$nextField}&amp;prev={$prevField}";
+$link = "{$_SERVER['PHP_SELF']}?a=setConfig&amp;next={$nextField}&amp;prev={$prevField}&amp;field={$p['var']}";
 
 $pageContent .= "<form role=\"form\" action=\"{$link}\" method=\"post\">";
 $pageContent .= "<h1>" . $currentField . " of " . $totalFields . "</h1>";
@@ -64,13 +69,13 @@ if ($p['isboolean']) {
     $pageContent .= <<<eof
 <div class="radio">
     <label>
-        <input type="radio" name="{$p['var']}" id="{$p['var']}" value="true" checked="checked" />
+        <input type="radio" name="fieldValue" id="{$p['var']}" value="true" checked="checked" />
         true
     </label>
 </div>
 <div class="radio">
     <label>
-        <input type="radio" name="{$p['var']}" id="{$p['var']}" value="false" />
+        <input type="radio" name="fieldValue" id="{$p['var']}" value="false" />
         false
     </label>
 </div>
@@ -79,17 +84,18 @@ eof;
     $pageContent .= <<<eof
   <div class="form-group">
     <label for="">{$p['var']}</label>
-    <input name="{$p['var']}" type="text" class="form-control" id="{$p['var']}" placeholder="{$p['exp']}" value="{$p['exp']}" />
+    <input name="fieldValue" type="text" class="form-control" id="{$p['var']}" placeholder="{$p['exp']}" value="{$p['exp']}" />
   </div>
 eof;
 }
 $pageContent .= <<<eof
         </div>
     </div>
+    <br />
+    {$success}
+    <br />
     {$prevButton} {$nextButton}
 </form>
-<br />
-{$success}
 <br />
 <button type="button" class="btn btn-danger" onclick="location.href='{$_SERVER['PHP_SELF']}?a=start-over'">Start over</button>
 eof;
