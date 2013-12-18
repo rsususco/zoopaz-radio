@@ -76,22 +76,57 @@ $pageContent .= "<div class=\"panel-heading\">Set auth parameter <code>{$p['var'
 $pageContent .= "<div class=\"panel-body\">";
 $pageContent .= "<p>{$p['desc']}</p>";
 if ($p['isboolean']) {
+    if ($auth != null) {
+        $val = $auth->$p['var'];
+    } else {
+        $val = $p['exp'];
+    }
+    if ($val === true) {
+        $btChecked = "checked=\"checked\"";
+        $bfChecked = "";
+    } else {
+        $btChecked = "";
+        $bfChecked = "checked=\"checked\"";
+    }
     $pageContent .= <<<eof
 <div class="radio">
     <label>
-        <input type="radio" name="fieldValue" id="{$p['var']}" value="true" checked="checked" />
+        <input type="radio" name="fieldValue" id="{$p['var']}" value="true" {$btChecked} />
         true
     </label>
 </div>
 <div class="radio">
     <label>
-        <input type="radio" name="fieldValue" id="{$p['var']}" value="false" />
+        <input type="radio" name="fieldValue" id="{$p['var']}" value="false" {$bfChecked} />
         false
     </label>
 </div>
 eof;
 } else if ($p['isusers']) {
-    $pageContent .= <<<eof
+    if ($auth != null) {
+        if ($p['var'] == "users") {
+            $users = $auth->$p['var'];
+            $cnt = 0;
+            foreach ($users as $email=>$password) {
+                $cnt++;
+                if ($cnt > 0) {
+                    $remove = "<p style=\"margin-bottom:16px\" class=\"btn btn-danger\" onclick=\"removeUser(this)\">Remove</p>";
+                } else {
+                    $remove = "";
+                }
+                $pageContent .= <<<eof
+<div class="new-user"><hr /><div class="form-group">
+    <label for="email">Email</label>
+    <input name="email[]" type="text" class="form-control" placeholder="Email..." value="{$email}" />
+</div>
+<div class="form-group">
+    <label for="password">Password</label>
+    <input name="password[]" type="password" class="form-control" placeholder="Password..." value="{$password}" />
+</div>{$remove}</div>
+eof;
+            }
+        } else {
+            $pageContent .= <<<eof
   <div class="form-group">
     <label for="email">Email</label>
     <input name="email[]" type="text" class="form-control" placeholder="Email..." />
@@ -102,19 +137,70 @@ eof;
   </div>
   <p class="btn btn-success" style="margin-bottom:16px;" id="addAnotherUser">Add another</p><br /> 
 eof;
-} else if ($p['isrestrictedusers']) {
-    $pageContent .= <<<eof
+        }
+    } else {
+        $pageContent .= <<<eof
   <div class="form-group">
     <label for="email">Email</label>
     <input name="email[]" type="text" class="form-control" placeholder="Email..." />
   </div>
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input name="password[]" type="password" class="form-control" placeholder="Password..." />
+  </div>
+eof;
+    }
+    $pageContent .= <<<eof
+  <p class="btn btn-success" style="margin-bottom:16px;" id="addAnotherUser">Add another</p><br /> 
+eof;
+} else if ($p['isrestrictedusers']) {
+    if ($auth != null) {
+        if ($p['var'] == "restrictedUsers") {
+            $restrictedUsers = $auth->$p['var'];
+            $cnt = 0;
+            foreach ($restrictedUsers as $email) {
+                $cnt++;
+                if ($cnt > 0) {
+                    $remove = "<p style=\"margin-bottom:16px\" class=\"btn btn-danger\" onclick=\"removeUser(this)\">Remove</p>";
+                } else {
+                    $remove = "";
+                }
+                $pageContent .= <<<eof
+<div class="new-user"><hr /><div class="form-group">
+    <label for="email">Email</label>
+    <input name="email[]" type="text" class="form-control" placeholder="Email..." value="{$email}" />
+</div>{$remove}</div>
+eof;
+            }
+        } else {
+            $pageContent .= <<<eof
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input name="email[]" type="text" class="form-control" placeholder="Email..." value="{$email}" />
+  </div>
+eof;
+        }
+    } else {
+        $pageContent .= <<<eof
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input name="email[]" type="text" class="form-control" placeholder="Email..." />
+  </div>
+eof;
+    }
+    $pageContent .= <<<eof
   <p class="btn btn-success" style="margin-bottom:16px;" id="addAnotherRestrictedUser">Add another</p><br /> 
 eof;
 } else {
+    if ($auth != null) {
+        $val = $auth->$p['var'];
+    } else {
+        $val = $p['exp'];
+    }
     $pageContent .= <<<eof
   <div class="form-group">
     <label for="">{$p['var']}</label>
-    <input name="fieldValue" type="text" class="form-control" id="{$p['var']}" placeholder="{$p['exp']}" value="{$p['exp']}" />
+    <input name="fieldValue" type="text" class="form-control" id="{$p['var']}" placeholder="{$p['exp']}" value="{$val}" />
   </div>
 eof;
     }

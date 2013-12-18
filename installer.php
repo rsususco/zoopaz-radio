@@ -78,8 +78,16 @@ if (!isset($_SESSION['step']) || $_SESSION['step'] == "" || $_SESSION['step'] ==
     require_once("lib/start-config-wizard.php");
 } else if ($_SESSION['step'] == "config-wizard") {
     $formFieldsForConfig = getFormFieldsForConfig();
+    if (file_exists("lib/Config.php")) {
+        require_once("lib/Config.php");
+        $cfg = Config::getInstance();
+    }
     require_once("lib/form-config-wizard.php");
 } else if ($_SESSION['step'] == "auth-wizard") {
+    if (file_exists("lib/Auth.php")) {
+        require_once("lib/Auth.php");
+        $auth = new Auth();
+    }
     $formFieldsForAuth = getFormFieldsForAuth();
     require_once("lib/form-auth-wizard.php");
 } else if ($_SESSION['step'] == "end-wizard") {

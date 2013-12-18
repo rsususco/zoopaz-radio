@@ -66,25 +66,46 @@ $pageContent .= "<div class=\"panel-heading\">Set config parameter <code>{$p['va
 $pageContent .= "<div class=\"panel-body\">";
 $pageContent .= "<p>{$p['desc']}</p>";
 if ($p['isboolean']) {
+    if ($cfg != null) {
+        $val = $cfg->$p['var'];
+    } else {
+        $val = $p['exp'];
+    }
+    if ($val === true) {
+        $btChecked = "checked=\"checked\"";
+        $bfChecked = "";
+    } else {
+        $btChecked = "";
+        $bfChecked = "checked=\"checked\"";
+    }
     $pageContent .= <<<eof
 <div class="radio">
     <label>
-        <input type="radio" name="fieldValue" id="{$p['var']}" value="true" checked="checked" />
+        <input type="radio" name="fieldValue" id="{$p['var']}" value="true" {$btChecked} />
         true
     </label>
 </div>
 <div class="radio">
     <label>
-        <input type="radio" name="fieldValue" id="{$p['var']}" value="false" />
+        <input type="radio" name="fieldValue" id="{$p['var']}" value="false" {$bfChecked} />
         false
     </label>
 </div>
 eof;
 } else {
+    if ($cfg != null) {
+        if ($p['var'] == "validMusicTypes") {
+            $val = implode($cfg->$p['var'], ", ");
+        } else {
+            $val = $cfg->$p['var'];
+        }
+    } else {
+        $val = $p['exp'];
+    }
     $pageContent .= <<<eof
   <div class="form-group">
     <label for="">{$p['var']}</label>
-    <input name="fieldValue" type="text" class="form-control" id="{$p['var']}" placeholder="{$p['exp']}" value="{$p['exp']}" />
+    <input name="fieldValue" type="text" class="form-control" id="{$p['var']}" placeholder="{$p['exp']}" value="{$val}" />
   </div>
 eof;
 }
