@@ -70,7 +70,7 @@ Build indexes and album art
 ---------------------------
 From the command line, go into `scripts` and run,
 
-    `php run.php`
+`php run.php`
 
 It runs the suite of scripts that build the search index and general radio index as well as creating thumbnails and montages. Montages
 are the thumbnails composed of album art in a grid.
