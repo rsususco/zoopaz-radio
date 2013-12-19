@@ -21,16 +21,16 @@ if (isset($_GET['a']) && $_GET['a'] == "setAuth") {
     if (isset($_POST['fieldValue']) && isset($_GET['field'])) {
         $field = $_GET['field'];
         $fieldValue = $_POST['fieldValue'];
-        $_SESSION['auth'][$field] = $fieldValue;
+        $_SESSION['authSetup'][$field] = $fieldValue;
     } else if (isset($_POST['email']) && isset($_POST['password'])) {
         // users
         foreach ($_POST['email'] as $k=>$v) {
-            $_SESSION['auth']['users'][$k] = array("email" => $_POST['email'][$k], "password" => $_POST['password'][$k]);
+            $_SESSION['authSetup']['users'][$k] = array("email" => $_POST['email'][$k], "password" => $_POST['password'][$k]);
         }
     } else if (isset($_POST['email']) && !isset($_POST['password'])) {
         // restricted users don't have passwords
         foreach ($_POST['email'] as $k=>$v) {
-            $_SESSION['auth']['restrictedUsers'][$k] = array("email" => $_POST['email'][$k]);
+            $_SESSION['authSetup']['restrictedUsers'][$k] = array("email" => $_POST['email'][$k]);
         }
     }
 

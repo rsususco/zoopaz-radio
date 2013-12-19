@@ -1,7 +1,7 @@
 <?php
 
-$_SESSION['config'] = array();
-$_SESSION['auth'] = array();
+$_SESSION['configSetup'] = array();
+$_SESSION['authSetup'] = array();
 
 if (isset($_GET['a']) && $_GET['a'] == "setConfigWizard") {
     $_SESSION['step'] = "config-wizard";

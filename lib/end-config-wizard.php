@@ -14,7 +14,7 @@ function replaceConfigVars(&$configFile, $var, $val) {
 }
 
 $configFile = file("lib/example.Config.php", FILE_IGNORE_NEW_LINES);
-foreach ($_SESSION['config'] as $k=>$v) {
+foreach ($_SESSION['configSetup'] as $k=>$v) {
     foreach ($v as $var=>$val) {
         replaceConfigVars($configFile, $var, $val);
     }
@@ -52,7 +52,7 @@ function replaceAuthVars(&$authFile, $var, $val) {
 }
 
 $authFile = file("lib/example.Auth.php", FILE_IGNORE_NEW_LINES);
-foreach ($_SESSION['auth'] as $k=>$v) {
+foreach ($_SESSION['authSetup'] as $k=>$v) {
     replaceAuthVars($authFile, $k, $v);
 }
 
@@ -74,6 +74,7 @@ $pageContent .= <<<eof
 <p>Next you will want to create search indexes and album art. From the command line, go 
     into <code>scripts</code> and run <code>php run.php</code> to complete the setup. 
     See <a target="_blank" href="https://github.com/wsams/WsMp3Streamer/blob/master/README.md">README</a> and <a target="_blank" href="https://github.com/wsams/WsMp3Streamer/blob/master/INSTALL.md">INSTALL</a> for more information.</p>
+<p><a href="index.php">Enter site.</a></p>
 </div>
 <br />
 <button type="button" class="btn btn-danger" onclick="location.href='{$_SERVER['PHP_SELF']}?a=start-over'">Start over</button>

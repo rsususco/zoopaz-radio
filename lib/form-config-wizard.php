@@ -21,7 +21,7 @@ if (isset($_GET['a']) && $_GET['a'] == "setConfig") {
     if (isset($_POST['fieldValue']) && isset($_GET['field'])) {
         $field = $_GET['field'];
         $fieldValue = $_POST['fieldValue'];
-        $_SESSION['config'][] = array($field => $fieldValue);
+        $_SESSION['configSetup'][] = array($field => $fieldValue);
     }
 
     if (intval($next) > 0) {
