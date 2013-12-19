@@ -21,6 +21,11 @@ $sessid = session_id();
 
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
 
+if (!file_exists("lib/Config.php") || !file_exists("lib/Auth.php")) {
+    header("Location:installer.php");
+    exit();
+}
+
 require_once("lib/Config.php");
 require_once("lib/WsTmpl.php");
 require_once("lib/getid3/getid3/getid3.php");
