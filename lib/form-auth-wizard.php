@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined("installer")) { exit(); }
 /*
     * Need to check to see if we're on the last field.
     * Add an currentAction={$p['var']} nextAction={$p['var']} to the <form>.

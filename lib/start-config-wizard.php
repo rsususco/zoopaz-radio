@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined("installer")) { exit(); }
 
 $_SESSION['configSetup'] = array();
 $_SESSION['authSetup'] = array();

@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined("installer")) { exit(); }
 
 function getFormFieldsForAuth() {
     $formFieldsForAuth = array(

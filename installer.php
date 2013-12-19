@@ -18,6 +18,7 @@ limitations under the License.
 
 session_start();
 $sessid = session_id();
+define("installer", "verification");
 
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
 

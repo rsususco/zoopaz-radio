@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined("installer")) { exit(); }
 
 function replaceConfigVars(&$configFile, $var, $val) {
     foreach ($configFile as $k=>$l) {

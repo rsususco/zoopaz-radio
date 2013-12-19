@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined("installer")) { exit(); }
 
 function getFormFieldsForConfig() {
     $formFieldsForConfig = array(
