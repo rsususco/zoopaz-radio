@@ -30,7 +30,7 @@ if (isset($_GET['a']) && $_GET['a'] == "setAuth") {
     } else if (isset($_POST['email']) && !isset($_POST['password'])) {
         // restricted users don't have passwords
         foreach ($_POST['email'] as $k=>$v) {
-            $_SESSION['auth']['retrictedusers'][$k] = array("email" => $_POST['email'][$k]);
+            $_SESSION['auth']['restrictedUsers'][$k] = array("email" => $_POST['email'][$k]);
         }
     }
 
@@ -53,7 +53,7 @@ if (intval($currentField) == intval($totalFields)) {
     $prevField = $currentField - 1;
     $nextButton = "<button type=\"submit\" value=\"next-button\" name=\"setAuthButton\" class=\"btn btn-primary\">Next</button>";
     $prevButton = "<button type=\"submit\" value=\"previous-button\" name=\"setAuthButton\" class=\"btn btn-primary\">Previous</button>";
-    $success .= "<div class=\"alert alert-success\">Configuration just about finished, next is a summary before writing configs.</div>";
+    $success .= "<div class=\"alert alert-success\">Click next to write configuration files and finish the setup process.</div>";
 } else if (intval($currentField) == 1) {
     // This is the first step.
     $nextField = $currentField + 1;

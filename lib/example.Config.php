@@ -27,19 +27,19 @@ class Config {
 
         // This is the root directory of your music archive.
         // Absolute path - no trailing slash.
-        $this->defaultMp3Dir = "{$this->webroot}/www.example.com/htdocs/music";
+        $this->defaultMp3Dir = "/var/www/nas/www.example.com/htdocs/music";
 
         // This is the root URL to the root location of your music archive. {@see $this->defaultMp3Dir}
         // No trailing slash.
-        $this->defaultMp3Url = "{$this->host}/music";
+        $this->defaultMp3Url = "https://www.example.com/music";
 
         // This is the root directory of this streaming application.
         // Absolute path - no trailing slash.
-        $this->streamsRootDir = "{$this->webroot}/www.example.com/htdocs/streams";
+        $this->streamsRootDir = "/var/www/nas/www.example.com/htdocs/streams";
 
         // This is the root URL to the root location of this streaming application. {@see $this->streamsRootDir}
         // No trailing slash.
-        $this->streamsRootDirUrl = "{$this->host}/streams";
+        $this->streamsRootDirUrl = "https://www.example.com/streams";
 
         // This is a directory where temporary files are stored for downloading albums.
         // Inside $this->tmpDir a directory named 'downloadAlbum' will be created. Inside that directory
@@ -62,16 +62,20 @@ class Config {
         $this->maxSearchResults = 100;
 
         // Location of search index file.
-        $this->searchDatabase = $this->streamsRootDir . "/search.db";
+        $this->searchDatabase = "/var/www/nas/www.example.com/htdocs/streams/search.db";
 
         // Location of radio files index.
-        $this->radioDatabase = $this->streamsRootDir . "/files.db";
+        $this->radioDatabase = "/var/www/nas/www.example.com/htdocs/streams/files.db";
 
         // Location of radio files index.
         $this->personalRadioDatabase = "default-radio.db";
 
         // File used by the search indexer temporarily.
-        $this->dirlistFile = $this->streamsRootDir . "/scripts/dir.list";
+        $this->dirlistFile = "/var/www/nas/www.example.com/htdocs/scripts/dir.list";
+
+        // This is used to generate a private key for hashing directories that can
+        // be sent directly to people that want to listen without having an account.
+        $this->publicListenKey = "ov7w0e8ZAvw@Cj35xH30K2yb6z1wiyN45446!z9@%Q3S4qs0h^ardCkVWQ2^9#!L";
     }
 
     public static function getInstance () {

@@ -9,7 +9,7 @@ See features and screenshots below.
 
 Download
 ========
-[Download](https://github.com/wsams/WsMp3Streamer/tags) one of the releases. Or [clone](https://github.com/wsams/WsMp3Streamer.git) this repository. [Fork](https://github.com/wsams/WsMp3Streamer/fork) me if you like. Have fun playing your music.
+[Download](https://github.com/wsams/WsMp3Streamer/tags) one of the releases. Or [clone](https://github.com/wsams/WsMp3Streamer.git) this repository. [Fork](https://github.com/wsams/WsMp3Streamer/fork me here). Have fun playing your music.
 
 Screenshots
 ===========
@@ -21,6 +21,7 @@ Screenshots
 Features
 ========
 
+* GUI installer.
 * Supports mp3, ogg, m4a and other formats supported by jPlayer and your browser.
 * ID3 support. Currently ID3v2, but more to follow.
 * Search. Supports word and quoted phrase matches using OR. e.g. "The Doors" "Grant Green"

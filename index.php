@@ -27,10 +27,19 @@ require_once("lib/getid3/getid3/getid3.php");
 require_once("lib/StreamsSearchIndexer.php");
 require_once("lib/Streams.php");
 require_once("lib/Auth.php");
-if (!isset($_SESSION['auth'])) {
-    $auth = new Auth();
-} else {
-    $auth = unserialize($_SESSION['auth']);
+
+function getAuth() {
+    if (!isset($_SESSION['auth'])) {
+        $auth = new Auth();
+    } else {
+        $auth = unserialize($_SESSION['auth']);
+    }
+    return $auth;
+}
+$auth = getAuth();
+if (!isset($auth->maxTries)) {
+    unset($_SESSION['auth']);
+    $auth = getAuth();
 }
 
 $cfg = Config::getInstance();

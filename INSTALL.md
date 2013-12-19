@@ -10,7 +10,7 @@ will be configured in [`lib/Auth.php`](lib/Auth.php).
 Music location
 --------------
 
-Personally, I organize my music archive by directories. i.e. `/RootMusicDir/Genre/BandName/AlbumName/01.MusicFiles.mp3`
+I organize my music archive by directories. i.e. `/RootMusicDir/Genre/BandName/AlbumName/01.MusicFiles.mp3`
 
 For example,
 
@@ -37,9 +37,16 @@ file. If two slashes are in the file, it will take the last two directories of t
 just the last directory. For example, *The Doors > LA Woman*, would be printed.
 
 
-[`lib/example.Config.php`](lib/example.Config.php)
+Run the installer
+-----------------
+Open `https://www.example.com/streamer/installer.php` and follow the wizard. Each config parameter is
+set page-by-page.
+
+The following two configuration files are created: [`lib/Config.php`](lib/Config.php) and [`lib/Auth.php`](lib/Auth.php).
+
+
+[`lib/Config.php`](lib/Config.php)
 --------------------------------------------------
-Copy [`lib/example.Config.php`](lib/example.Config.php) to [`lib/Config.php`](lib/Config.php) and edit.
 
 See [`lib/example.Config.php`](lib/example.Config.php) - your music will live in `$defaultMp3Dir`. This directory
 should contain any level of sub-directories, but at least one more level deep. 
@@ -51,24 +58,25 @@ art image. The directory of music should contain two images,
 `cover.jpg` and `small_cover.jpg`
 
 
-[`lib/example.Auth.php`](lib/example.Auth.php)
+[`lib/Auth.php`](lib/Auth.php)
 ----------------------------------------------
-Copy [`lib/example.Auth.php`](lib/example.Auth.php) to [`lib/Auth.php`](lib/Auth.php) and edit.
-
 This is a very simple authentication mechanism. It contains an array of username and password combinations.
 
 See [`scripts/README.md`](scripts/README.md) for information on setting up the search index.
 
 
-[`lib/example.streams.config.js`](lib/example.streams.config.js)
+
+Build indexes and album art
+---------------------------
+From the command line, go into `scripts` and run,
+
+    `php run.php`
+
+It runs the suite of scripts that build the search index and general radio index as well as creating thumbnails and montages. Montages
+are the thumbnails composed of album art in a grid.
+
+
+JavaScript configuration: [`js/example.streams.config.js`](js/example.streams.config.js)
 ----------------------------------------------------------------
-Copy [`lib/example.streams.config.js`](lib/example.streams.config.js) to [`lib/streams.config.js`](lib/streams.config.js) and edit.
-
-
-Test application
-----------------
-Some functions search as search and radio require running [`scripts/buildSearchIndex.php`](scripts/buildSearchIndex.php).
-
-Open this application in a web browser and begin streaming your music.
-
-e.g. http://www.example.com/streams/
+Copy [`js/example.streams.config.js`](js/example.streams.config.js) to [`js/streams.config.js`](js/streams.config.js) and edit 
+if you wish - the intaller copies it for you with sane defaults.

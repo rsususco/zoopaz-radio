@@ -46,6 +46,18 @@ foreach ($cmds as $cmd) {
     $pageContent .= buildCommandTable($cmd);
 }
 
+$exampleConfig = "lib/example.Config.php";
+if (!file_exists($exampleConfig)) {
+    $_SESSION['foundAllDeps'] = false;
+    $pageContent .= "<tr><td class=\"danger\" colspan=\"2\">This installer requires <code>{$exampleConfig}</code>. If it has been deleted, you can simply restore from [<a target=\"_blank\" href=\"https://github.com/wsams/WsMp3Streamer/tree/master/lib\">https://github.com/wsams/WsMp3Streamer/tree/master/lib</a>].</td></tr>";
+}
+
+$exampleAuth = "lib/example.Auth.php";
+if (!file_exists($exampleAuth)) {
+    $_SESSION['foundAllDeps'] = false;
+    $pageContent .= "<tr><td class=\"danger\" colspan=\"2\">This installer requires <code>{$exampleAuth}</code>. If it has been deleted, you can simply restore from [<a target=\"_blank\" href=\"https://github.com/wsams/WsMp3Streamer/tree/master/lib\">https://github.com/wsams/WsMp3Streamer/tree/master/lib</a>].</td></tr>";
+}
+
 $pageContent .= <<<eof
     </tbody>
 </table>
