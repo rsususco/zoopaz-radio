@@ -1,4 +1,4 @@
-<?php if (!defined("installer")) { exit(); }
+<?php
 /*
     * Need to check to see if we're on the last field.
     * Add an currentAction={$p['var']} nextAction={$p['var']} to the <form>.
@@ -67,7 +67,16 @@ $pageContent .= "<div class=\"panel-body\">";
 $pageContent .= "<p>{$p['desc']}</p>";
 if ($p['isboolean']) {
     if ($cfg != null) {
-        $val = $cfg->$p['var'];
+        $isset = false;
+        foreach ($_SESSION['configSetup'] as $csk=>$csv) {
+            if (isset($csv[$p['var']])) {
+                $isset = true;
+                $val = $csv[$p['var']];
+            }
+        }
+        if (!$isset) {
+            $val = $cfg->$p['var'];
+        }
     } else {
         $val = $p['exp'];
     }
@@ -94,10 +103,19 @@ if ($p['isboolean']) {
 eof;
 } else {
     if ($cfg != null) {
-        if ($p['var'] == "validMusicTypes") {
-            $val = implode($cfg->$p['var'], ", ");
-        } else {
-            $val = $cfg->$p['var'];
+        $isset = false;
+        foreach ($_SESSION['configSetup'] as $csk=>$csv) {
+            if (isset($csv[$p['var']])) {
+                $isset = true;
+                $val = $csv[$p['var']];
+            }
+        }
+        if (!$isset) {
+            if ($p['var'] == "validMusicTypes") {
+                $val = implode($cfg->$p['var'], ", ");
+            } else {
+                $val = $cfg->$p['var'];
+            }
         }
     } else {
         $val = $p['exp'];

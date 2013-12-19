@@ -1,4 +1,4 @@
-<?php if (!defined("installer")) { exit(); }
+<?php
 /*
     * Need to check to see if we're on the last field.
     * Add an currentAction={$p['var']} nextAction={$p['var']} to the <form>.
@@ -77,7 +77,16 @@ $pageContent .= "<div class=\"panel-body\">";
 $pageContent .= "<p>{$p['desc']}</p>";
 if ($p['isboolean']) {
     if ($auth != null) {
-        $val = $auth->$p['var'];
+        $isset = false;
+        foreach ($_SESSION['authSetup'] as $csk=>$csv) {
+            if (isset($csv[$p['var']])) {
+                $isset = true;
+                $val = $csv[$p['var']];
+            }
+        }
+        if (!$isset) {
+            $val = $auth->$p['var'];
+        }
     } else {
         $val = $p['exp'];
     }
@@ -105,7 +114,14 @@ eof;
 } else if ($p['isusers']) {
     if ($auth != null) {
         if ($p['var'] == "users") {
-            $users = $auth->$p['var'];
+            if (isset($_SESSION['authSetup']['users']) && is_array($_SESSION['authSetup']['users'])) {
+                foreach ($_SESSION['authSetup']['users'] as $k=>$v) {
+                    $users[$v['email']] = $v['password'];
+                }
+            } else {
+                $users = $auth->$p['var'];
+            }
+
             $cnt = 0;
             foreach ($users as $email=>$password) {
                 $cnt++;
@@ -156,7 +172,14 @@ eof;
 } else if ($p['isrestrictedusers']) {
     if ($auth != null) {
         if ($p['var'] == "restrictedUsers") {
-            $restrictedUsers = $auth->$p['var'];
+            if (isset($_SESSION['authSetup']['restrictedUsers']) && is_array($_SESSION['authSetup']['restrictedUsers'])) {
+                foreach ($_SESSION['authSetup']['restrictedUsers'] as $k=>$v) {
+                    $restrictedUsers[] = $v['email'];
+                }
+            } else {
+                $restrictedUsers = $auth->$p['var'];
+            }
+
             $cnt = 0;
             foreach ($restrictedUsers as $email) {
                 $cnt++;
