@@ -57,10 +57,22 @@ foreach ($f as $dir) {
         traverse($dir);
         $m = file("m.list");
         if (count($m) > 0) {
+            /*
             if (count($m) < 2) {
                 $splice = 1;
                 $splicer = 1;
             } else if (count($m) < 5) {
+                $splice = 4;
+                $splicer = 2;
+            } else {
+                $splice = 9;
+                $splicer = 3;
+            }
+            */
+            if (count($m) < 4) {
+                $splice = 1;
+                $splicer = 1;
+            } else if (count($m) >= 4 && count($m) < 9) {
                 $splice = 4;
                 $splicer = 2;
             } else {
