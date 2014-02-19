@@ -119,6 +119,9 @@ if ($_GET['action'] == "createPlaylistJs") {
 } else if ($_GET['action'] == "addToPersonalRadio") {
     print($streams->addToPersonalRadio($_GET['dir']));
     die();
+} else if ($_GET['action'] == "removeFromPersonalRadio") {
+    print($streams->removeFromPersonalRadio($_GET['dir']));
+    die();
 } else {
     die("Unused action.");
 }

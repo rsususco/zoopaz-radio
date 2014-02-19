@@ -93,47 +93,50 @@ class Streams {
         $index = "";
         if (file_exists($db)) {
             $dirs = file($db);
-            foreach ($dirs as $k=>$dir) {
-                $dir = trim(preg_replace("/^(.*?):::.*$/", "\${1}", $dir));
-                $file = $this->singleSlashes($dir);
-                if (is_dir($this->cfg->defaultMp3Dir . "/" . $file) 
-                        && $this->containsMusic($file)) {
-                    $dirLink = "/";
-                    $html_dir = preg_replace("/\"/", "\\\"", $dirLink . $file);
-                    $html_end_dir = htmlspecialchars(preg_replace("/^.*\/(.*?)/", "\${1}", $file));
+            if (is_array($dirs)) {
+                foreach ($dirs as $k=>$dir) {
+                    $dir = trim(preg_replace("/^(.*?):::.*$/", "\${1}", $dir));
+                    $file = $this->singleSlashes($dir);
+                    if (is_dir($this->cfg->defaultMp3Dir . "/" . $file) 
+                            && $this->containsMusic($file)) {
+                        $dirLink = "/";
+                        $html_dir = preg_replace("/\"/", "\\\"", $dirLink . $file);
+                        $html_end_dir = htmlspecialchars(preg_replace("/^.*\/(.*?)/", "\${1}", $file));
 
-                    // Add create and add-to radio buttons.
-                    $this->t->setData(array("html_dir" => $html_dir));
-                    $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/create-add-radio.tmpl");
-                    $createAddRadioButton = $this->t->compile();
+                        // Add create and add-to radio buttons.
+                        $this->t->setData(array("html_dir" => $html_dir));
+                        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/create-remove-radio.tmpl");
+                        $createAddRadioButton = $this->t->compile();
 
-                    if (file_exists("{$this->cfg->defaultMp3Dir}{$dirLink}{$file}/small_montage.jpg")) {
-                        $background_url = "{$this->cfg->defaultMp3Url}{$dirLink}{$file}/small_montage.jpg";
-                        $js_background_url = preg_replace("/'/", "\\'", $background_url);
-                    } else if (file_exists("{$this->cfg->defaultMp3Dir}{$dirLink}{$file}/small_cover.jpg")) {
-                        $background_url = "{$this->cfg->defaultMp3Url}{$dirLink}{$file}/small_cover.jpg";
-                        $js_background_url = preg_replace("/'/", "\\'", $background_url);
-                    } else {
-                        $background_url = "images/bigfolder.png";
-                        $js_background_url = $background_url;
+                        if (file_exists("{$this->cfg->defaultMp3Dir}{$dirLink}{$file}/small_montage.jpg")) {
+                            $background_url = "{$this->cfg->defaultMp3Url}{$dirLink}{$file}/small_montage.jpg";
+                            $js_background_url = preg_replace("/'/", "\\'", $background_url);
+                        } else if (file_exists("{$this->cfg->defaultMp3Dir}{$dirLink}{$file}/small_cover.jpg")) {
+                            $background_url = "{$this->cfg->defaultMp3Url}{$dirLink}{$file}/small_cover.jpg";
+                            $js_background_url = preg_replace("/'/", "\\'", $background_url);
+                        } else {
+                            $background_url = "images/bigfolder.png";
+                            $js_background_url = $background_url;
+                        }
+
+                        $addToPlaylist = "";
+                        if ($this->containsMusic("{$dirLink}{$file}")) {
+                            $this->t->setData(array("html_dir" => $html_dir, "type" => "dir"));
+                            $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/add-to-playlist.tmpl");
+                            $addToPlaylist = $this->t->compile();
+                        }
+
+                        $this->t->setData(array("js_background_url"=>$js_background_url, "html_dir"=>$html_dir,
+                                "html_end_dir"=>$html_end_dir, "addToPlaylist"=>$addToPlaylist, "createAddRadioButton"=>$createAddRadioButton));
+                        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/coverListItem.tmpl");
+                        $coverListItem = $this->t->compile();
+                        $o['index'] .= $coverListItem;
                     }
-
-                    $addToPlaylist = "";
-                    if ($this->containsMusic("{$dirLink}{$file}")) {
-                        $this->t->setData(array("html_dir" => $html_dir, "type" => "dir"));
-                        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/add-to-playlist.tmpl");
-                        $addToPlaylist = $this->t->compile();
-                    }
-
-                    $this->t->setData(array("js_background_url"=>$js_background_url, "html_dir"=>$html_dir,
-                            "html_end_dir"=>$html_end_dir, "addToPlaylist"=>$addToPlaylist, "createAddRadioButton"=>$createAddRadioButton));
-                    $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/coverListItem.tmpl");
-                    $coverListItem = $this->t->compile();
-                    $o['index'] .= $coverListItem;
                 }
             }
         }
 
+        $this->t->setData(array());
         $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/playMyRadioButton.tmpl");
         $index = $this->t->compile() . "<br /><br />" . $o['index'];
 
@@ -1055,6 +1058,49 @@ class Streams {
         $indexer->setAddToIndex(true);
         $indexer->index();
         $o = array("status"=>"ok", "message"=>"Added {$dir} to personal radio station.");
+        return json_encode($o);
+    }
+
+    public function removeFromPersonalRadio($dir) {
+        $dir = trim($this->singleSlashes("/" . $dir));
+        $userDir = $this->auth->userDir;
+        $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/files.db";
+        if (file_exists($fdb)) {
+            $f = file($fdb);
+            $found = false;
+            if (is_array($f)) {
+                foreach ($f as $k=>$album) {
+                    $album = trim($this->singleSlashes("/" . $album));
+                    if (preg_match("/^" . preg_quote($dir, "/") . "\//i", $album)) {
+                        $found = true;
+                        unset($f[$k]);
+                    }
+                }
+            }
+            if ($found) {
+                file_put_contents($fdb, implode("", $f));
+            }
+            unset($f); unset($k); unset($album);
+        }
+
+        $db = "{$this->cfg->streamsRootDir}/{$userDir}/search.db";
+        if (file_exists($db)) {
+            $f = file($db);
+            $found = false;
+            if (is_array($f)) {
+                foreach ($f as $k=>$album) {
+                    $album = trim(preg_replace("/^(.*?):::.*$/", "\${1}", $this->singleSlashes("/" . $album)));
+                    if ($dir == $album) {
+                        $found = true;
+                        unset($f[$k]);
+                    }
+                }
+            }
+            if ($found) {
+                file_put_contents($db, implode("", $f));
+            }
+        }
+        $o = array("status"=>"ok", "message"=>"Removed from personal radio station.");
         return json_encode($o);
     }
 

@@ -411,14 +411,14 @@ span.dropwrapper:hover div.drop {
     border-radius:4px;
 }
 
-.linkbutton:hover, .createradiobutton:hover, .addtoradiobutton:hover {
+.linkbutton:hover, .createradiobutton:hover, .addtoradiobutton:hover, .removefromradiobutton:hover {
     background-color:#c2e8f9;
 }
 
 .createaddradiobutton {
 }
 
-.createradiobutton, .addtoradiobutton, .addtoplaylist {
+.createradiobutton, .addtoradiobutton, .addtoplaylist, .removefromradiobutton {
     cursor:pointer;
     padding:4px 8px;
     font-size:0.9em;
@@ -436,7 +436,7 @@ span.dropwrapper:hover div.drop {
     border-bottom-left-radius:4px;
 }
 
-.addtoradiobutton {
+.addtoradiobutton, .removefromradiobutton {
     border-top:1px solid #ececec;
     border-right:1px solid #ececec;
     border-bottom:1px solid #ececec;

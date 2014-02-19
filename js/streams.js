@@ -387,6 +387,32 @@ function createPersonalRadio(e, thiz) {
     return false;
 }
 
+function removeFromPersonalRadio(e, thiz) {
+    var event = e || window.event;
+    displayWorking();
+    var dir = $(thiz).data("dir");
+    $.getJSON("ajax.php?action=removeFromPersonalRadio&dir=" 
+            + encodeURIComponent(dir), function(json){
+        handleLogoutJson(json);
+
+        var hash = window.location.hash;
+        hash = hash.replace(/^#/, "");
+        var hashVars = hash.split("/");
+        switch(hashVars[1]) {
+            case "myradio":
+                $(thiz).parent().parent().parent().parent().remove();
+            default:
+                var doNothing = true;
+        }
+
+        hideWorking();
+    });
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    event.cancelBubble = true;
+    return false;
+}
+
 function addToPersonalRadio(e, thiz) {
     var event = e || window.event;
     displayWorking();
@@ -489,6 +515,10 @@ $(document).ready(function(){
 
     $(document).on("click", ".addtoradiobutton", function(e) {
         addToPersonalRadio(e, this);
+    });
+
+    $(document).on("click", ".removefromradiobutton", function(e) {
+        removeFromPersonalRadio(e, this);
     });
 
     prevtime = parseInt(new Date().getTime());
