@@ -54,6 +54,25 @@ function createPlaylistJs(url) {
     });
 }
 
+function openMyRadio() {
+    location.hash = "#/myradio";
+    displayWorking();
+    $.ajax({
+        type: "GET",  
+        url: "ajax.php",  
+        data: "action=openMyRadio",
+        success: function(html){
+            handleLogoutHtml(html);
+            var controls = $("#playercontrols");
+            if (controls.size() > 0) {
+                controls.remove();
+            }
+            $("#musicindex").replaceWith(html);
+            hideWorking();
+        }
+    });
+}
+
 function openDir(url) {
     location.hash = "#/open/" + encodeURIComponent(url);
     displayWorking();
@@ -87,6 +106,9 @@ function init() {
             var dir = decodeURIComponent(hashVars[2]);
             openDir(dir);
             break;
+        case "myradio":
+            openDir("/");
+            openMyRadio();
         default:
             var doNothing = true;
     }
@@ -273,6 +295,49 @@ function playRadio(e) {
     });
 }
 
+function playMyRadio() {
+    isRadioMode = true;
+    displayWorking();
+    var cfg = new StreamsConfig();
+    $.getJSON("ajax.php?action=startPersonalRadio&num=" 
+            + cfg.numberOfRadioItems, function(json){
+        handleLogoutJson(json);
+
+        var width = $("#content").width();
+        $("#content-player").html(json['contentPlayer']);
+        $(".album-title").text("My Radio");
+        $("#playbutton").remove();
+
+        // Currently the player only works in iPhone with the Chrome browser.
+        // We remove this playlist because it is not functional while playing.
+        if (isMobile && isMobile()) {
+            var musicIndex = $("#musicindex");
+            $("#playercontrols").remove();
+            var newwidth = width - 16;
+            $("#mediaplayer_wrapper").css("width", newwidth + "px");
+            var playerTop = $("#mediaplayer").offset().top;
+            window.scrollTo(0, playerTop);
+        }
+
+        // After each song plays, remove the first song.
+        $("#mediaplayer").bind($.jPlayer.event.play, function(event) {
+            // TODO: This is kind of a bug, but shouldn't happen with normal usage.
+            //       If you click the last item in the list, after it's done, the player will stop.
+            console.log("bind: Playlist size: " + myPlaylist.playlist.length + ", Current position: " + myPlaylist.current);
+        }).bind($.jPlayer.event.ended, function(event) {
+            var current = myPlaylist.current;
+            myPlaylist.remove(current - 1);
+            $.getJSON("ajax.php?action=getRandomPlaylist&num=1&personal=yes", function(json){
+                $(json).each(function(i, audioFile) {
+                    myPlaylist.add(audioFile);
+                });
+            });
+        });
+
+        hideWorking();
+    });
+}
+
 function createPersonalRadio(e, thiz) {
     var event = e || window.event;
     isRadioMode = true;
@@ -364,6 +429,8 @@ isRadioMode = false;
 $(document).ready(function(){
     init();
 
+    //$(".showtooltip").tooltip();
+
     if ($("#content-player").length > 0 && $(".m3uplayer").length > 0) {
         $("#playbutton").html("Pause");
     }
@@ -402,6 +469,14 @@ $(document).ready(function(){
 
     $(document).on("click", "#logout-link", function(e) {
         logout(this);
+    });
+
+    $(document).on("click", "#my-radio-button", function(e) {
+        openMyRadio();
+    });
+
+    $(document).on("click", "#play-my-radio", function(e) {
+        playMyRadio(e);
     });
 
     $(document).on("click", "#radio-button", function(e) {

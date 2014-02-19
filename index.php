@@ -16,17 +16,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+if (!file_exists("lib/Config.php") || !file_exists("lib/Auth.php")) {
+    header("Location:installer.php");
+    exit();
+}
+require_once("lib/Config.php");
+$cfg = Config::getInstance();
+
+if (!file_exists($cfg->alternateSessionDir)) {
+    $cfg->mkdirRecursive($cfg->alternateSessionDir);
+}
+session_save_path($cfg->alternateSessionDir);
+
 session_start();
 $sessid = session_id();
 
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
 
-if (!file_exists("lib/Config.php") || !file_exists("lib/Auth.php")) {
-    header("Location:installer.php");
-    exit();
-}
-
-require_once("lib/Config.php");
 require_once("lib/WsTmpl.php");
 require_once("lib/getid3/getid3/getid3.php");
 require_once("lib/StreamsSearchIndexer.php");
@@ -47,7 +53,6 @@ if (!isset($auth->maxTries)) {
     $auth = getAuth();
 }
 
-$cfg = Config::getInstance();
 $t = new WsTmpl();
 $streams = new Streams($cfg, $auth, $t);
 

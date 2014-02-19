@@ -76,6 +76,8 @@ class Config {
         // This is used to generate a private key for hashing directories that can
         // be sent directly to people that want to listen without having an account.
         $this->publicListenKey = "ov7w0e8ZAvw@Cj35xH30K2yb6z1wiyN45446!z9@%Q3S4qs0h^ardCkVWQ2^9#!L";
+
+        $this->alternateSessionDir = "/var/lib/php5/streams";
     }
 
     public static function getInstance () {
