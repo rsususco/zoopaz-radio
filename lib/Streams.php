@@ -100,7 +100,7 @@ class Streams {
                         && $this->containsMusic($file)) {
                     $dirLink = "/";
                     $html_dir = preg_replace("/\"/", "\\\"", $dirLink . $file);
-                    $html_end_dir = htmlspecialchars($file);
+                    $html_end_dir = htmlspecialchars(preg_replace("/^.*\/(.*?)/", "\${1}", $file));
 
                     // Add create and add-to radio buttons.
                     $this->t->setData(array("html_dir" => $html_dir));
