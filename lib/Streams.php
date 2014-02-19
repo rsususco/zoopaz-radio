@@ -168,9 +168,35 @@ class Streams {
                 $html_end_dir = htmlspecialchars($file);
 
                 // Add create and add-to radio buttons.
-                $this->t->setData(array("html_dir" => $html_dir));
-                $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/create-add-radio.tmpl");
-                $createAddRadioButton = $this->t->compile();
+                // TODO: make this a function
+                // start: see if album is in radio
+                $radioDir = $dirLink . $file;
+                $radioDir = trim($this->singleSlashes("/" . $radioDir));
+                $userDir = $this->auth->userDir;
+                $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/files.db";
+                if (file_exists($fdb)) {
+                    $f = file($fdb);
+                    $found = false;
+                    if (is_array($f)) {
+                        foreach ($f as $k=>$album) {
+                            $album = trim($this->singleSlashes("/" . $album));
+                            if (preg_match("/^" . preg_quote($radioDir, "/") . "\//i", $album)) {
+                                $found = true;
+                                unset($f[$k]);
+                            }
+                        }
+                    }
+                }
+                // end: see if album is in radio
+                if ($found) {
+                    $this->t->setData(array("html_dir" => $html_dir));
+                    $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/create-remove-radio.tmpl");
+                    $createAddRadioButton = $this->t->compile();
+                } else {
+                    $this->t->setData(array("html_dir" => $html_dir));
+                    $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/create-add-radio.tmpl");
+                    $createAddRadioButton = $this->t->compile();
+                }
 
                 if (file_exists("{$this->cfg->defaultMp3Dir}{$dirLink}{$file}/small_montage.jpg")) {
                     $background_url = "{$this->cfg->defaultMp3Url}{$dirLink}{$file}/small_montage.jpg";
