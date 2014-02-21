@@ -320,14 +320,15 @@ class Streams {
                 $radioDir = $dirLink . $file;
                 $radioDir = trim($this->singleSlashes("/" . $radioDir));
                 $userDir = $this->auth->userDir;
-                $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/files.db";
+                $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/search.db";
                 if (file_exists($fdb)) {
                     $f = file($fdb);
                     $found = false;
                     if (is_array($f)) {
                         foreach ($f as $k=>$album) {
+                            $album = trim(preg_replace("/^(.*):::.*$/", "\${1}", $album));
                             $album = trim($this->singleSlashes("/" . $album));
-                            if (preg_match("/^" . preg_quote($radioDir, "/") . "\//i", $album)) {
+                            if ($album == $radioDir) {
                                 $found = true;
                                 unset($f[$k]);
                             }
