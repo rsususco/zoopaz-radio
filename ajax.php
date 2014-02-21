@@ -114,13 +114,22 @@ if ($_GET['action'] == "createPlaylistJs") {
     print($streams->createPersonalRadio($_GET['dir'], $_GET['num']));
     die();
 } else if ($_GET['action'] == "startPersonalRadio") {
-    print($streams->startPersonalRadio($_GET['num']));
+    print($streams->startPersonalRadio($_GET['num'], $_GET['station']));
     die();
 } else if ($_GET['action'] == "addToPersonalRadio") {
     print($streams->addToPersonalRadio($_GET['dir']));
     die();
 } else if ($_GET['action'] == "removeFromPersonalRadio") {
-    print($streams->removeFromPersonalRadio($_GET['dir']));
+    print($streams->removeFromPersonalRadio($_GET['dir'], $_GET['station']));
+    die();
+} else if ($_GET['action'] == "saveMyRadio") {
+    print($streams->saveMyRadio($_GET['name']));
+    die();
+} else if ($_GET['action'] == "viewMyRadio") {
+    print($streams->viewMyRadio());
+    die();
+} else if ($_GET['action'] == "loadStation") {
+    print($streams->loadStation($_GET['station']));
     die();
 } else {
     die("Unused action.");

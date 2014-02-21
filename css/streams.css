@@ -519,3 +519,35 @@ legend, .legend {
 }
 #password {
 }
+
+#save-my-radio {
+}
+
+#save-radio-dialog {
+}
+
+#save-my-radio:hover #save-radio-dialog {
+}
+
+#save-radio-name {
+    padding:3px;
+    margin:3px;
+    font-size:1em;
+    width:50%;
+}
+
+#save-radio-dialog {
+    display:none;
+    visibility:hidden;
+}
+
+.radio-station {
+   background-color:#efefef; 
+   padding:8px;
+   border-bottom:1px solid #dfdfdf;
+   cursor:pointer;
+}
+
+.radio-station:hover {
+    background-color:#dfdfdf;
+}

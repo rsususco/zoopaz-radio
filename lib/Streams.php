@@ -86,10 +86,15 @@ class Streams {
         return $pageContent;
     }
 
-    public function openMyRadio() {
+    public function openMyRadio($searchDb=null, $radioDb=null) {
         $userDir = $this->auth->userDir;
-        $db = "{$this->cfg->streamsRootDir}/{$userDir}/search.db";
-        $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/files.db";
+        if ($searchDb == null && $radioDb == null) {
+            $db = "{$this->cfg->streamsRootDir}/{$userDir}/search.db";
+            $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/files.db";
+        } else {
+            $db = $searchDb;
+            $fdb = $radioDb;
+        }
         $index = "";
         if (file_exists($db)) {
             $dirs = file($db);
@@ -138,9 +143,118 @@ class Streams {
 
         $this->t->setData(array());
         $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/playMyRadioButton.tmpl");
-        $index = $this->t->compile() . "<br /><br />" . $o['index'];
+        $playRadioButton = $this->t->compile();
+        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/saveMyRadioButton.tmpl");
+        $saveRadioButton = $this->t->compile();
+        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/myRadioStationsButton.tmpl");
+        $viewMyRadioStationsButton = $this->t->compile();
+        $index = "{$playRadioButton} {$saveRadioButton} {$viewMyRadioStationsButton}<br />"
+                . "<div id=\"save-radio-dialog\"><input type=\"text\" id=\"save-radio-name\" "
+                . "placeholder=\"Enter radio name...\" /> <input class=\"button\" type=\"button\" "
+                . "id=\"save-radio-button\" value=\"save\" /></div><br /><br />"
+                . "<div id=\"radio-station-wrapper\">" . $o['index'] . "</div>";
 
         return $index;
+    }
+
+    public function viewMyRadio() {
+        $userDir = $this->auth->userDir;
+        $fullUserDir = "{$this->cfg->streamsRootDir}/{$userDir}";
+        $stationsDir = "{$fullUserDir}/stations";
+        $curdir = getcwd();
+        chdir($stationsDir);
+        $stations = glob("*.files.db");
+        $radioNames = array();
+        $stationsHtml = "";
+        foreach ($stations as $k=>$station) {
+            $radioName = $station;
+            $radioName = preg_replace("/\.files.db/", "", $radioName);
+            $dataName = $radioName;
+            $radioName = preg_replace("/_/", " ", $radioName);
+            $stationsHtml .= "<div data-station=\"{$dataName}\" "
+                    . "data-selected=\"no\" "
+                    . "class=\"radio-station\">{$radioName}</div>";
+            $radioNames[] = $radioName;
+        }
+        $this->t->setData(array());
+        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/playMyRadioButton.tmpl");
+        $playRadioButton = $this->t->compile();
+        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/saveMyRadioButton.tmpl");
+        $saveRadioButton = $this->t->compile();
+        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/myRadioStationsButton.tmpl");
+        $viewMyRadioStationsButton = $this->t->compile();
+        // TODO: This HTML for display my radio buttons is duplicated. Make a function.
+        $html = "{$playRadioButton} {$saveRadioButton} {$viewMyRadioStationsButton}<br />"
+                . "<div id=\"save-radio-dialog\"><input type=\"text\" id=\"save-radio-name\" "
+                . "placeholder=\"Enter radio name...\" /> <input class=\"button\" type=\"button\" "
+                . "id=\"save-radio-button\" value=\"save\" /></div><br /><br />"
+                . "<div id=\"radio-station-wrapper\">" . $stationsHtml . "</div>";
+        return json_encode(array("status"=>"ok", "radioNames"=>$radioNames, "html"=>$html));
+    }
+
+    public function loadStation($station) {
+        if (!isset($station) || preg_match("/^\s*$/", $station)) {
+            return json_encode(array("status"=>"error", "message"=>"You must enter a station name."));
+        }
+
+        $userDir = $this->auth->userDir;
+        $fullUserDir = "{$this->cfg->streamsRootDir}/{$userDir}";
+        $searchDb = "{$fullUserDir}/stations/{$station}.search.db";
+        $radioDb = "{$fullUserDir}/stations/{$station}.files.db";
+
+        if (!file_exists($radioDb) || !file_exists($searchDb)) {
+            return json_encode(array("status"=>"error", 
+                    "message"=>"Radio does not exist."));
+        }
+
+        $this->t->setData(array());
+        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/playMyRadioButton.tmpl");
+        $playRadioButton = $this->t->compile();
+        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/saveMyRadioButton.tmpl");
+        $saveRadioButton = $this->t->compile();
+        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/myRadioStationsButton.tmpl");
+        $viewMyRadioStationsButton = $this->t->compile();
+        $html = $this->openMyRadio($searchDb, $radioDb);
+
+        return json_encode(array("status"=>"ok", "html"=>$html));
+    }
+
+    public function saveMyRadio($name) {
+        if (!isset($name) || preg_match("/^\s*$/", $name)) {
+            return json_encode(array("status"=>"error", "message"=>"You must enter a station name."));
+        }
+
+        $userDir = $this->auth->userDir;
+        $fullUserDir = "{$this->cfg->streamsRootDir}/{$userDir}";
+        $db = "{$this->cfg->streamsRootDir}/{$userDir}/search.db";
+        $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/files.db";
+
+        $radioName = $name;
+        $radioName = preg_replace("/[^a-zA-Z0-9-_ ]/", "", $radioName);
+        $radioName = preg_replace("/  +/", " ", $radioName);
+        $radioName = ucwords(strtolower($radioName));
+        $humanRadioName = $radioName;
+        $radioName = preg_replace("/ /", "_", $radioName);
+
+        $radioDb = "{$fullUserDir}/stations/{$radioName}.files.db";
+        $searchDb = "{$fullUserDir}/stations/{$radioName}.search.db";
+
+        if (!file_exists("{$fullUserDir}/stations")) {
+            if (!mkdir("{$fullUserDir}/stations")) {
+                return json_encode(array("status"=>"error", 
+                        "message"=>"Could not create stations directory. Not saving station."));
+            }
+        }
+
+        if (file_exists($radioDb) || file_exists($searchDb)) {
+            return json_encode(array("status"=>"error", 
+                    "message"=>"Radio station already exists. Please enter another."));
+        }
+
+        copy($db, $searchDb);
+        copy($fdb, $radioDb);
+
+        return json_encode(array("status"=>"ok", "message"=>"Saving radio station {$humanRadioName}"));
     }
 
     /**
@@ -1059,12 +1173,19 @@ class Streams {
         return json_encode($o);
     }
 
-    public function startPersonalRadio($num) {
-        $indexer = new StreamsSearchIndexer($this->cfg, $this->auth);
+    public function startPersonalRadio($num, $station) {
         $userDir = $this->auth->userDir;
-        $db = "{$this->cfg->streamsRootDir}/{$userDir}/search.db";
-        $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/files.db";
-        $playlist = $this->getRandomPlaylistJson($num, $fdb);
+        $searchDb = "{$this->cfg->streamsRootDir}/{$userDir}/stations/{$station}.search.db";
+        $radioDb = "{$this->cfg->streamsRootDir}/{$userDir}/stations/{$station}.files.db";
+        if (file_exists($searchDb) && file_exists($radioDb)) {
+            $playlist = $this->getRandomPlaylistJson($num, $radioDb);
+        } else {
+            $indexer = new StreamsSearchIndexer($this->cfg, $this->auth);
+            $userDir = $this->auth->userDir;
+            $db = "{$this->cfg->streamsRootDir}/{$userDir}/search.db";
+            $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/files.db";
+            $playlist = $this->getRandomPlaylistJson($num, $fdb);
+        }
         $html = $this->buildPlayerHtml($playlist, null, 'true');
         $o = array("status"=>"ok", "message"=>"Playing radio for {$dir}", "contentPlayer"=>$html);
         return json_encode($o);
@@ -1087,10 +1208,19 @@ class Streams {
         return json_encode($o);
     }
 
-    public function removeFromPersonalRadio($dir) {
-        $dir = trim($this->singleSlashes("/" . $dir));
+    public function removeFromPersonalRadio($dir, $station) {
         $userDir = $this->auth->userDir;
-        $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/files.db";
+        $searchDb = "{$this->cfg->streamsRootDir}/{$userDir}/stations/{$station}.search.db";
+        $radioDb = "{$this->cfg->streamsRootDir}/{$userDir}/stations/{$station}.files.db";
+        if (file_exists($searchDb) && file_exists($radioDb)) {
+            $fdb = $radioDb;
+            $db = $searchDb;
+        } else {
+            $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/files.db";
+            $db = "{$this->cfg->streamsRootDir}/{$userDir}/search.db";
+        }
+
+        $dir = trim($this->singleSlashes("/" . $dir));
         if (file_exists($fdb)) {
             $f = file($fdb);
             $found = false;
@@ -1109,7 +1239,6 @@ class Streams {
             unset($f); unset($k); unset($album);
         }
 
-        $db = "{$this->cfg->streamsRootDir}/{$userDir}/search.db";
         if (file_exists($db)) {
             $f = file($db);
             $found = false;

@@ -55,6 +55,7 @@ function createPlaylistJs(url) {
 }
 
 function openMyRadio() {
+    openDir("/");
     location.hash = "#/myradio";
     displayWorking();
     $.ajax({
@@ -67,7 +68,7 @@ function openMyRadio() {
             if (controls.size() > 0) {
                 controls.remove();
             }
-            $("#musicindex").replaceWith(html);
+            $("#musicwrapper").html(html);
             hideWorking();
         }
     });
@@ -109,6 +110,12 @@ function init() {
         case "myradio":
             openDir("/");
             openMyRadio();
+        case "viewstations":
+            openDir("/");
+            viewMyRadio();
+        case "loadstation":
+            var station = decodeURIComponent(hashVars[2]);
+            loadRadio(station);
         default:
             var doNothing = true;
     }
@@ -129,6 +136,9 @@ function search(q) {
         data: "action=search&q=" + encodeURIComponent(q),
         success: function(html){
             handleLogoutHtml(html);
+            if ($("#musicindex").size() < 1) {
+                $("#musicwrapper").prepend("<ul id=\"musicindex\"></ul>");
+            }
             $("#musicindex").html(html);
             hideWorking();
         }
@@ -295,12 +305,13 @@ function playRadio(e) {
     });
 }
 
-function playMyRadio() {
+function playMyRadio(station) {
     isRadioMode = true;
     displayWorking();
     var cfg = new StreamsConfig();
     $.getJSON("ajax.php?action=startPersonalRadio&num=" 
-            + cfg.numberOfRadioItems, function(json){
+            + cfg.numberOfRadioItems + "&station=" 
+            + encodeURIComponent(station), function(json){
         handleLogoutJson(json);
 
         var width = $("#content").width();
@@ -391,8 +402,21 @@ function removeFromPersonalRadio(e, thiz) {
     var event = e || window.event;
     displayWorking();
     var dir = $(thiz).data("dir");
+
+    var hash = window.location.hash;
+    hash = hash.replace(/^#/, "");
+    var hashVars = hash.split("/");
+    var station = "";
+    switch(hashVars[1]) {
+        case "loadstation":
+            station = decodeURIComponent(hashVars[2]);
+        default:
+            var doNothing = true;
+    }
+
     $.getJSON("ajax.php?action=removeFromPersonalRadio&dir=" 
-            + encodeURIComponent(dir), function(json){
+            + encodeURIComponent(dir) + "&station=" 
+            + encodeURIComponent(station), function(json){
         handleLogoutJson(json);
 
         var hash = window.location.hash;
@@ -400,6 +424,8 @@ function removeFromPersonalRadio(e, thiz) {
         var hashVars = hash.split("/");
         switch(hashVars[1]) {
             case "myradio":
+                $(thiz).parent().parent().parent().parent().remove();
+            case "loadstation":
                 $(thiz).parent().parent().parent().parent().remove();
             default:
                 var doNothing = true;
@@ -449,6 +475,95 @@ function setPlayTimeout() {
         return false;
     }
     pt = setTimeout("playTimeout()", parseInt(cfg.playTimeout) * 1000);
+}
+
+function clickSaveMyRadio() {
+    if (saveDialog) {
+        hideSaveRadioDialog();
+    } else {
+        showSaveRadioDialog();
+    }
+}
+
+function showSaveRadioDialog() {
+    var dialog = $("#save-radio-dialog");
+    saveDialog = true;
+    dialog.css("visibility", "visible").css("display", "block");
+}
+
+function hideSaveRadioDialog() {
+    var dialog = $("#save-radio-dialog");
+    saveDialog = false;
+    dialog.css("visibility", "hidden").css("display", "none");
+}
+
+function saveMyRadio() {
+    var name = $("#save-radio-name").val();
+    displayWorking();
+    $.getJSON("ajax.php?action=saveMyRadio&name=" 
+            + encodeURIComponent(name), function(json){
+        if (json['status'] === "ok") {
+            hideSaveRadioDialog();
+            //alert(json['message']);
+        } else if (json['status'] === "error") {
+            alert(json['message']);
+        } else {
+            alert("An unexpected error has occurred. Could not save radio.");
+        }
+        handleLogoutJson(json);
+        hideWorking();
+    });
+}
+
+function viewMyRadio() {
+    location.hash = "#/viewstations";
+    displayWorking();
+    $.getJSON("ajax.php?action=viewMyRadio", function(json){
+        if (json['status'] === "ok") {
+            $("#musicwrapper").html(json['html']);
+        } else if (json['status'] === "error") {
+            alert(json['message']);
+        } else {
+            alert("An unexpected error has occurred. Could not save radio.");
+        }
+        handleLogoutJson(json);
+        hideWorking();
+    });
+}
+
+function loadRadio(station) {
+    location.hash = "#/loadstation/" + station;
+    displayWorking();
+    $.getJSON("ajax.php?action=loadStation&station=" 
+            + encodeURIComponent(station), function(json){
+        if (json['status'] === "ok") {
+            $("#musicwrapper").html(json['html']);
+        } else if (json['status'] === "error") {
+            alert(json['message']);
+        } else {
+            alert("An unexpected error has occurred. Could not save radio.");
+        }
+        handleLogoutJson(json);
+        hideWorking();
+    });
+}
+
+function loadMyRadio(e, thiz) {
+    var station = $(thiz).data("station");
+    location.hash = "#/loadstation/" + station;
+    displayWorking();
+    $.getJSON("ajax.php?action=loadStation&station=" 
+            + encodeURIComponent(station), function(json){
+        if (json['status'] === "ok") {
+            $("#musicwrapper").html(json['html']);
+        } else if (json['status'] === "error") {
+            alert(json['message']);
+        } else {
+            alert("An unexpected error has occurred. Could not save radio.");
+        }
+        handleLogoutJson(json);
+        hideWorking();
+    });
 }
 
 isRadioMode = false;
@@ -502,11 +617,21 @@ $(document).ready(function(){
     });
 
     $(document).on("click", "#play-my-radio", function(e) {
-        playMyRadio(e);
+        var hash = window.location.hash;
+        hash = hash.replace(/^#/, "");
+        var hashVars = hash.split("/");
+        switch(hashVars[1]) {
+            case "loadstation":
+                var station = decodeURIComponent(hashVars[2]);
+                playMyRadio(station);
+                break;
+            default:
+                var doNothing = true;
+        }
     });
 
     $(document).on("click", "#radio-button", function(e) {
-        playRadio(e);
+        playRadio(e, null);
     });
 
     $(document).on("click", ".createradiobutton", function(e) {
@@ -519,6 +644,23 @@ $(document).ready(function(){
 
     $(document).on("click", ".removefromradiobutton", function(e) {
         removeFromPersonalRadio(e, this);
+    });
+
+    saveDialog = false;
+    $(document).on("click", "#save-my-radio", function(e) {
+        clickSaveMyRadio();
+    });
+
+    $(document).on("click", "#save-radio-button", function(e) {
+        saveMyRadio();
+    });
+
+    $(document).on("click", "#view-my-radio-stations-button", function(e) {
+        viewMyRadio();
+    });
+
+    $(document).on("click", ".radio-station", function(e) {
+        loadMyRadio(e, this);
     });
 
     prevtime = parseInt(new Date().getTime());
