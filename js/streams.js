@@ -575,6 +575,28 @@ function loadMyRadio(e, thiz) {
     });
 }
 
+function removeRadioStation(e, thiz) {
+    var event = e || window.event;
+    var station = $(thiz).data("station");
+    displayWorking();
+    $.getJSON("ajax.php?action=removeRadioStation&station=" 
+            + encodeURIComponent(station), function(json){
+        if (json['status'] === "ok") {
+            $(thiz).parent().remove();
+        } else if (json['status'] === "error") {
+            alert(json['message']);
+        } else {
+            alert("An unexpected error has occurred. Could not save radio.");
+        }
+        handleLogoutJson(json);
+        hideWorking();
+    });
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    event.cancelBubble = true;
+    return false;
+}
+
 function getHashValue(action) {
     console.log("action=" + action);
     var hash = window.location.hash;
@@ -686,6 +708,14 @@ $(document).ready(function(){
 
     $(document).on("click", ".radio-station", function(e) {
         loadMyRadio(e, this);
+    });
+
+    $(document).on("click", ".radio-station-remove", function(e) {
+        var c = confirm("Are you sure you want to remove this station?");
+        if (!c) {
+            return false;
+        }
+        removeRadioStation(e, this);
     });
 
     prevtime = parseInt(new Date().getTime());

@@ -175,7 +175,10 @@ class Streams {
             $radioName = preg_replace("/_/", " ", $radioName);
             $stationsHtml .= "<div data-station=\"{$dataName}\" "
                     . "data-selected=\"no\" "
-                    . "class=\"radio-station\">{$radioName}</div>";
+                    . "class=\"radio-station\"><div title=\"Remove this radio station.\" "
+                    . "class=\"radio-station-remove\" data-station=\"{$dataName}\">&nbsp;</div> "
+                    . "<div class=\"radio-station-name\">{$radioName}</div>"
+                    . "<div class=\"clear\"></div></div>";
             $radioNames[] = $radioName;
         }
         $this->t->setData(array());
@@ -220,6 +223,33 @@ class Streams {
         $html = $this->openMyRadio($searchDb, $radioDb, $loadingStation);
 
         return json_encode(array("status"=>"ok", "html"=>$html));
+    }
+
+    public function removeRadioStation($station) {
+        if (!isset($station) || preg_match("/^\s*$/", $station)) {
+            return json_encode(array("status"=>"error", "message"=>"You must enter a station name."));
+        }
+        $radioName = preg_replace("/_/", " ", $station);
+        $userDir = $this->auth->userDir;
+        $fullUserDir = "{$this->cfg->streamsRootDir}/{$userDir}";
+        $searchDb = "{$fullUserDir}/stations/{$station}.search.db";
+        $radioDb = "{$fullUserDir}/stations/{$station}.files.db";
+
+        if (!file_exists($radioDb) || !file_exists($searchDb)) {
+            return json_encode(array("status"=>"error", 
+                    "message"=>"Radio does not exist."));
+        }
+
+        if (!unlink($searchDb)) {
+            return json_encode(array("status"=>"error", 
+                    "message"=>"Could not remove radio station."));
+        }
+        if (!unlink($radioDb)) {
+            return json_encode(array("status"=>"error", 
+                    "message"=>"Could not remove radio station."));
+        }
+
+        print(json_encode(array("status"=>"ok", "message"=>"Removed radio station {$station}")));
     }
 
     public function saveMyRadio($name) {

@@ -203,10 +203,10 @@ div.coverart img {
     float:right;
     max-width:175px;
     margin:16px;
-    -moz-box-shadow:3px 3px 0px silver;
-    -webkit-box-shadow:3px 3px 0px silver;
-    -o-box-shadow:3px 3px 0px silver;
-    box-shadow:3px 3px 0px silver;
+    -moz-box-shadow:2px 2px 0px silver;
+    -webkit-box-shadow:2px 2px 0px silver;
+    -o-box-shadow:2px 2px 0px silver;
+    box-shadow:2px 2px 0px silver;
 }
 
 .clear {
@@ -239,10 +239,10 @@ a.button, .button, a.button-left, .button-left, a.button-right, .button-right {
     color:white;
     font-weight:bold;
     background-color:#3181b7;
-    -moz-box-shadow:3px 3px 0px silver;
-    -webkit-box-shadow:3px 3px 0px silver;
-    -o-box-shadow:3px 3px 0px silver;
-    box-shadow:3px 3px 0px silver;
+    -moz-box-shadow:2px 2px 0px silver;
+    -webkit-box-shadow:2px 2px 0px silver;
+    -o-box-shadow:2px 2px 0px silver;
+    box-shadow:2px 2px 0px silver;
     text-shadow: 1px 1px 2px gray; 
     border:0px;
 }
@@ -323,10 +323,10 @@ span.dropwrapper:hover div.drop {
     margin:0px;
     padding:0px;
     /* the topleft corner is still a hard right angle */
-    -moz-box-shadow:3px 3px 0px silver;
-    -webkit-box-shadow:3px 3px 0px silver;
-    -o-box-shadow:3px 3px 0px silver;
-    box-shadow:3px 3px 0px silver;
+    -moz-box-shadow:2px 2px 0px silver;
+    -webkit-box-shadow:2px 2px 0px silver;
+    -o-box-shadow:2px 2px 0px silver;
+    box-shadow:2px 2px 0px silver;
 
     opacity:0.9;
     -ms-filter:'alpha(opacity=90)';
@@ -386,10 +386,10 @@ span.dropwrapper:hover div.drop {
 }
 
 .dirlink-cover a img {
-    -moz-box-shadow:3px 3px 0px silver;
-    -webkit-box-shadow:3px 3px 0px silver;
-    -o-box-shadow:3px 3px 0px silver;
-    box-shadow:3px 3px 0px silver;
+    -moz-box-shadow:2px 2px 0px silver;
+    -webkit-box-shadow:2px 2px 0px silver;
+    -o-box-shadow:2px 2px 0px silver;
+    box-shadow:2px 2px 0px silver;
 }
 
 #searchbox {
@@ -401,10 +401,10 @@ span.dropwrapper:hover div.drop {
     margin-bottom:0px;
     padding:4px;
     border:1px solid gray;
-    -moz-box-shadow:3px 3px 0px silver;
-    -webkit-box-shadow:3px 3px 0px silver;
-    -o-box-shadow:3px 3px 0px silver;
-    box-shadow:3px 3px 0px silver;
+    -moz-box-shadow:2px 2px 0px silver;
+    -webkit-box-shadow:2px 2px 0px silver;
+    -o-box-shadow:2px 2px 0px silver;
+    box-shadow:2px 2px 0px silver;
 }
 
 
@@ -550,12 +550,34 @@ legend, .legend {
 }
 
 .radio-station {
-   background-color:#efefef; 
-   padding:8px;
-   border-bottom:1px solid #dfdfdf;
-   cursor:pointer;
+    background-color:#efefef; 
+    border-bottom:1px solid #dfdfdf;
+    cursor:pointer;
+}
+
+.radio-station-name {
+    padding:8px;
+    float:right;
+    width:88%;
+}
+
+.radio-station-remove {
+    padding:8px;
+    background-color:#efefef;
+    width:5%;
+    z-index:100;
+    float:left;
 }
 
 .radio-station:hover {
     background-color:#dfdfdf;
+    clear:both;
+}
+
+.radio-station:hover .radio-station-remove {
+    background-color:#d66b6b;
+}
+
+.radio-station-remove:hover {
+    background-color:#d14b4b ! important;
 }

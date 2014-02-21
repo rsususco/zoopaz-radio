@@ -133,6 +133,8 @@ if ($_GET['action'] == "createPlaylistJs") {
 } else if ($_GET['action'] == "loadStation") {
     print($streams->loadStation($_GET['station']));
     die();
+} else if ($_GET['action'] == "removeRadioStation") {
+    print($streams->removeRadioStation($_GET['station']));
 } else {
     die("Unused action.");
 }
