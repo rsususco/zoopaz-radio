@@ -114,6 +114,7 @@ function init() {
             openDir("/");
             viewMyRadio();
         case "loadstation":
+            openDir("/");
             var station = decodeURIComponent(hashVars[2]);
             loadRadio(station);
         default:
@@ -293,7 +294,7 @@ function playRadio(e) {
             }).bind($.jPlayer.event.ended, function(event) {
                 var current = myPlaylist.current;
                 myPlaylist.remove(current - 1);
-                $.getJSON("ajax.php?action=getRandomPlaylist&num=1", function(json){
+                $.getJSON("ajax.php?action=getRandomPlaylist&num=1" + stationQS, function(json){
                     $(json).each(function(i, audioFile) {
                         myPlaylist.add(audioFile);
                     });
@@ -305,7 +306,9 @@ function playRadio(e) {
     });
 }
 
+currentMyRadioStation = null;
 function playMyRadio(station) {
+    currentMyRadioStation = station;
     isRadioMode = true;
     displayWorking();
     var cfg = new StreamsConfig();
@@ -336,9 +339,15 @@ function playMyRadio(station) {
             //       If you click the last item in the list, after it's done, the player will stop.
             console.log("bind: Playlist size: " + myPlaylist.playlist.length + ", Current position: " + myPlaylist.current);
         }).bind($.jPlayer.event.ended, function(event) {
+            console.log("Music has ended, changing tracks.");
             var current = myPlaylist.current;
             myPlaylist.remove(current - 1);
-            $.getJSON("ajax.php?action=getRandomPlaylist&num=1&personal=yes", function(json){
+            // Playing a personal radio station. Must get the station from the URL.
+            var stationQS = "";
+            if (currentMyRadioStation != null) {
+                stationQS = "&station=" + currentMyRadioStation;
+            }
+            $.getJSON("ajax.php?action=getRandomPlaylist&num=1&personal=yes" + stationQS, function(json){
                 $(json).each(function(i, audioFile) {
                     myPlaylist.add(audioFile);
                 });
@@ -383,7 +392,7 @@ function createPersonalRadio(e, thiz) {
         }).bind($.jPlayer.event.ended, function(event) {
             var current = myPlaylist.current;
             myPlaylist.remove(current - 1);
-            $.getJSON("ajax.php?action=getRandomPlaylist&num=1&personal=yes", function(json){
+            $.getJSON("ajax.php?action=getRandomPlaylist&num=1&personal=yes" + stationQS, function(json){
                 $(json).each(function(i, audioFile) {
                     myPlaylist.add(audioFile);
                 });
@@ -566,6 +575,20 @@ function loadMyRadio(e, thiz) {
     });
 }
 
+function getHashValue(action) {
+    console.log("action=" + action);
+    var hash = window.location.hash;
+    hash = hash.replace(/^#/, "");
+    var hashVars = hash.split("/");
+    switch(hashVars[1]) {
+        case action:
+            return decodeURIComponent(hashVars[2]);
+            break;
+        default:
+            return false;
+    }
+}
+
 isRadioMode = false;
 $(document).ready(function(){
     init();
@@ -621,6 +644,8 @@ $(document).ready(function(){
         hash = hash.replace(/^#/, "");
         var hashVars = hash.split("/");
         switch(hashVars[1]) {
+            case "myradio":
+                playMyRadio(null);
             case "loadstation":
                 var station = decodeURIComponent(hashVars[2]);
                 playMyRadio(station);

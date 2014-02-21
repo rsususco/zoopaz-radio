@@ -147,9 +147,9 @@ class Streams {
         if (!$loadingStation) {
             $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/saveMyRadioButton.tmpl");
             $saveRadioButton = $this->t->compile();
-            $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/myRadioStationsButton.tmpl");
-            $viewMyRadioStationsButton = $this->t->compile();
         }
+        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/myRadioStationsButton.tmpl");
+        $viewMyRadioStationsButton = $this->t->compile();
         $index = "{$playRadioButton} {$saveRadioButton} {$viewMyRadioStationsButton}<br />"
                 . "<div id=\"save-radio-dialog\"><input type=\"text\" id=\"save-radio-name\" "
                 . "placeholder=\"Enter radio name...\" /> <input class=\"button\" type=\"button\" "
@@ -213,8 +213,8 @@ class Streams {
 
         // This syncs the newly loaded station with the current My Radio station.
         // That way you can add to it and save again if you want.
-        copy($searchDb, $db);
-        copy($radioDb, $fdb);
+        //copy($searchDb, $db);
+        //copy($radioDb, $fdb);
 
         $loadingStation = true;
         $html = $this->openMyRadio($searchDb, $radioDb, $loadingStation);

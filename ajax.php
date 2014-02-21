@@ -87,7 +87,9 @@ if ($_GET['action'] == "createPlaylistJs") {
     $streams->print_gzipped_page();
     die();
 } else if ($_GET['action'] == "getRandomPlaylist") {
-    if (isset($_GET['personal']) && $_GET['personal'] == "yes") {
+    if (isset($_GET['station']) && $_GET['station'] != "undefined") {
+        $o = $streams->getRandomPlaylistJson($_GET['num'], "{$auth->userDir}/stations/{$_GET['station']}.files.db");
+    } else if (isset($_GET['personal']) && $_GET['personal'] == "yes") {
         $o = $streams->getRandomPlaylistJson($_GET['num'], "{$auth->userDir}/{$cfg->personalRadioDatabase}");
     } else {
         $o = $streams->getRandomPlaylistJson($_GET['num']);

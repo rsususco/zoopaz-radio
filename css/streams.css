@@ -217,13 +217,24 @@ div.coverart img {
 	clear:both;
 }
 
-a.button, .button {
+.button, .button-left, .button-right {
+    padding:4px 8px;
+}
+.button-left {
+    margin-right:0px;
+    padding-right:4px;
+}
+.button-right {
+    margin-left:0px;
+    padding-left:4px;
+}
+
+a.button, .button, a.button-left, .button-left, a.button-right, .button-right {
     display:inline-block;
     font-family:"helvetica neue", helvetica, arial, freesans, "liberation sans", "numbus sans l", sans-serif;
     font-size:13px;
     text-decoration:none;
     text-align:center;
-    padding:4px 8px;
     white-space:nowrap;
     color:white;
     font-weight:bold;
@@ -236,15 +247,12 @@ a.button, .button {
     border:0px;
 }
 
-a.button:hover, .button:hover {
+a.button:hover, .button:hover, a.button-left:hover, .button-left:hover, a.button-right:hover, .button-right:hover {
     background-color:#d88900;
 }
 
-a.button:active, .button:active {
+a.button:active, .button:active, a.button-left:active, .button-left:active, a.button-right:active, .button-right:active {
     background-color:#ffb22d;
-}
-
-a.button:active, a.button:focus, .button:active, .button:focus {
 }
 
 span.dropwrapper {
