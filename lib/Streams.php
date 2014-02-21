@@ -86,7 +86,7 @@ class Streams {
         return $pageContent;
     }
 
-    public function openMyRadio($searchDb=null, $radioDb=null) {
+    public function openMyRadio($searchDb=null, $radioDb=null, $loadingStation=false) {
         $userDir = $this->auth->userDir;
         if ($searchDb == null && $radioDb == null) {
             $db = "{$this->cfg->streamsRootDir}/{$userDir}/search.db";
@@ -144,10 +144,12 @@ class Streams {
         $this->t->setData(array());
         $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/playMyRadioButton.tmpl");
         $playRadioButton = $this->t->compile();
-        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/saveMyRadioButton.tmpl");
-        $saveRadioButton = $this->t->compile();
-        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/myRadioStationsButton.tmpl");
-        $viewMyRadioStationsButton = $this->t->compile();
+        if (!$loadingStation) {
+            $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/saveMyRadioButton.tmpl");
+            $saveRadioButton = $this->t->compile();
+            $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/myRadioStationsButton.tmpl");
+            $viewMyRadioStationsButton = $this->t->compile();
+        }
         $index = "{$playRadioButton} {$saveRadioButton} {$viewMyRadioStationsButton}<br />"
                 . "<div id=\"save-radio-dialog\"><input type=\"text\" id=\"save-radio-name\" "
                 . "placeholder=\"Enter radio name...\" /> <input class=\"button\" type=\"button\" "
@@ -184,12 +186,12 @@ class Streams {
         $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/myRadioStationsButton.tmpl");
         $viewMyRadioStationsButton = $this->t->compile();
         // TODO: This HTML for display my radio buttons is duplicated. Make a function.
-        $html = "{$playRadioButton} {$saveRadioButton} {$viewMyRadioStationsButton}<br />"
-                . "<div id=\"save-radio-dialog\"><input type=\"text\" id=\"save-radio-name\" "
-                . "placeholder=\"Enter radio name...\" /> <input class=\"button\" type=\"button\" "
-                . "id=\"save-radio-button\" value=\"save\" /></div><br /><br />"
-                . "<div id=\"radio-station-wrapper\">" . $stationsHtml . "</div>";
-        return json_encode(array("status"=>"ok", "radioNames"=>$radioNames, "html"=>$html));
+//        $html = "{$playRadioButton} {$saveRadioButton} {$viewMyRadioStationsButton}<br />"
+//                . "<div id=\"save-radio-dialog\"><input type=\"text\" id=\"save-radio-name\" "
+//                . "placeholder=\"Enter radio name...\" /> <input class=\"button\" type=\"button\" "
+//                . "id=\"save-radio-button\" value=\"save\" /></div><br /><br />"
+//                . "<div id=\"radio-station-wrapper\">" . $stationsHtml . "</div>";
+        return json_encode(array("status"=>"ok", "radioNames"=>$radioNames, "html"=>$stationsHtml));
     }
 
     public function loadStation($station) {
@@ -201,20 +203,21 @@ class Streams {
         $fullUserDir = "{$this->cfg->streamsRootDir}/{$userDir}";
         $searchDb = "{$fullUserDir}/stations/{$station}.search.db";
         $radioDb = "{$fullUserDir}/stations/{$station}.files.db";
+        $db = "{$this->cfg->streamsRootDir}/{$userDir}/search.db";
+        $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/files.db";
 
         if (!file_exists($radioDb) || !file_exists($searchDb)) {
             return json_encode(array("status"=>"error", 
                     "message"=>"Radio does not exist."));
         }
 
-        $this->t->setData(array());
-        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/playMyRadioButton.tmpl");
-        $playRadioButton = $this->t->compile();
-        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/saveMyRadioButton.tmpl");
-        $saveRadioButton = $this->t->compile();
-        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/myRadioStationsButton.tmpl");
-        $viewMyRadioStationsButton = $this->t->compile();
-        $html = $this->openMyRadio($searchDb, $radioDb);
+        // This syncs the newly loaded station with the current My Radio station.
+        // That way you can add to it and save again if you want.
+        copy($searchDb, $db);
+        copy($radioDb, $fdb);
+
+        $loadingStation = true;
+        $html = $this->openMyRadio($searchDb, $radioDb, $loadingStation);
 
         return json_encode(array("status"=>"ok", "html"=>$html));
     }
