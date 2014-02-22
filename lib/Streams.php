@@ -151,7 +151,7 @@ class Streams {
         $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/myRadioStationsButton.tmpl");
         $viewMyRadioStationsButton = $this->t->compile();
         $index = "{$playRadioButton} {$saveRadioButton} {$viewMyRadioStationsButton}<br />"
-                . "<div id=\"save-radio-dialog\"><input type=\"text\" id=\"save-radio-name\" "
+                . "<div id=\"save-radio-dialog\"><input class=\"form-input\" type=\"text\" id=\"save-radio-name\" "
                 . "placeholder=\"Enter radio name...\" /> <input class=\"button\" type=\"button\" "
                 . "id=\"save-radio-button\" value=\"save\" /></div><br /><br />"
                 . "<div id=\"radio-station-wrapper\">" . $o['index'] . "</div>";
@@ -220,9 +220,106 @@ class Streams {
         //copy($radioDb, $fdb);
 
         $loadingStation = true;
-        $html = $this->openMyRadio($searchDb, $radioDb, $loadingStation);
+        $html = "<input type=\"text\" id=\"find-music-input\" class=\"form-input find-music-input\" "
+                . "placeholder=\"Search to find music for this playlist... Click to add...\" />"
+                . "<br /><br />" . $this->openMyRadio($searchDb, $radioDb, $loadingStation);
 
         return json_encode(array("status"=>"ok", "html"=>$html));
+    }
+
+    public function suggestRadioStationItem($term) {
+        $f = file($this->cfg->searchDatabase);
+        $results = $this->searchArray($term, $f);
+
+        $curdir = getcwd();
+
+        $a_files = array();
+        $o['index'] = "";
+        $o['isMp3'] = false;
+        $index = "";
+        foreach ($results as $k=>$key) {
+            $r = explode(":::", $f[$key]);
+            $dir = trim($r[0]);
+
+            // Don't return directories that don't contain music.
+            $cntmusic = count(glob("{$this->cfg->defaultMp3Dir}/{$dir}/*.{"
+                    . $this->cfg->getValidMusicTypes("glob") . "}", GLOB_BRACE));
+            if ($cntmusic < 1) {
+                continue;
+            }
+
+            if (!file_exists($this->cfg->defaultMp3Dir . '/' . $dir)) {
+                continue;
+            }
+            $dirLink = "/" . preg_replace("/^(.*)\/.*$/", "\${1}", $dir) . "/";
+
+            $reldir = preg_replace("/^.*\/(.*)$/", "\${1}", $dir);
+            $lastdir = preg_replace("/^.*\/(.*)$/", "\${1}", $dir);
+            $nexttolastdir = preg_replace("/^.*\/(.*?)\/.*$/", "\${1}", $dir);
+            $autoLabel = trim($nexttolastdir . " / " . $lastdir);
+            $autoValue = trim("/" . $dir);
+            $autoValue = trim($this->singleSlashes($autoValue));
+            //$a_files[] = $reldir;
+            //$a_files[] = trim($nexttolastdir . " / " . $lastdir);
+            $a_files[] = array("label"=>$autoLabel, "value"=>$autoLabel, "dir"=>$autoValue);
+            $chdir = preg_replace("/^(.*)\/.*$/", "\${1}", $this->cfg->defaultMp3Dir . "/" . $dir);
+            chdir($chdir);
+            if ($k > $this->cfg->maxSearchResults) {
+                break;
+            }
+            chdir($curdir);
+        }
+
+        return json_encode($a_files);
+    }
+
+    public function addToRadioStation($station, $dir) {
+        if (!isset($station) || preg_match("/^\s*$/", $station)) {
+            return json_encode(array("status"=>"error", "message"=>"You must enter a station name."));
+        }
+        if (!isset($dir) || preg_match("/^\s*$/", $dir)) {
+            return json_encode(array("status"=>"error", "message"=>"You must enter a dir name."));
+        }
+
+        $this->addToPersonalRadio($dir, $station);
+
+        $html_dir = preg_replace("/\"/", "\\\"", $dir);
+        $html_end_dir = htmlspecialchars(preg_replace("/^.*\/(.*)$/", "\${1}", $dir));
+
+        if ($found) {
+            $this->t->setData(array("html_dir" => $html_dir));
+            $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/create-remove-radio.tmpl");
+            $createAddRadioButton = $this->t->compile();
+        } else {
+            $this->t->setData(array("html_dir" => $html_dir));
+            $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/create-add-radio.tmpl");
+            $createAddRadioButton = $this->t->compile();
+        }
+
+        if (file_exists("{$this->cfg->defaultMp3Dir}{$dir}/small_montage.jpg")) {
+            $background_url = "{$this->cfg->defaultMp3Url}{$dir}/small_montage.jpg";
+            $js_background_url = preg_replace("/'/", "\\'", $background_url);
+        } else if (file_exists("{$this->cfg->defaultMp3Dir}{$dir}/small_cover.jpg")) {
+            $background_url = "{$this->cfg->defaultMp3Url}{$dir}/small_cover.jpg";
+            $js_background_url = preg_replace("/'/", "\\'", $background_url);
+        } else {
+            $background_url = "images/bigfolder.png";
+            $js_background_url = $background_url;
+        }
+
+        $addToPlaylist = "";
+        if ($this->containsMusic("{$dir}")) {
+            $this->t->setData(array("html_dir" => $html_dir, "type" => "dir"));
+            $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/add-to-playlist.tmpl");
+            $addToPlaylist = $this->t->compile();
+        }
+
+        $this->t->setData(array("js_background_url"=>$js_background_url, "html_dir"=>$html_dir,
+                "html_end_dir"=>$html_end_dir, "addToPlaylist"=>$addToPlaylist, "createAddRadioButton"=>$createAddRadioButton));
+        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/coverListItem.tmpl");
+        $coverListItem = $this->t->compile();
+
+        return json_encode(array("status"=>"ok", "html"=>$coverListItem));
     }
 
     public function removeRadioStation($station) {
@@ -1225,12 +1322,17 @@ class Streams {
         return json_encode($o);
     }
 
-    public function addToPersonalRadio($dir) {
+    public function addToPersonalRadio($dir, $station=null) {
         $dir = $this->singleSlashes($dir);
         $indexer = new StreamsSearchIndexer($this->cfg, $this->auth);
         $userDir = $this->auth->userDir;
-        $db = "{$this->cfg->streamsRootDir}/{$userDir}/search.db";
-        $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/files.db";
+        if ($station != null) {
+            $db = "{$this->cfg->streamsRootDir}/{$userDir}/stations/{$station}.search.db";
+            $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/stations/{$station}.files.db";
+        } else {
+            $db = "{$this->cfg->streamsRootDir}/{$userDir}/search.db";
+            $fdb = "{$this->cfg->streamsRootDir}/{$userDir}/files.db";
+        }
         $indexer->setDb($db);
         $indexer->setFdb($fdb);
         $indexer->setVerbose(false);

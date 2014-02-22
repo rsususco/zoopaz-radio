@@ -396,7 +396,7 @@ span.dropwrapper:hover div.drop {
     line-height:2.5em;
 }
 
-#search {
+#search, .form-input {
     width:40%;
     margin-bottom:0px;
     padding:4px;
@@ -580,4 +580,12 @@ legend, .legend {
 
 .radio-station-remove:hover {
     background-color:#d14b4b ! important;
+}
+
+#find-music-input {
+    width:100%;
+}
+
+.ui-menu-item {
+    font-size:0.75em ! important;
 }

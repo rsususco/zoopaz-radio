@@ -617,6 +617,34 @@ $(document).ready(function(){
 
     //$(".showtooltip").tooltip();
 
+    $("#find-music-input").livequery(function() {
+        $("#find-music-input").autocomplete({
+            source: "ajax.php?action=suggest",
+            minLength: 2,
+            delay: 100,
+            autoFocus: false,
+            html: true,
+            select: function(event, ui) {
+                var dir = ui.item.dir;
+                displayWorking();
+                var station = getHashValue("loadstation");
+                $.getJSON("ajax.php?action=addToRadioStation&dir=" 
+                        + encodeURIComponent(dir) + "&station="
+                        + encodeURIComponent(station), function(json){
+                    if (json['status'] === "ok") {
+                        $("#radio-station-wrapper").prepend(json['html']);
+                    } else if (json['status'] === "error") {
+                        alert(json['message']);
+                    } else {
+                        alert("An unexpected error has occurred. Could not save radio.");
+                    }
+                    handleLogoutJson(json);
+                    hideWorking();
+                });
+            }
+        });
+    });
+
     if ($("#content-player").length > 0 && $(".m3uplayer").length > 0) {
         $("#playbutton").html("Pause");
     }
