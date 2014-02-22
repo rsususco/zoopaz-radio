@@ -9,7 +9,7 @@ See features and screenshots below.
 
 Download
 ========
-[Download](https://github.com/wsams/WsMp3Streamer/tags) one of the releases. Or [clone](https://github.com/wsams/WsMp3Streamer.git) this repository. [Fork](https://github.com/wsams/WsMp3Streamer/fork me here). Have fun playing your music.
+[Download](https://github.com/wsams/zoopaz-myradio/tags) one of the releases. Or [clone](https://github.com/wsams/zoopaz-myradio.git) this repository. [Fork](https://github.com/wsams/zoopaz-myradio/fork me here). Have fun playing your music.
 
 Screenshots
 ===========
