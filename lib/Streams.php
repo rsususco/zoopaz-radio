@@ -227,6 +227,7 @@ class Streams {
         return json_encode(array("status"=>"ok", "html"=>$html));
     }
 
+    // similar to function search()
     public function suggestRadioStationItem($term) {
         $f = file($this->cfg->searchDatabase);
         $results = $this->searchArray($term, $f);
@@ -256,15 +257,18 @@ class Streams {
             $reldir = preg_replace("/^.*\/(.*)$/", "\${1}", $dir);
             $lastdir = preg_replace("/^.*\/(.*)$/", "\${1}", $dir);
             $nexttolastdir = preg_replace("/^.*\/(.*?)\/.*$/", "\${1}", $dir);
-            $autoLabel = trim($nexttolastdir . " / " . $lastdir);
+            $coverImg = "";
+            if (file_exists("{$this->cfg->defaultMp3Dir}/{$dir}/small_cover.jpg")) {
+                $coverImg = "<img style=\"width:2em; height:2em;\" src=\"{$this->cfg->defaultMp3Url}/{$dir}/small_cover.jpg\" alt=\"cover\" /> ";
+            }
             $autoValue = trim("/" . $dir);
             $autoValue = trim($this->singleSlashes($autoValue));
-            //$a_files[] = $reldir;
-            //$a_files[] = trim($nexttolastdir . " / " . $lastdir);
-            $a_files[] = array("label"=>$autoLabel, "value"=>$autoLabel, "dir"=>$autoValue);
+            $autoLabelValue = trim($nexttolastdir . " / " . $lastdir);
+            $autoLabel = $coverImg . " " . $autoLabelValue . " <span class=\"muted\">{$cntmusic} files</span>";
+            $a_files[] = array("label"=>$autoLabel, "value"=>$autoLabelValue, "dir"=>$autoValue);
             $chdir = preg_replace("/^(.*)\/.*$/", "\${1}", $this->cfg->defaultMp3Dir . "/" . $dir);
             chdir($chdir);
-            if ($k > $this->cfg->maxSearchResults) {
+            if ($k > 15) {
                 break;
             }
             chdir($curdir);

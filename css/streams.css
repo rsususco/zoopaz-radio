@@ -589,3 +589,7 @@ legend, .legend {
 .ui-menu-item {
     font-size:0.75em ! important;
 }
+
+.muted {
+    color:gray;
+}
