@@ -633,6 +633,12 @@ class Streams {
         chdir($curdir);
     }
 
+    public function getHomeNavigation() {
+        $this->t->setData(array());
+        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/navigation-nodirs.tmpl");
+        return $this->t->compile();
+    }
+
     /**
      * @tested true
      */

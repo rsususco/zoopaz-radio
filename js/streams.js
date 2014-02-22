@@ -55,7 +55,6 @@ function createPlaylistJs(url) {
 }
 
 function openMyRadio() {
-    openDir("/");
     location.hash = "#/myradio";
     displayWorking();
     $.ajax({
@@ -69,6 +68,20 @@ function openMyRadio() {
                 controls.remove();
             }
             $("#musicwrapper").html(html);
+            hideWorking();
+        }
+    });
+}
+
+function getHomeNavigation() {
+    displayWorking();
+    $.ajax({
+        type: "GET",  
+        url: "ajax.php",  
+        data: "action=getHomeNavigation",
+        success: function(html){
+            handleLogoutHtml(html);
+            $("#navlist").html(html);
             hideWorking();
         }
     });
@@ -108,15 +121,18 @@ function init() {
             openDir(dir);
             break;
         case "myradio":
-            openDir("/");
+            getHomeNavigation();
             openMyRadio();
+            break;
         case "viewstations":
-            openDir("/");
+            getHomeNavigation();
             viewMyRadio();
+            break;
         case "loadstation":
-            openDir("/");
+            getHomeNavigation();
             var station = decodeURIComponent(hashVars[2]);
             loadRadio(station);
+            break;
         default:
             var doNothing = true;
     }

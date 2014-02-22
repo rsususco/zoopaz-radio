@@ -66,6 +66,10 @@ if ($_GET['action'] == "createPlaylistJs") {
     print($streams->openTheDir($_GET['dir']));
     $streams->print_gzipped_page();
     die();
+} else if ($_GET['action'] == "getHomeNavigation") {
+    print($streams->getHomeNavigation());
+    $streams->print_gzipped_page();
+    die();
 } else if ($_GET['action'] == "openMyRadio") {
     print($streams->openMyRadio());
     $streams->print_gzipped_page();
@@ -87,7 +91,7 @@ if ($_GET['action'] == "createPlaylistJs") {
     $streams->print_gzipped_page();
     die();
 } else if ($_GET['action'] == "getRandomPlaylist") {
-    if (isset($_GET['station']) && $_GET['station'] != "undefined") {
+    if (isset($_GET['station'])) {
         $o = $streams->getRandomPlaylistJson($_GET['num'], "{$auth->userDir}/stations/{$_GET['station']}.files.db");
     } else if (isset($_GET['personal']) && $_GET['personal'] == "yes") {
         $o = $streams->getRandomPlaylistJson($_GET['num'], "{$auth->userDir}/{$cfg->personalRadioDatabase}");
