@@ -703,35 +703,11 @@ class Streams {
             $url = $this->singleSlashes($url);
             $thelinks = $this->getDropDownAlbums($url);
             $this->t->setData(array("backDir" => $backDir));
-            if ($dirCnt === 2) {
-                // This is every directory after Home that's not the last.
-                // Apply the 'enddir' class.
-                $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/breadcrumb-nodrop.tmpl");
-                $a_dir[$k] = $this->t->compile();
-            } else if ($cnt === ($dirCnt - 1)) {
-                // This is called for every directory after the first clicked directory when in Home
-                // including the last directory.
-                if ($thelinks) {
-                    // This is any album in-between the first (first after Home) and last.
-                    $this->t->addData(array("thelinks"=>$thelinks));
-                    $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/breadcrumb-withdrop.tmpl");
-                    $a_dir[$k] = $this->t->compile();
-                } else {
-                    // This is the album you've opened that has music in it. Basically when we
-                    // call getDropDownAlbums(), if there are now, assume you're at the end.
-                    // Apply the 'enddir' class.
-                    $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/breadcrumb-nodrop.tmpl");
-                    $a_dir[$k] = $this->t->compile();
-                }
-            } else {
-                // This is called for every directory.
-                // Have drop-down of all available directories under this directory.
-                if (isset($url) && strlen($url) > 0) {
-                    $this->t->addData(array("thelinks"=>$thelinks, "url"=>$url));
-                    $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/breadcrumb-withdrop-and-url.tmpl");
-                    $a_dir[$k] = $this->t->compile();
-                }
-            }
+
+            $this->t->addData(array("thelinks"=>$thelinks, "url"=>$url));
+            $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/breadcrumb-withdrop-and-url.tmpl");
+            $a_dir[$k] = $this->t->compile();
+
             $cnt++;
         }
         $backDirs = implode(" ", $a_dir);
