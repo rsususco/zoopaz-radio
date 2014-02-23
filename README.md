@@ -9,7 +9,7 @@ See features and screenshots below.
 
 Download
 ========
-[Download](https://github.com/wsams/zoopaz-myradio/tags) one of the releases. Or [clone](https://github.com/wsams/zoopaz-myradio.git) this repository. [Fork](https://github.com/wsams/zoopaz-myradio/fork me here). Have fun playing your music.
+[Download](https://github.com/wsams/zoopaz-radio/tags) one of the releases. Or [clone](https://github.com/wsams/zoopaz-radio.git) this repository. [Fork](https://github.com/wsams/zoopaz-radio/fork me here). Have fun playing your music.
 
 Screenshots
 ===========
