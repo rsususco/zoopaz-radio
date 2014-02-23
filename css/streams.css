@@ -586,8 +586,23 @@ legend, .legend {
     width:100%;
 }
 
+.ui-menu {
+    border-radius:0px ! important;
+    -webkit-border-radius:0px ! important;
+    -moz-border-radius:0px ! important;
+}
+
 .ui-menu-item {
     font-size:0.75em ! important;
+    border-radius:0px ! important;
+    -webkit-border-radius:0px ! important;
+    -moz-border-radius:0px ! important;
+}
+
+.ui-corner-all {
+    border-radius:0px ! important;
+    -webkit-border-radius:0px ! important;
+    -moz-border-radius:0px ! important;
 }
 
 .muted {
