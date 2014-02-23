@@ -1353,7 +1353,15 @@ class Streams {
         $indexer->setDirlistFile($this->cfg->streamsRootDir . "/" . $userDir . "/dir.list");
         $indexer->setAddToIndex(true);
         $indexer->index();
-        $o = array("status"=>"ok", "message"=>"Added {$dir} to personal radio station.");
+
+        // Create add-to radio button.
+        $html_dir = preg_replace("/\"/", "\\\"", $dir);
+        $this->t->setData(array("html_dir" => $html_dir));
+        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/create-remove-radio.tmpl");
+        $createRemoveRadioButton = $this->t->compile();
+
+        $o = array("status"=>"ok", "message"=>"Added {$dir} to personal radio station.", 
+                "button"=>$createRemoveRadioButton);
         return json_encode($o);
     }
 
@@ -1404,7 +1412,14 @@ class Streams {
                 file_put_contents($db, implode("", $f));
             }
         }
-        $o = array("status"=>"ok", "message"=>"Removed from personal radio station.");
+
+        // Create remove radio button.
+        $html_dir = preg_replace("/\"/", "\\\"", $dir);
+        $this->t->setData(array("html_dir" => $html_dir));
+        $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/create-add-radio.tmpl");
+        $createAddRadioButton = $this->t->compile();
+
+        $o = array("status"=>"ok", "message"=>"Removed from personal radio station.", "button"=>$createAddRadioButton);
         return json_encode($o);
     }
 

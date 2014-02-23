@@ -455,7 +455,7 @@ function removeFromPersonalRadio(e, thiz) {
             case "loadstation":
                 $(thiz).parent().parent().parent().parent().remove();
             default:
-                var doNothing = true;
+                $(thiz).parent().replaceWith(json['button']);
         }
 
         hideWorking();
@@ -472,6 +472,7 @@ function addToPersonalRadio(e, thiz) {
     var dir = $(thiz).data("dir");
     $.getJSON("ajax.php?action=addToPersonalRadio&dir=" 
             + encodeURIComponent(dir), function(json){
+        $(thiz).parent().replaceWith(json['button']);
         handleLogoutJson(json);
         hideWorking();
     });
