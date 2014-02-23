@@ -312,7 +312,7 @@ function playRadio(e) {
             }).bind($.jPlayer.event.ended, function(event) {
                 var current = myPlaylist.current;
                 myPlaylist.remove(current - 1);
-                $.getJSON("ajax.php?action=getRandomPlaylist&num=1" + stationQS, function(json){
+                $.getJSON("ajax.php?action=getRandomPlaylist&num=1", function(json){
                     $(json).each(function(i, audioFile) {
                         myPlaylist.add(audioFile);
                     });
@@ -726,7 +726,7 @@ $(document).ready(function(){
     });
 
     $(document).on("click", "#radio-button", function(e) {
-        playRadio(e, null);
+        playRadio(e);
     });
 
     $(document).on("click", ".createradiobutton", function(e) {
