@@ -74,17 +74,19 @@ function openMyRadio() {
 }
 
 function getHomeNavigation() {
-    displayWorking();
-    $.ajax({
-        type: "GET",  
-        url: "ajax.php",  
-        data: "action=getHomeNavigation",
-        success: function(html){
-            handleLogoutHtml(html);
-            $("#navlist").html(html);
-            hideWorking();
-        }
-    });
+    if ($("#navlist .previousDirectoryListItem .filesize_type .dirlink").size() < 1) {
+        displayWorking();
+        $.ajax({
+            type: "GET",  
+            url: "ajax.php",  
+            data: "action=getHomeNavigation",
+            success: function(html){
+                handleLogoutHtml(html);
+                $("#navlist").html(html);
+                hideWorking();
+            }
+        });
+    }
 }
 
 function openDir(url) {
