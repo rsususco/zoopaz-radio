@@ -1136,7 +1136,8 @@ class Streams {
      */
     public function getRandomPlaylistJson($numItems, $personalRadioDatabase=null) {
         $radioDatabase = $this->cfg->radioDatabase;
-        if (isset($personalRadioDatabase)) {
+        if (isset($personalRadioDatabase) && $personalRadioDatabase != null 
+                && $personalRadioDatabase != "undefined") {
             $radioDatabase = $personalRadioDatabase;
         }
 

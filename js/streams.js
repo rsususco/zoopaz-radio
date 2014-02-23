@@ -410,7 +410,7 @@ function createPersonalRadio(e, thiz) {
         }).bind($.jPlayer.event.ended, function(event) {
             var current = myPlaylist.current;
             myPlaylist.remove(current - 1);
-            $.getJSON("ajax.php?action=getRandomPlaylist&num=1&personal=yes" + stationQS, function(json){
+            $.getJSON("ajax.php?action=getRandomPlaylist&num=1&personal=yes", function(json){
                 $(json).each(function(i, audioFile) {
                     myPlaylist.add(audioFile);
                 });
