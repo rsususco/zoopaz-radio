@@ -11,6 +11,12 @@ Download
 ========
 [Download](https://github.com/wsams/zoopaz-radio/tags) one of the releases. Or [clone](https://github.com/wsams/zoopaz-radio.git) this repository. [Fork](https://github.com/wsams/zoopaz-radio/fork me here). Have fun playing your music.
 
+Demo Video
+==========
+View a complete demonstration of the current 2.0.0 release.
+
+<iframe src="//player.vimeo.com/video/87402935" width="500" height="375" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> <p><a href="http://vimeo.com/87402935">zoopaz-radio-2.0.0 demo</a> from <a href="http://vimeo.com/user5614942">wsams</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
+
 Screenshots
 ===========
 
