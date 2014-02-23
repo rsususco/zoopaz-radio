@@ -599,6 +599,10 @@ legend, .legend {
     -moz-border-radius:0px ! important;
 }
 
+.ui-menu-item:hover {
+    background-color:#afc8d8 ! important;
+}
+
 .ui-corner-all {
     border-radius:0px ! important;
     -webkit-border-radius:0px ! important;
