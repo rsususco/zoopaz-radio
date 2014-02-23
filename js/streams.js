@@ -702,6 +702,7 @@ $(document).ready(function(){
     });
 
     $(document).on("click", "#my-radio-button", function(e) {
+        getHomeNavigation();
         openMyRadio();
     });
 

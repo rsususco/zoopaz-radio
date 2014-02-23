@@ -163,6 +163,9 @@ class Streams {
         $userDir = $this->auth->userDir;
         $fullUserDir = "{$this->cfg->streamsRootDir}/{$userDir}";
         $stationsDir = "{$fullUserDir}/stations";
+        if (!file_exists($stationsDir)) {
+            mkdir($stationsDir);
+        }
         $curdir = getcwd();
         chdir($stationsDir);
         $stations = glob("*.files.db");
