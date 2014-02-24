@@ -21,10 +21,12 @@ class Auth {
     public $maxTries = 100;
 
     // Set your users here.
-    // Note: This will be replaced for something more secure and configurable in the
-    //       future. It is just here to provide playlists for individual users and
-    //       in no way provides real world security.
-    public $users = array("user1"=>"user1password", "user2"=>"user2password");
+    // Depending on the Config.hashFunction you use, you will set the password
+    // accordingly.
+    // You can use duckduckgo.com to compute md5 or sha1 hashes. For example,
+    // If you password is MY_SECRET_PASSWORD then go to the following URL.
+    // https://duckduckgo.com/?q=sha1+MY_SECRET_PASSWORD
+    public $users = array("user1"=>"6322c48be847940f6d9466bf07d2ce53186ea77c", "user2"=>"3da541559918a808c2402bba5012f6c60b27661c");
 
     // These users are restricted in some manner by Streams.isRestricted($file).
     // Currently it prevents audio purchased from iTunes or Amazon from being served

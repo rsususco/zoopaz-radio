@@ -113,6 +113,12 @@ if ($p['isboolean']) {
 eof;
 } else if ($p['isusers']) {
     if ($auth != null) {
+        $pageContent .= <<<eof
+<p>Depending on the Config.hashFunction you use, you will set the password accordingly.</p>
+<p>You can use duckduckgo.com to compute <code>md5</code> or <code>sha1</code> hashes. For example,</p>
+<p>If you password is <code>MY_SECRET_PASSWORD</code> then go to the following URL.</p>
+<p>https://duckduckgo.com/?q=sha1+MY_SECRET_PASSWORD</p>
+eof;
         if ($p['var'] == "users") {
             if (isset($_SESSION['authSetup']['users']) && is_array($_SESSION['authSetup']['users'])) {
                 foreach ($_SESSION['authSetup']['users'] as $k=>$v) {

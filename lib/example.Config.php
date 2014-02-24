@@ -78,6 +78,9 @@ class Config {
         $this->publicListenKey = "ov7w0e8ZAvw@Cj35xH30K2yb6z1wiyN45446!z9@%Q3S4qs0h^ardCkVWQ2^9#!L";
 
         $this->alternateSessionDir = "/var/lib/php5/streams";
+
+        // This function will be used during authentication.
+        $this->hashFunction = "sha1";
     }
 
     public static function getInstance () {
