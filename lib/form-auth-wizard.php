@@ -113,12 +113,6 @@ if ($p['isboolean']) {
 eof;
 } else if ($p['isusers']) {
     if ($auth != null) {
-        $pageContent .= <<<eof
-<p>Depending on the Config.hashFunction you use, you will set the password accordingly.</p>
-<p>You can use duckduckgo.com to compute <code>md5</code> or <code>sha1</code> hashes. For example,</p>
-<p>If you password is <code>MY_SECRET_PASSWORD</code> then go to the following URL.</p>
-<p>https://duckduckgo.com/?q=sha1+MY_SECRET_PASSWORD</p>
-eof;
         if ($p['var'] == "users") {
             if (isset($_SESSION['authSetup']['users']) && is_array($_SESSION['authSetup']['users'])) {
                 foreach ($_SESSION['authSetup']['users'] as $k=>$v) {
@@ -143,7 +137,9 @@ eof;
 </div>
 <div class="form-group">
     <label for="password">Password</label>
-    <input name="password[]" type="password" class="form-control" placeholder="Password..." value="{$password}" />
+    <input name="password[]" type="text" class="form-control" placeholder="Password..." value="{$password}" />
+    <p>You must enter a hashed password. See instructions above for using duckduckgo.com.</p>
+    <p>e.g. 6322c48be847940f6d9466bf07d2ce53186ea77c</p>
 </div>{$remove}</div>
 eof;
             }
@@ -155,7 +151,9 @@ eof;
   </div>
   <div class="form-group">
     <label for="password">Password</label>
-    <input name="password[]" type="password" class="form-control" placeholder="Password..." />
+    <input name="password[]" type="text" class="form-control" placeholder="Password..." />
+    <p>You must enter a hashed password. See instructions above for using duckduckgo.com.</p>
+    <p>e.g. 6322c48be847940f6d9466bf07d2ce53186ea77c</p>
   </div>
   <p class="btn btn-success" style="margin-bottom:16px;" id="addAnotherUser">Add another</p><br /> 
 eof;
@@ -168,7 +166,9 @@ eof;
   </div>
   <div class="form-group">
     <label for="password">Password</label>
-    <input name="password[]" type="password" class="form-control" placeholder="Password..." />
+    <input name="password[]" type="text" class="form-control" placeholder="Password..." />
+    <p>You must enter a hashed password. See instructions above for using duckduckgo.com.</p>
+    <p>e.g. 6322c48be847940f6d9466bf07d2ce53186ea77c</p>
   </div>
 eof;
     }

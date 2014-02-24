@@ -91,6 +91,16 @@ function getFormFieldsForConfig() {
             "var" => "publicListenKey",
             "exp" => "ov7w0e8ZAvw",
             "desc" => "This parameter is not currently used, but will be in the future. It's a secret key used for sharing individual albums to others without requiring the person to have an account. It will be used to create a hash placed in the URL.",
+            "isboolean" => false),
+        array(
+            "var" => "alternateSessionDir",
+            "exp" => "/var/lib/php5/streams",
+            "desc" => "This parameter allows you to override the default session storage directory. Which ever directory you choose, make sure to create it.",
+            "isboolean" => false),
+        array(
+            "var" => "hashFunction",
+            "exp" => "sha1",
+            "desc" => "This parameter defines a function that is responsible for hashing passwords for authentication. e.g. sha1, md5, ...",
             "isboolean" => false)
     );
     return $formFieldsForConfig;
