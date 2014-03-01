@@ -337,7 +337,11 @@ function playMyRadio(station) {
 
         var width = $("#content").width();
         $("#content-player").html(json['contentPlayer']);
-        $(".album-title").text("My Radio");
+        if (station === null || station === undefined || station === "null" || station === "undefined") {
+            $(".album-title").html("My Radio");
+        } else {
+            $(".album-title").html(station.replace(/_/, " "));
+        }
         $("#playbutton").remove();
 
         // Currently the player only works in iPhone with the Chrome browser.
@@ -566,6 +570,7 @@ function loadRadio(station) {
             + encodeURIComponent(station), function(json){
         if (json['status'] === "ok") {
             $("#musicwrapper").html(json['html']);
+            setRadioStationTitle(station);
         } else if (json['status'] === "error") {
             alert(json['message']);
         } else {
@@ -576,6 +581,18 @@ function loadRadio(station) {
     });
 }
 
+function setRadioStationTitle(station) {
+    // This comes from json['html']
+    var wrapper = $("#radio-station-wrapper");
+    wrapper.html("<div class='album-title'>" + station.replace(/_/, " ") 
+            + "</div>" + wrapper.html());
+}
+
+function setPlayerStationTitle(station) {
+    var wrapper = $("#content-player .album-title").first();
+    wrapper.html(station.replace(/_/, " "));
+}
+
 function loadMyRadio(e, thiz) {
     var station = $(thiz).data("station");
     location.hash = "#/loadstation/" + station;
@@ -584,6 +601,7 @@ function loadMyRadio(e, thiz) {
             + encodeURIComponent(station), function(json){
         if (json['status'] === "ok") {
             $("#musicwrapper").html(json['html']);
+            setRadioStationTitle(station);
         } else if (json['status'] === "error") {
             alert(json['message']);
         } else {
@@ -719,6 +737,7 @@ $(document).ready(function(){
             case "loadstation":
                 var station = decodeURIComponent(hashVars[2]);
                 playMyRadio(station);
+                setPlayerStationTitle(station);
                 break;
             default:
                 var doNothing = true;

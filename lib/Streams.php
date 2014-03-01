@@ -191,12 +191,6 @@ class Streams {
         $saveRadioButton = $this->t->compile();
         $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/myRadioStationsButton.tmpl");
         $viewMyRadioStationsButton = $this->t->compile();
-        // TODO: This HTML for display my radio buttons is duplicated. Make a function.
-//        $html = "{$playRadioButton} {$saveRadioButton} {$viewMyRadioStationsButton}<br />"
-//                . "<div id=\"save-radio-dialog\"><input type=\"text\" id=\"save-radio-name\" "
-//                . "placeholder=\"Enter radio name...\" /> <input class=\"button\" type=\"button\" "
-//                . "id=\"save-radio-button\" value=\"save\" /></div><br /><br />"
-//                . "<div id=\"radio-station-wrapper\">" . $stationsHtml . "</div>";
         return json_encode(array("status"=>"ok", "radioNames"=>$radioNames, "html"=>$stationsHtml));
     }
 
