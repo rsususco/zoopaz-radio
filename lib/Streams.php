@@ -474,6 +474,7 @@ class Streams {
                     $displayFile = $file;
                     $id3 = $this->id3($dirLink, $file);
                     $filePath = rawurlencode($dirLink . $file);
+                    $directLink = preg_replace("/ /", "%20", $dirLink . $file);
 
                     if ($this->isRestricted($dirLink . $file)) {
                         continue;
@@ -487,7 +488,7 @@ class Streams {
                     $addToPlaylist = $this->t->compile();
 
                     $this->t->setData(array("filePath"=>$filePath, "title"=>$id3['title'],
-                            "filesize"=>$filesize, "add-to-playlist"=>$addToPlaylist));
+                            "filesize"=>$filesize, "add-to-playlist"=>$addToPlaylist, "direct-link" => "{$this->cfg->defaultMp3Url}/{$directLink}"));
                     $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/albumListItem.tmpl");
                     $o['index'] .= $this->t->compile();
                     continue;

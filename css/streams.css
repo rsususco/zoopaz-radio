@@ -426,7 +426,7 @@ span.dropwrapper:hover div.drop {
 .createaddradiobutton {
 }
 
-.createradiobutton, .addtoradiobutton, .addtoplaylist, .removefromradiobutton {
+.createradiobutton, .addtoradiobutton, .addtoplaylist, .removefromradiobutton, .smallbutton {
     cursor:pointer;
     padding:4px 8px;
     font-size:0.9em;
