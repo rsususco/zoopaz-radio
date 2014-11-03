@@ -22,8 +22,18 @@ if ($_GET['action'] == "downloadAlbum" && $_GET['dir'] != "") {
         $curdir = getcwd();
         $musicDir = $cfg->defaultMp3Dir . $_GET['dir'];
         $musicContDir = preg_replace("/^(.*)\/.*$/", "\${1}", $musicDir);
-        $musicZipDir = preg_replace("/^.*\/(.*)$/", "\${1}", $musicDir);
-        $musicZip = preg_replace("/[^0-9a-zA-Z-_]/", "_", $musicZipDir);
+
+        // This is the real directory we're going to zip. We'll make a copy first and name it $musicTmpZipDir
+        $musicZipDir = preg_replace("/^.*\/(.*?)$/", "\${1}", $musicDir);
+
+        // This is the actual folder we're going to zip.
+        if (preg_match("/cd\s*[0-9]/i", $musicDir) || preg_match("/set\s*[0-9]/i", $musicDir)) {
+            $musicTmpZipDir = preg_replace("/^.*\/(.*?)\/(.*?)\/(.*?)$/", "\${1} - \${2} - \${3}", $musicDir);
+        } else {
+            $musicTmpZipDir = preg_replace("/^.*\/(.*?)\/(.*?)$/", "\${1} - \${2}", $musicDir);
+        }
+
+        $musicZip = preg_replace("/[^0-9a-zA-Z-_]/", "_", $musicTmpZipDir);
         $musicTmpDir = "{$cfg->tmpDir}/streamsTmpDir/{$auth->username}{$musicDir}";
         if (!file_exists($musicTmpDir)) {
             mkdir($musicTmpDir, 0777, true);
@@ -33,18 +43,35 @@ if ($_GET['action'] == "downloadAlbum" && $_GET['dir'] != "") {
         } else {
             die("Could not find music.");
         }
-        exec("zip -r \"{$musicTmpDir}/{$musicZip}.zip\" \"{$musicZipDir}\"");
-        header('Content-Description: Download file');
-        header("Content-type: application/x-download");
-        header("Content-Length: " . filesize("{$musicTmpDir}/{$musicZip}.zip"));
-        header("Content-Disposition: attachment; filename=" . basename("{$musicZip}.zip"));
-        header('Content-Transfer-Encoding: binary');
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Expires: 0');
-        header('Pragma: public');
-        readfile("{$musicTmpDir}/{$musicZip}.zip");
-        exec("rm -Rf {$cfg->tmpDir}/streamsTmpDir/{$auth->username}");
-        chdir($curdir);
+
+
+        exec("cp -rf \"{$musicZipDir}\" \"{$musicTmpDir}/{$musicTmpZipDir}\"");
+
+        if (file_exists("{$musicTmpDir}/{$musicTmpZipDir}")) {
+            chdir("{$musicTmpDir}/{$musicTmpZipDir}");
+            $filesInDir = glob("*");
+            foreach ($filesInDir as $f) {
+                $f = trim($f);
+                $ext = preg_replace("/^.*\.(.*)$/", "\${1}", $f);
+                if (!is_dir($f) && !in_array($ext, $cfg->validMusicTypes)) {
+                    unlink($f);
+                }
+            }
+            chdir("..");
+
+            exec("zip -r \"{$musicTmpDir}/{$musicZip}.zip\" \"{$musicTmpZipDir}\"");
+            header('Content-Description: Download file');
+            header("Content-type: application/x-download");
+            header("Content-Length: " . filesize("{$musicTmpDir}/{$musicZip}.zip"));
+            header("Content-Disposition: attachment; filename=" . basename("{$musicZip}.zip"));
+            header('Content-Transfer-Encoding: binary');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Expires: 0');
+            header('Pragma: public');
+            readfile("{$musicTmpDir}/{$musicZip}.zip");
+            exec("rm -Rf {$cfg->tmpDir}/streamsTmpDir/{$auth->username}");
+            chdir($curdir);
+        }
         die();
     }
 } else if ($_GET['action'] == "download") {
