@@ -49,6 +49,7 @@ function createPlaylistJs(url) {
                 var newwidth = width - 16;
                 $("#mediaplayer_wrapper").css("width", newwidth + "px");
             }
+
             hideWorking();
         }
     });

@@ -66,8 +66,9 @@ See [`INSTALL.md`](INSTALL.md)
 Todo
 ====
 
+* Look for multiple types of cover art - not just cover.jpg.
 * Boolean search operators. Current development.
 * Browser history.
 * Manage music from web.
-* Manage configuration from web.
+* Manage configuration from web. (Basic install is now web based.)
 * Radio are you still listening? Would stop play after X amount of time.

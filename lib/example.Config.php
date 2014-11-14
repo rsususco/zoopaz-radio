@@ -105,4 +105,39 @@ class Config {
         }
         return $o;
     }
+
+    public function collapseChar($char, $dir) {
+        return preg_replace("/" . preg_quote($char, "/") 
+                . preg_quote($char, "/") . "+/", $char, $dir);
+    }
+
+    public function stripLeadingChar($char, $dir) {
+        return preg_replace("/^" . preg_quote($char, "/") . "/", "", $dir);
+    }
+
+    public function stripTrailingChar($char, $dir) {
+        return preg_replace("/" . preg_quote($char, "/") . "$/", "", $dir);
+    }
+
+    public function mkdirSafe($dir) {
+        if (!file_exists($dir)) {
+            mkdir($dir);
+        }
+    }
+
+    public function mkdirRecursive($dir) {
+        $dir = $this->collapseChar("/", $dir);
+        $dir = $this->stripLeadingChar("/", $dir);
+        $dirs = explode("/", $dir);
+        foreach ($dirs as $k=>$d) {
+            if ($k === 0) {
+                $tomake = "/" . $d;
+            } else {
+                $tomake = $tomake . "/" . $d;
+            }
+            if (preg_match("/^" . preg_quote($this->cfg->rootDir, "/") . "\/.+/", $tomake)) {
+                $this->mkdirSafe($tomake);
+            }
+        }
+    }
 }

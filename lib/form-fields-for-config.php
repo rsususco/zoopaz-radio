@@ -2,34 +2,36 @@
 
 function getFormFieldsForConfig() {
     $formFieldsForConfig = array(
+        /*
         array(
             "var" => "webroot",
             "exp" => "/var/www",
-            "desc" => "This is the root directory that contains your web directories. See the variables below for its use.",
+            "desc" => "This is the root directory that contains your web directories. If you cloned the project at <code>/var/www/zoopaz-radio</code>, then you would set this value to <code>/var/www</code>",
             "isboolean" => false),
+        */
         array(
             "var" => "host",
-            "exp" => "https://music.example.com",
+            "exp" => ($_SERVER['HTTPS'] === "on" || $_SERVER['HTTP_PORT'] === 443 ? "https://" : "http://") .  $_SERVER['HTTP_HOST'],
             "desc" => "This is your <code>PROTOCOL://DOMAIN</code> with no paths appended.",
             "isboolean" => false),
         array(
             "var" => "defaultMp3Dir",
-            "exp" => "/var/www/music.example.com/music",
-            "desc" => "Absolute path to the root directory containing your music. It should be a web accessible directory.",
+            "exp" => preg_replace("/^(.*)\/.*$/", "\${1}", getcwd()) . "/mymusic",
+            "desc" => "Absolute path to the <strong>web accessible</strong> root directory containing your music.",
             "isboolean" => false),
         array(
             "var" => "defaultMp3Url",
-            "exp" => "https://music.example.com/music",
+            "exp" => ($_SERVER['HTTPS'] === "on" || $_SERVER['HTTP_PORT'] === 443 ? "https://" : "http://") .  $_SERVER['HTTP_HOST'] . "/mymusic",
             "desc" => "This is a URL that points to the root directory containing your music.",
             "isboolean" => false),
         array(
             "var" => "streamsRootDir",
-            "exp" => "/var/www/music.example.com/streams",
+            "exp" => getcwd(),
             "desc" => "This is the root directory of this project - the directory containing index.php.",
             "isboolean" => false),
         array(
             "var" => "streamsRootDirUrl",
-            "exp" => "https://music.example.com/streams",
+            "exp" => ($_SERVER['HTTPS'] === "on" || $_SERVER['HTTP_PORT'] === 443 ? "https://" : "http://") .  $_SERVER['HTTP_HOST'] . "/zoopaz-radio",
             "desc" => "This is the root URL of this project - the directory containing index.php.",
             "isboolean" => false),
         array(
@@ -38,19 +40,14 @@ function getFormFieldsForConfig() {
             "desc" => "This is a directory where temporary files are stored for downloading albums. Inside this directory a directory named <code>downloadAlbum</code> will be created. Inside that directory we'll create zip archives for downloading. Install the following cronjob if you want to clean up this directory. <code>30 5 * * * rm -Rf /tmp/downloadAlbum/*</code>",
             "isboolean" => false),
         array(
-            "var" => "streamsRootDirUrl",
-            "exp" => "https://music.example.com/streams",
-            "desc" => "This is the root URL of this project - the directory containing index.php.",
-            "isboolean" => false),
-        array(
             "var" => "logging",
             "exp" => "true or false",
             "desc" => "This allows access logging. Creates a file in the root of the project named <code>access.log</code> by default. The next page will allow you to change that file name and location.",
             "isboolean" => true),
         array(
             "var" => "logfile",
-            "exp" => "/var/www/music.example.com/streams/access.log",
-            "desc" => "This is a log file for logging hits to the application.",
+            "exp" => preg_replace("/^(.*)\/.*$/", "\${1}", getcwd()) . "/access.log",
+            "desc" => "This is a log file for logging hits to the application. This should not be web accessible but not required.",
             "isboolean" => false),
         array(
             "var" => "validMusicTypes",
@@ -69,13 +66,13 @@ function getFormFieldsForConfig() {
             "isboolean" => false),
         array(
             "var" => "searchDatabase",
-            "exp" => "/var/www/music.example.com/streams/search.db",
-            "desc" => "This is the search index file.",
+            "exp" => preg_replace("/^(.*)\/.*$/", "\${1}", getcwd()) . "/search.db",
+            "desc" => "This is the search index file. Should not be in a web accessible directory but not required.",
             "isboolean" => false),
         array(
             "var" => "radioDatabase",
-            "exp" => "/var/www/music.example.com/streams/files.db",
-            "desc" => "This is similar to the search index file, but used for radio. It is a list of files that are randomly pulled into the radio stream based on the filters you setup. There is also a person radio index file.",
+            "exp" => preg_replace("/^(.*)\/.*$/", "\${1}", getcwd()) . "/files.db",
+            "desc" => "This is similar to the search index file, but used for radio. It is a list of files that are randomly pulled into the radio stream based on the filters you setup. There is also a person radio index file. Should not be in a web accessible directory but not required.",
             "isboolean" => false),
         array(
             "var" => "personalRadioDatabase",
@@ -84,7 +81,7 @@ function getFormFieldsForConfig() {
             "isboolean" => false),
         array(
             "var" => "dirlistFile",
-            "exp" => "/var/www/music.example.com/streams/scripts/dir.list",
+            "exp" => "/tmp/dir.list",
             "desc" => "This is a temporary file used to generate the search index.",
             "isboolean" => false),
         array(
@@ -94,7 +91,7 @@ function getFormFieldsForConfig() {
             "isboolean" => false),
         array(
             "var" => "alternateSessionDir",
-            "exp" => "/var/lib/php5/streams",
+            "exp" => preg_replace("/^(.*)\/.*$/", "\${1}", getcwd()) . "/stream-sessions",
             "desc" => "This parameter allows you to override the default session storage directory. Which ever directory you choose, make sure to create it.",
             "isboolean" => false),
         array(
