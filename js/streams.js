@@ -815,4 +815,41 @@ $(document).ready(function(){
         }
     });
 
+    $(".jp-volume-bar").livequery(function() {
+        $(".jp-volume-bar").on("click", function() {
+            var bar = parseInt($(".jp-volume-bar").css("width").replace(/px/, ""));
+            var volume = parseInt($(".jp-volume-bar-value").css("width").replace(/px/, ""));
+            var percent = volume / bar;
+            $.getJSON("ajax.php?action=saveVolume&volume=" + encodeURIComponent(percent), function(json) {
+                console.log("volume: " + json.volume);
+            });
+        });
+    });
+    $(".jp-volume-max").livequery(function() {
+        $(".jp-volume-max").on("click", function() {
+            var percent = 1;
+            $.getJSON("ajax.php?action=saveVolume&volume=" + encodeURIComponent(percent), function(json) {
+                console.log("volume: " + json.volume);
+            });
+        });
+    });
+    $(".jp-mute").livequery(function() {
+        $(".jp-mute").on("click", function() {
+            var percent = 0;
+            $.getJSON("ajax.php?action=saveVolume&volume=" + encodeURIComponent(percent), function(json) {
+                console.log("volume: " + json.volume);
+            });
+        });
+    });
+    $(".jp-unmute").livequery(function() {
+        $(".jp-unmute").on("click", function() {
+            var bar = parseInt($(".jp-volume-bar").css("width").replace(/px/, ""));
+            var volume = parseInt($(".jp-volume-bar-value").css("width").replace(/px/, ""));
+            var percent = volume / bar;
+            $.getJSON("ajax.php?action=saveVolume&volume=" + encodeURIComponent(percent), function(json) {
+                console.log("volume: " + json.volume);
+            });
+        });
+    });
+
 });

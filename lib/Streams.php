@@ -1063,8 +1063,8 @@ class Streams {
     /**
      * @tested true
      */
-    public function buildPlayerHtml($playlist, $dir, $autoplay='false') {
-        $this->t->setData(array("playlist" => $playlist, "autoplay" => $autoplay));
+    public function buildPlayerHtml($playlist, $dir, $autoplay='true') {
+        $this->t->setData(array("playlist" => $playlist, "autoplay" => $autoplay, "volume" => $this->getVolume()));
         $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/jplayer.tmpl");
         $flashPlayer = $this->t->compile();
 
@@ -1236,7 +1236,11 @@ class Streams {
             $playlist = $this->buildPlaylistFromDir($dir);
             file_put_contents($this->auth->currentPlaylist, $playlist);
             file_put_contents($this->auth->currentPlaylistDir, $dir);
-            $html = $this->buildPlayerHtml($playlist, $dir, 'false');
+            // Set to 'false' if you don't want the player to autostart
+            // TODO: Set this to 'false', but make the blue 'Play' button
+            //       say something like. 'Open album'. Then use the player
+            //       play button.
+            $html = $this->buildPlayerHtml($playlist, $dir, 'true');
         }
         return $html;
     }
@@ -1413,6 +1417,23 @@ class Streams {
             }
         }
         return false;
+    }
+
+    public function getVolume() {
+        $userDir = $this->auth->userDir;
+        $volumeFile = "{$this->cfg->streamsRootDir}/{$userDir}/volume.db";
+        if (!file_exists($volumeFile)) {
+            file_put_contents($volumeFile, json_encode(array("volume" => "0.5")));
+        }
+        $json = json_decode(file_get_contents($volumeFile));
+        return $json->volume;
+    }
+
+    public function saveVolume($volume) {
+        $userDir = $this->auth->userDir;
+        $volumeFile = "{$this->cfg->streamsRootDir}/{$userDir}/volume.db";
+        file_put_contents($volumeFile, json_encode(array("volume" => $volume)));
+        return json_encode(array("status" => "ok", "volume" => $this->getVolume()));
     }
 
 }
