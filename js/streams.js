@@ -307,9 +307,15 @@ function playRadio(e) {
 
             // After each song plays, remove the first song.
             $("#mediaplayer").bind($.jPlayer.event.play, function(event) {
-                // TODO: This is kind of a bug, but shouldn't happen with normal usage.
-                //       If you click the last item in the list, after it's done, the player will stop.
-                console.log("bind: Playlist size: " + myPlaylist.playlist.length + ", Current position: " + myPlaylist.current);
+                console.log("bind1: Playlist size: " + myPlaylist.playlist.length + ", Current position: " + myPlaylist.current);
+                if (myPlaylist.playlist.length === (myPlaylist.current + 1)) {
+                    $.getJSON("ajax.php?action=getRandomPlaylist&num=1", function(json){
+                        $(json).each(function(i, audioFile) {
+                            myPlaylist.add(audioFile);
+                            //myPlaylist.remove(0);
+                        });
+                    });
+                }
             }).bind($.jPlayer.event.ended, function(event) {
                 var current = myPlaylist.current;
                 myPlaylist.remove(current - 1);
@@ -360,7 +366,20 @@ function playMyRadio(station) {
         $("#mediaplayer").bind($.jPlayer.event.play, function(event) {
             // TODO: This is kind of a bug, but shouldn't happen with normal usage.
             //       If you click the last item in the list, after it's done, the player will stop.
-            console.log("bind: Playlist size: " + myPlaylist.playlist.length + ", Current position: " + myPlaylist.current);
+            console.log("bind2: Playlist size: " + myPlaylist.playlist.length + ", Current position: " + myPlaylist.current);
+            if (myPlaylist.playlist.length === (myPlaylist.current + 1)) {
+                // Playing a personal radio station. Must get the station from the URL.
+                var stationQS = "";
+                if (currentMyRadioStation != null) {
+                    stationQS = "&station=" + currentMyRadioStation;
+                }
+                $.getJSON("ajax.php?action=getRandomPlaylist&num=1&personal=yes" + stationQS, function(json){
+                    $(json).each(function(i, audioFile) {
+                        myPlaylist.add(audioFile);
+                        //myPlaylist.remove(0);
+                    });
+                });
+            }
         }).bind($.jPlayer.event.ended, function(event) {
             console.log("Music has ended, changing tracks.");
             var current = myPlaylist.current;
@@ -409,9 +428,15 @@ function createPersonalRadio(e, thiz) {
 
         // After each song plays, remove the first song.
         $("#mediaplayer").bind($.jPlayer.event.play, function(event) {
-            // TODO: This is kind of a bug, but shouldn't happen with normal usage.
-            //       If you click the last item in the list, after it's done, the player will stop.
-            console.log("bind: Playlist size: " + myPlaylist.playlist.length + ", Current position: " + myPlaylist.current);
+            console.log("bind3: Playlist size: " + myPlaylist.playlist.length + ", Current position: " + myPlaylist.current);
+            if (myPlaylist.playlist.length === (myPlaylist.current + 1)) {
+                $.getJSON("ajax.php?action=getRandomPlaylist&num=1&personal=yes", function(json){
+                    $(json).each(function(i, audioFile) {
+                        myPlaylist.add(audioFile);
+                        //myPlaylist.remove(0);
+                    });
+                });
+            }
         }).bind($.jPlayer.event.ended, function(event) {
             var current = myPlaylist.current;
             myPlaylist.remove(current - 1);
@@ -820,35 +845,34 @@ $(document).ready(function(){
             var bar = parseInt($(".jp-volume-bar").css("width").replace(/px/, ""));
             var volume = parseInt($(".jp-volume-bar-value").css("width").replace(/px/, ""));
             var percent = volume / bar;
-            $.getJSON("ajax.php?action=saveVolume&volume=" + encodeURIComponent(percent), function(json) {
-                console.log("volume: " + json.volume);
-            });
+            $.getJSON("ajax.php?action=saveVolume&volume=" 
+                    + encodeURIComponent(percent), function(json) { });
         });
     });
+
     $(".jp-volume-max").livequery(function() {
         $(".jp-volume-max").on("click", function() {
             var percent = 1;
-            $.getJSON("ajax.php?action=saveVolume&volume=" + encodeURIComponent(percent), function(json) {
-                console.log("volume: " + json.volume);
-            });
+            $.getJSON("ajax.php?action=saveVolume&volume=" 
+                    + encodeURIComponent(percent), function(json) { });
         });
     });
+
     $(".jp-mute").livequery(function() {
         $(".jp-mute").on("click", function() {
             var percent = 0;
-            $.getJSON("ajax.php?action=saveVolume&volume=" + encodeURIComponent(percent), function(json) {
-                console.log("volume: " + json.volume);
-            });
+            $.getJSON("ajax.php?action=saveVolume&volume=" 
+                    + encodeURIComponent(percent), function(json) { });
         });
     });
+
     $(".jp-unmute").livequery(function() {
         $(".jp-unmute").on("click", function() {
             var bar = parseInt($(".jp-volume-bar").css("width").replace(/px/, ""));
             var volume = parseInt($(".jp-volume-bar-value").css("width").replace(/px/, ""));
             var percent = volume / bar;
-            $.getJSON("ajax.php?action=saveVolume&volume=" + encodeURIComponent(percent), function(json) {
-                console.log("volume: " + json.volume);
-            });
+            $.getJSON("ajax.php?action=saveVolume&volume=" 
+                    + encodeURIComponent(percent), function(json) { });
         });
     });
 
