@@ -18,10 +18,16 @@
     border-bottom:4px solid #f0f0f0;
 }
 
+.jp-playlist-item-remove {
+    width:4%;
+    float:left;
+}
 .jp-playlist-item {
     background-image:url('../images/transBack.png');
     background-repeat:repeat-x;
     background-position:top left;
+    width:90%;
+    float:right;
 }
 
 div.jp-playlist ul {
@@ -36,6 +42,7 @@ div.jp-playlist ul {
 div.jp-playlist ul li {
     margin:0px;
     padding:0px;
+    clear:both;
 }
 
 .jp-playlist-current {
@@ -68,7 +75,7 @@ a.jp-playlist-item, a.jp-playlist-item:link {
     display:block;
     margin:0px;
     padding:8px;
-    width:100%;
+    /*width:100%;*/
 
     -webkit-transition:background-color 1.0s ease-out;
     -moz-transition:background-color 1.0s ease-out;
@@ -80,7 +87,7 @@ a.jp-playlist-item:hover {
     text-decoration:none;
     color:black;
     display:block;
-    width:100%;
+    /*width:100%;*/
     /*background-color:#f0f0f0;*/
     background-color:#afc8d8;
 
