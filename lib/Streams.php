@@ -472,6 +472,7 @@ class Streams {
                     $o['isMp3'] = true;
                     $filesize = $this->human_filesize($file);
                     $displayFile = $file;
+                    $bitrate = $this->getBitrate($dirLink, $file);
                     $id3 = $this->id3($dirLink, $file);
                     $filePath = rawurlencode($dirLink . $file);
                     $directLink = preg_replace("/ /", "%20", $dirLink . $file);
@@ -488,7 +489,8 @@ class Streams {
                     $addToPlaylist = $this->t->compile();
 
                     $this->t->setData(array("filePath"=>$filePath, "title"=>$id3['title'],
-                            "filesize"=>$filesize, "add-to-playlist"=>$addToPlaylist, "direct-link" => "{$this->cfg->defaultMp3Url}/{$directLink}"));
+                            "filesize"=>$filesize, "bitrate"=>$bitrate, "add-to-playlist"=>$addToPlaylist, 
+                            "direct-link" => "{$this->cfg->defaultMp3Url}/{$directLink}"));
                     $this->t->setFile("{$this->cfg->streamsRootDir}/tmpl/albumListItem.tmpl");
                     $o['index'] .= $this->t->compile();
                     continue;
@@ -496,6 +498,19 @@ class Streams {
             }
         }
         return $o;
+    }
+
+    public function getBitrate($dir, $file) {
+        $dir = ltrim(rtrim($dir, "/"), "/");
+        $file = ltrim(rtrim($file, "/"), "/");
+        $fullPath = $this->cfg->defaultMp3Dir . "/" . $dir . "/" . $file;
+        ob_start();
+            //system("file \"{$fullPath}\"");
+            system("exiftool -AudioBitrate \"{$fullPath}\"");
+            $c = ob_get_contents();
+        ob_end_clean();
+        //return preg_replace("/" . preg_quote($fullPath, "/") . ": /", "", trim($c));
+        return preg_replace("/ kbps/", "kbps", preg_replace("/Audio Bitrate : /", "", preg_replace("/  +/", " ", trim($c))));
     }
 
     /**

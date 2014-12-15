@@ -78,6 +78,7 @@ a:hover {
     /* padding must match that of .file-download-link */
     padding:8px;
     font-size:0.9em;
+    line-height:1.5em;
 }
 
 .file-download-link, .file-download-link:link {
@@ -615,4 +616,12 @@ legend, .legend {
 
 img.playlist-albumart {
     vertical-align:middle;
+}
+
+code.filesize {
+    color:#DE4508;
+}
+
+code.bitrate {
+    color:#3181b7;
 }

@@ -57,6 +57,7 @@ Dependencies
     * `find`
     * Command line `php`
     * `coverlovin.py` if you want to find album art automatically.
+    * `exiftool` for displaying audio metadata information like bitrate... Install package:`libimage-exiftool-perl`. If you are using a Debian based Linux distribution you can install using the following command. `sudo apt-get install libimage-exiftool-perl`
 
 Setup
 =====
