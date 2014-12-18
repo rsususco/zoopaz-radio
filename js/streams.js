@@ -57,6 +57,9 @@ function createPlaylistJs(url) {
 
 function openMyRadio() {
     location.hash = "#/myradio";
+}
+
+function doOpenMyRadio() {
     displayWorking();
     $.ajax({
         type: "GET",  
@@ -92,6 +95,9 @@ function getHomeNavigation() {
 
 function openDir(url) {
     location.hash = "#/open/" + encodeURIComponent(url);
+}
+
+function doOpenDir(url) {
     displayWorking();
     $.ajax({
         type: "GET",  
@@ -121,20 +127,20 @@ function init() {
     switch(hashVars[1]) {
         case "open":
             var dir = decodeURIComponent(hashVars[2]);
-            openDir(dir);
+            doOpenDir(dir);
             break;
         case "myradio":
             getHomeNavigation();
-            openMyRadio();
+            doOpenMyRadio();
             break;
         case "viewstations":
             getHomeNavigation();
-            viewMyRadio();
+            doViewMyRadio();
             break;
         case "loadstation":
             getHomeNavigation();
             var station = decodeURIComponent(hashVars[2]);
-            loadRadio(station);
+            doLoadRadio(station);
             break;
         default:
             var doNothing = true;
@@ -575,6 +581,9 @@ function saveMyRadio() {
 
 function viewMyRadio() {
     location.hash = "#/viewstations";
+}
+
+function doViewMyRadio() {
     displayWorking();
     $.getJSON("ajax.php?action=viewMyRadio", function(json){
         if (json['status'] === "ok") {
@@ -591,6 +600,9 @@ function viewMyRadio() {
 
 function loadRadio(station) {
     location.hash = "#/loadstation/" + station;
+}
+
+function doLoadRadio(station) {
     displayWorking();
     $.getJSON("ajax.php?action=loadStation&station=" 
             + encodeURIComponent(station), function(json){
@@ -677,6 +689,10 @@ function getHashValue(action) {
 isRadioMode = false;
 $(document).ready(function(){
     init();
+
+    $(window).on("hashchange", function() {
+        init();
+    });
 
     //$(".showtooltip").tooltip();
 
@@ -875,5 +891,16 @@ $(document).ready(function(){
                     + encodeURIComponent(percent), function(json) { });
         });
     });
+
+//    $(".jp-seek-bar").livequery(function() {
+//        $(".jp-seek-bar").on("click", function() {
+//            var bar = parseInt($(".jp-seek-bar").css("width").replace(/px/, ""));
+//            var position = parseInt($(".jp-play-bar").css("width").replace(/px/, ""));
+//            var percent = position / bar;
+//            console.log("percent: " + percent);
+//            //$.getJSON("ajax.php?action=saveVolume&volume=" 
+//                    //+ encodeURIComponent(percent), function(json) { });
+//        });
+//    });
 
 });
